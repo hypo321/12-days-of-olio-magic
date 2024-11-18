@@ -14,9 +14,6 @@
 
   .calendar-background {
     @apply fixed inset-0;
-    background-image: url('https://images.unsplash.com/photo-1543589077-47d81606c1bf');
-    background-size: cover;
-    background-position: center;
   }
 
   .calendar-window-container {

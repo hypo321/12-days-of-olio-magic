@@ -17,6 +17,7 @@ interface CachedWindowsData {
 }
 
 const STORAGE_KEY = 'advent-calendar-windows';
+const BACKGROUND_IMAGE_URL = "https://images.unsplash.com/photo-1543589077-47d81606c1bf";
 
 const generateNewWindows = (containerWidth: number, containerHeight: number): (CalendarWindowType & Position)[] => {
   const newWindows: (CalendarWindowType & Position)[] = [];
@@ -61,6 +62,7 @@ export const Calendar: React.FC = () => {
   const [windows, setWindows] = useState<(CalendarWindowType & Position)[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const { day: urlDay } = useParams<{ day?: string }>();
   const navigate = useNavigate();
   const [containerSize, setContainerSize] = useState({
@@ -73,9 +75,11 @@ export const Calendar: React.FC = () => {
     const loadImages = async () => {
       setIsLoading(true);
       setLoadingProgress(0);
+      setBackgroundLoaded(false);
 
       // Load main background image first
-      await preloadImage("https://images.unsplash.com/photo-1543589077-47d81606c1bf");
+      await preloadImage(BACKGROUND_IMAGE_URL);
+      setBackgroundLoaded(true);
       setLoadingProgress(30);
 
       // Load cached windows or generate new ones
@@ -190,7 +194,14 @@ export const Calendar: React.FC = () => {
 
   return (
     <div className="calendar-container">
-      <div className="calendar-background" />
+      <div 
+        className="calendar-background"
+        style={{
+          backgroundImage: backgroundLoaded ? `url(${BACKGROUND_IMAGE_URL})` : 'none',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
       {windows.map((window) => {
         const xPercent = `${(window.x / containerSize.width) * 100}%`;
         const yPercent = `${(window.y / containerSize.height) * 100}%`;
