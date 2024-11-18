@@ -22,6 +22,7 @@ interface CachedData {
 }
 
 export const Calendar: React.FC = () => {
+  const [allImagesLoaded, setAllImagesLoaded] = useState(false);
   const [windows, setWindows] = useState<WindowData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -80,61 +81,65 @@ export const Calendar: React.FC = () => {
   };
 
   useEffect(() => {
-    const loadImages = async () => {
-      setIsLoading(true);
-      setLoadingProgress(0);
-      setBackgroundLoaded(false);
-
-      // Step 1: Load background image (50% of progress)
+    const loadAllImages = async () => {
       try {
-        await preloadImage(BACKGROUND_IMAGE_URL);
-        setBackgroundLoaded(true);
-        setLoadingProgress(50);
-      } catch (error) {
-        console.error('Failed to load background image:', error);
-        setBackgroundLoaded(false);
-        setLoadingProgress(50);
-      }
+        setIsLoading(true);
+        setAllImagesLoaded(false);
+        setLoadingProgress(0);
+        
+        // Create an array of all image URLs
+        const imageUrls = [
+          BACKGROUND_IMAGE_URL,
+          ...Array.from({ length: 25 }, (_, i) => `/advent-calendar/images/day${i + 1}.jpg`)
+        ];
+        
+        // Load all images concurrently
+        const imagePromises = imageUrls.map(url => preloadImage(url));
+        
+        // Track progress
+        let loaded = 0;
+        await Promise.all(
+          imagePromises.map(promise =>
+            promise.then(() => {
+              loaded++;
+              setLoadingProgress((loaded / imageUrls.length) * 100);
+            }).catch(error => {
+              console.error('Failed to load image:', error);
+              // Continue loading other images even if one fails
+              loaded++;
+              setLoadingProgress((loaded / imageUrls.length) * 100);
+            })
+          )
+        );
 
-      // Step 2: Generate or load window data
-      const savedData = localStorage.getItem(STORAGE_KEY);
-      let initialWindows: WindowData[];
-      
-      if (savedData) {
-        const parsed = JSON.parse(savedData) as CachedData;
-        if (parsed.viewportSize.width === containerSize.width && 
-            parsed.viewportSize.height === containerSize.height) {
-          initialWindows = parsed.windows;
+        // Initialize windows
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (savedData) {
+          const { windows: savedWindows, viewportSize } = JSON.parse(savedData) as CachedData;
+          if (
+            viewportSize.width === containerSize.width &&
+            viewportSize.height === containerSize.height
+          ) {
+            setWindows(savedWindows);
+          } else {
+            setWindows(generateNewWindows(containerSize.width, containerSize.height));
+          }
         } else {
-          initialWindows = generateNewWindows(containerSize.width, containerSize.height);
+          setWindows(generateNewWindows(containerSize.width, containerSize.height));
         }
-      } else {
-        initialWindows = generateNewWindows(containerSize.width, containerSize.height);
+
+        // Mark all images as loaded and remove loading screen
+        setAllImagesLoaded(true);
+        await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to ensure state update
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error loading images:', error);
+        setAllImagesLoaded(true);
+        setIsLoading(false);
       }
-
-      // Cache the windows
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        windows: initialWindows,
-        viewportSize: containerSize
-      }));
-
-      // Set initial window state
-      setWindows(initialWindows);
-
-      // Step 3: Load window images in sequence (remaining 50%)
-      for (let i = 0; i < initialWindows.length; i++) {
-        try {
-          await preloadImage(initialWindows[i].imageUrl);
-          setLoadingProgress(50 + ((i + 1) / initialWindows.length) * 50);
-        } catch (error) {
-          console.error(`Failed to load image for window ${i + 1}:`, error);
-        }
-      }
-
-      setIsLoading(false);
     };
 
-    loadImages();
+    loadAllImages();
   }, [containerSize]);
 
   useEffect(() => {
@@ -160,23 +165,26 @@ export const Calendar: React.FC = () => {
   }, [day, windows]);
 
   const preloadImage = async (url: string): Promise<void> => {
-    try {
+    return new Promise((resolve, reject) => {
       const img = new Image();
+      
+      const handleLoad = () => {
+        img.removeEventListener('load', handleLoad);
+        img.removeEventListener('error', handleError);
+        resolve();
+      };
+      
+      const handleError = () => {
+        img.removeEventListener('load', handleLoad);
+        img.removeEventListener('error', handleError);
+        console.warn(`Failed to load image: ${url}`);
+        reject(new Error(`Failed to load image: ${url}`));
+      };
+      
+      img.addEventListener('load', handleLoad);
+      img.addEventListener('error', handleError);
       img.src = url;
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = () => {
-          console.warn(`Failed to load image: ${url}, using fallback`);
-          // Use a fallback image instead of rejecting
-          img.src = '/advent-calendar/background.jpg'; // Use background as fallback
-          img.onload = () => resolve();
-          img.onerror = () => reject(new Error(`Failed to load fallback image`));
-        };
-      });
-    } catch (error) {
-      console.error(`Error loading image ${url}:`, error);
-      throw error;
-    }
+    });
   };
 
   const handleWindowClick = (day: number) => {
@@ -214,34 +222,36 @@ export const Calendar: React.FC = () => {
   return (
     <div className="fixed inset-0 overflow-hidden">
       <div 
-        className="absolute inset-0 bg-[#f8f8f8] transition-opacity duration-500"
+        className="absolute inset-0 bg-[#f8f8f8]"
         style={{
-          backgroundImage: backgroundLoaded ? `url(${BACKGROUND_IMAGE_URL})` : 'none',
+          backgroundImage: allImagesLoaded ? `url(${BACKGROUND_IMAGE_URL})` : 'none',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          opacity: backgroundLoaded ? 1 : 0.5,
+          opacity: allImagesLoaded ? 1 : 0,
         }}
       />
-      <div className="relative w-full h-full">
-        {windows.map((window) => (
-          <div
-            key={window.day}
-            className="absolute"
-            style={{
-              left: `${window.x}px`,
-              top: `${window.y}px`,
-              width: window.width,
-              height: window.height,
-            }}
-          >
-            <CalendarWindow
-              window={window}
-              onWindowClick={handleWindowClick}
-              onWindowClose={handleWindowClose}
-            />
-          </div>
-        ))}
-      </div>
+      {allImagesLoaded && (
+        <div className="relative w-full h-full">
+          {windows.map((window) => (
+            <div
+              key={window.day}
+              className="absolute"
+              style={{
+                left: `${window.x}px`,
+                top: `${window.y}px`,
+                width: window.width,
+                height: window.height,
+              }}
+            >
+              <CalendarWindow
+                window={window}
+                onWindowClick={handleWindowClick}
+                onWindowClose={handleWindowClose}
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
