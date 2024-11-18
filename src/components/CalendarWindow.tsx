@@ -1,4 +1,6 @@
+import React from 'react';
 import { CalendarWindow as CalendarWindowType } from '../types';
+import { BACKGROUND_IMAGE_URL } from '../constants';
 
 interface Props {
   window: CalendarWindowType;
@@ -12,16 +14,16 @@ export const CalendarWindow: React.FC<Props> = ({
   onWindowClose,
 }) => {
   const backgroundStyle = {
-    backgroundImage:
-      'url("https://images.unsplash.com/photo-1543589077-47d81606c1bf")',
+    backgroundImage: `url("${BACKGROUND_IMAGE_URL}")`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    transform: `translate(${-window.x}px, ${-window.y}px)`,
+    transform: `translate(${-window.x}px, ${-window.y}px) scale(1.005)`, // Slight scale to prevent edge artifacts
     width: '100vw',
     height: '100vh',
     position: 'absolute' as const,
     top: '0',
     left: '0',
+    transformOrigin: '0 0',
   };
 
   return (

@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { CalendarWindow as CalendarWindowType } from '../types';
 import { CalendarWindow } from './CalendarWindow';
 import { LoadingScreen } from './LoadingScreen';
+import { BACKGROUND_IMAGE_URL } from '../constants';
 
-const BACKGROUND_IMAGE_URL = "/advent-calendar/background.jpg";
 const STORAGE_KEY = 'advent-calendar-windows';
 
 interface Position {
@@ -34,28 +34,47 @@ export const Calendar: React.FC = () => {
   const navigate = useNavigate();
 
   const generateNewWindows = (width: number, height: number): WindowData[] => {
-    const gridSize = 5;
-    const cellWidth = width / gridSize;
-    const cellHeight = height / gridSize;
+    const gridSize = 5; // 5x5 grid for 25 windows
+    const padding = 16; // padding around the entire grid
     
-    return Array.from({ length: 24 }, (_, i) => {
+    // Calculate available space, accounting for the container offset
+    const availableWidth = width;
+    const availableHeight = height;
+    
+    // Calculate cell dimensions
+    const cellWidth = availableWidth / gridSize;
+    const cellHeight = availableHeight / gridSize;
+    
+    // Calculate window size to fit within cells
+    const windowSize = Math.min(cellWidth, cellHeight) * 0.85;
+    
+    return Array.from({ length: 25 }, (_, i) => {
       const row = Math.floor(i / gridSize);
       const col = i % gridSize;
-      const baseX = col * cellWidth;
-      const baseY = row * cellHeight;
       
-      // Add some random offset within the cell
-      const offsetX = Math.random() * (cellWidth * 0.3);
-      const offsetY = Math.random() * (cellHeight * 0.3);
+      // Calculate base position, centering the entire grid
+      const gridWidth = cellWidth * gridSize;
+      const gridHeight = cellHeight * gridSize;
+      const gridLeft = (width - gridWidth) / 2;
+      const gridTop = (height - gridHeight) / 2;
+      
+      // Position within the grid
+      const baseX = gridLeft + (col * cellWidth) + ((cellWidth - windowSize) / 2);
+      const baseY = gridTop + (row * cellHeight) + ((cellHeight - windowSize) / 2);
+      
+      // Add small random offset
+      const maxOffset = Math.min(cellWidth, cellHeight) * 0.05;
+      const offsetX = (Math.random() - 0.5) * maxOffset;
+      const offsetY = (Math.random() - 0.5) * maxOffset;
       
       return {
         day: i + 1,
         isOpen: false,
         x: baseX + offsetX,
         y: baseY + offsetY,
-        width: '120px',
-        height: '120px',
-        imageUrl: `https://source.unsplash.com/random/400x400/?christmas,${i + 1}`,
+        width: `${windowSize}px`,
+        height: `${windowSize}px`,
+        imageUrl: `/advent-calendar/images/day${i + 1}.jpg`,
       };
     });
   };
@@ -140,13 +159,24 @@ export const Calendar: React.FC = () => {
     }
   }, [day, windows]);
 
-  const preloadImage = (src: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
+  const preloadImage = async (url: string): Promise<void> => {
+    try {
       const img = new Image();
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
-      img.src = src;
-    });
+      img.src = url;
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => {
+          console.warn(`Failed to load image: ${url}, using fallback`);
+          // Use a fallback image instead of rejecting
+          img.src = '/advent-calendar/background.jpg'; // Use background as fallback
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error(`Failed to load fallback image`));
+        };
+      });
+    } catch (error) {
+      console.error(`Error loading image ${url}:`, error);
+      throw error;
+    }
   };
 
   const handleWindowClick = (day: number) => {
@@ -182,9 +212,9 @@ export const Calendar: React.FC = () => {
   }
 
   return (
-    <div className="relative w-full min-h-screen">
+    <div className="fixed inset-0 overflow-hidden">
       <div 
-        className="fixed inset-0 bg-[#f8f8f8] transition-opacity duration-500"
+        className="absolute inset-0 bg-[#f8f8f8] transition-opacity duration-500"
         style={{
           backgroundImage: backgroundLoaded ? `url(${BACKGROUND_IMAGE_URL})` : 'none',
           backgroundSize: 'cover',
@@ -192,24 +222,26 @@ export const Calendar: React.FC = () => {
           opacity: backgroundLoaded ? 1 : 0.5,
         }}
       />
-      {windows.map((window) => (
-        <div
-          key={window.day}
-          className="absolute"
-          style={{
-            left: `${window.x}px`,
-            top: `${window.y}px`,
-            width: window.width,
-            height: window.height,
-          }}
-        >
-          <CalendarWindow
-            window={window}
-            onWindowClick={handleWindowClick}
-            onWindowClose={handleWindowClose}
-          />
-        </div>
-      ))}
+      <div className="relative w-full h-full">
+        {windows.map((window) => (
+          <div
+            key={window.day}
+            className="absolute"
+            style={{
+              left: `${window.x}px`,
+              top: `${window.y}px`,
+              width: window.width,
+              height: window.height,
+            }}
+          >
+            <CalendarWindow
+              window={window}
+              onWindowClick={handleWindowClick}
+              onWindowClose={handleWindowClose}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
