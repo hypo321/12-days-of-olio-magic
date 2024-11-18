@@ -12,7 +12,8 @@ export const CalendarWindow: React.FC<Props> = ({
   onWindowClose,
 }) => {
   const backgroundStyle = {
-    backgroundImage: 'url("https://images.unsplash.com/photo-1543589077-47d81606c1bf")',
+    backgroundImage:
+      'url("https://images.unsplash.com/photo-1543589077-47d81606c1bf")',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     transform: `translate(${-window.x}px, ${-window.y}px)`,
@@ -26,7 +27,7 @@ export const CalendarWindow: React.FC<Props> = ({
   return (
     <div className="calendar-window">
       <div className={`door ${window.isOpen ? 'open' : ''}`}>
-        <div 
+        <div
           className="door-front"
           onClick={(e) => {
             e.stopPropagation();
@@ -38,14 +39,13 @@ export const CalendarWindow: React.FC<Props> = ({
           <div className="door-front-image" style={backgroundStyle} />
           <div className="door-number">{window.day}</div>
         </div>
-        <div 
+        <div
           className="door-back"
           onClick={(e) => {
             e.stopPropagation();
             onWindowClose(window.day);
           }}
         />
-        <div className="door-edge" />
       </div>
       <div className="content-behind">
         <img

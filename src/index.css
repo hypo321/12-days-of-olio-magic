@@ -28,7 +28,7 @@
     @apply w-full h-full relative;
     perspective: 1000px;
   }
-  
+
   .door {
     @apply absolute inset-0;
     transform-style: preserve-3d;
@@ -36,51 +36,58 @@
     transition: transform 0.7s ease-in-out;
     z-index: 2;
   }
-  
+
   .door.open {
     transform: rotateY(-105deg);
   }
-  
+
   .door-front {
     @apply absolute inset-0 rounded-lg cursor-pointer;
     transform-style: preserve-3d;
     backface-visibility: hidden;
-    background: #f0f0f0;
     overflow: hidden;
     z-index: 2;
+  }
+
+  .door-front::before {
+    content: '';
+    @apply absolute inset-0 rounded-lg pointer-events-none;
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.1);
+    z-index: 3;
   }
 
   .door-front-image {
     @apply absolute inset-0 overflow-hidden rounded-lg;
     transform-style: preserve-3d;
   }
-  
+
   .door-back {
-    @apply absolute inset-0 rounded-lg cursor-pointer hover:bg-gray-100;
+    @apply absolute inset-0 rounded-lg cursor-pointer;
     transform: rotateY(180deg);
-    background-color: #ffffff;
-    border: 1px solid #e5e5e5;
+    background-image: url('/cardboard.jpg');
+    background-size: cover;
+    background-position: center;
+    border: 2px dashed #e5e5e5;
     backface-visibility: hidden;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .door-back:hover {
+    filter: brightness(1.05);
   }
 
   .door-number {
-    @apply absolute inset-0 
-           flex items-center justify-center 
+    @apply absolute inset-0
+           flex items-center justify-center
            text-white font-bold
            pointer-events-none;
     font-size: clamp(1rem, 4vw, 2rem);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     z-index: 3;
   }
-  
-  .door-edge {
-    @apply absolute top-0 bottom-0 left-0 pointer-events-none;
-    width: 2px;
-    transform-origin: left;
-    transform: rotateY(-90deg);
-    background-color: #e5e5e5;
-  }
-  
+
+
   .content-behind {
     @apply absolute inset-0 rounded-lg overflow-hidden;
     transform: translateZ(-2px);
