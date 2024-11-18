@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { CalendarWindow as CalendarWindowType } from '../types';
 import { CalendarWindow } from './CalendarWindow';
+import { LoadingScreen } from './LoadingScreen';
 
 interface Position {
   x: number;
@@ -56,58 +57,64 @@ const generateNewWindows = (containerWidth: number, containerHeight: number): (C
   return newWindows;
 };
 
-export const Calendar = () => {
+export const Calendar: React.FC = () => {
+  const [windows, setWindows] = useState<(CalendarWindowType & Position)[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const { day: urlDay } = useParams<{ day?: string }>();
   const navigate = useNavigate();
-  const [windows, setWindows] = useState<(CalendarWindowType & Position)[]>([]);
   const [containerSize, setContainerSize] = useState({
     width: 0,
     height: 0,
   });
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Load cached windows or generate new ones
   useEffect(() => {
-    if (containerSize.width === 0 || containerSize.height === 0) return;
+    const loadImages = async () => {
+      setIsLoading(true);
+      setLoadingProgress(0);
 
-    const cachedData = localStorage.getItem(STORAGE_KEY);
-    let windowsToUse: (CalendarWindowType & Position)[] = [];
+      // Load main background image first
+      await preloadImage("https://images.unsplash.com/photo-1543589077-47d81606c1bf");
+      setLoadingProgress(30);
 
-    if (cachedData) {
-      const parsed = JSON.parse(cachedData) as CachedWindowsData;
-      // Only use cached data if viewport size matches
-      if (parsed.viewportSize.width === containerSize.width && 
-          parsed.viewportSize.height === containerSize.height) {
-        windowsToUse = parsed.windows;
+      // Load cached windows or generate new ones
+      if (containerSize.width === 0 || containerSize.height === 0) return;
+
+      const cachedData = localStorage.getItem(STORAGE_KEY);
+      let windowsToUse: (CalendarWindowType & Position)[] = [];
+
+      if (cachedData) {
+        const parsed = JSON.parse(cachedData) as CachedWindowsData;
+        // Only use cached data if viewport size matches
+        if (parsed.viewportSize.width === containerSize.width && 
+            parsed.viewportSize.height === containerSize.height) {
+          windowsToUse = parsed.windows;
+        }
       }
-    }
 
-    if (windowsToUse.length === 0) {
-      windowsToUse = generateNewWindows(containerSize.width, containerSize.height);
-      // Cache the new windows
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        windows: windowsToUse,
-        viewportSize: containerSize
-      }));
-    }
-
-    setWindows(windowsToUse);
-
-    // Handle URL-based window opening
-    if (urlDay && isInitialLoad) {
-      const dayNumber = parseInt(urlDay, 10);
-      if (!isNaN(dayNumber) && dayNumber >= 1 && dayNumber <= 25) {
-        setTimeout(() => {
-          setWindows(prev =>
-            prev.map(window =>
-              window.day === dayNumber ? { ...window, isOpen: true } : window
-            )
-          );
-        }, 500);
+      if (windowsToUse.length === 0) {
+        windowsToUse = generateNewWindows(containerSize.width, containerSize.height);
+        // Cache the new windows
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          windows: windowsToUse,
+          viewportSize: containerSize
+        }));
       }
-      setIsInitialLoad(false);
-    }
-  }, [containerSize, urlDay, isInitialLoad]);
+
+      // Preload all window images
+      const totalImages = windowsToUse.length;
+      for (let i = 0; i < totalImages; i++) {
+        await preloadImage(windowsToUse[i].imageUrl);
+        setLoadingProgress(30 + ((i + 1) / totalImages) * 70);
+      }
+
+      setWindows(windowsToUse);
+      setIsLoading(false);
+    };
+
+    loadImages();
+  }, [containerSize]);
 
   useEffect(() => {
     const updateSize = () => {
@@ -122,6 +129,30 @@ export const Calendar = () => {
 
     return () => window.removeEventListener('resize', updateSize);
   }, []);
+
+  useEffect(() => {
+    if (urlDay && windows.length > 0 && isInitialLoad) {
+      const dayNumber = parseInt(urlDay, 10);
+      if (!isNaN(dayNumber) && dayNumber >= 1 && dayNumber <= 25) {
+        setTimeout(() => {
+          setWindows(prev =>
+            prev.map(window =>
+              window.day === dayNumber ? { ...window, isOpen: true } : window
+            )
+          );
+        }, 500);
+      }
+      setIsInitialLoad(false);
+    }
+  }, [urlDay, windows, isInitialLoad]);
+
+  const preloadImage = (src: string): Promise<void> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve();
+      img.src = src;
+    });
+  };
 
   const handleWindowClick = (day: number) => {
     navigate(`/day/${day}`);
@@ -152,6 +183,10 @@ export const Calendar = () => {
       return newWindows;
     });
   };
+
+  if (isLoading) {
+    return <LoadingScreen progress={loadingProgress} />;
+  }
 
   return (
     <div className="calendar-container">
