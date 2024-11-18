@@ -26,7 +26,6 @@ export const Calendar: React.FC = () => {
   const [windows, setWindows] = useState<WindowData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [containerSize, setContainerSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -36,7 +35,6 @@ export const Calendar: React.FC = () => {
 
   const generateNewWindows = (width: number, height: number): WindowData[] => {
     const gridSize = 5; // 5x5 grid for 25 windows
-    const padding = 16; // padding around the entire grid
     
     // Calculate available space, accounting for the container offset
     const availableWidth = width;
