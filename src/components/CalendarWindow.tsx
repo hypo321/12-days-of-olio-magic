@@ -17,7 +17,7 @@ export const CalendarWindow: React.FC<Props> = ({
     backgroundImage: `url("${BACKGROUND_IMAGE_URL}")`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    transform: `translate(${-window.x}px, ${-window.y}px) scale(1.005)`, // Slight scale to prevent edge artifacts
+    transform: `translate(${-window.x}px, ${-window.y}px) `,
     width: '100vw',
     height: '100vh',
     position: 'absolute' as const,

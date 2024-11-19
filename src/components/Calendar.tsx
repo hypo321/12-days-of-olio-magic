@@ -36,7 +36,7 @@ export const Calendar: React.FC = () => {
   const generateNewWindows = (width: number, height: number): WindowData[] => {
     const gridSize = 5; // 5x5 grid for 25 windows
     
-    // Calculate available space, accounting for the container offset
+    // Calculate available space
     const availableWidth = width;
     const availableHeight = height;
     
@@ -45,7 +45,24 @@ export const Calendar: React.FC = () => {
     const cellHeight = availableHeight / gridSize;
     
     // Calculate window size to fit within cells
-    const windowSize = Math.min(cellWidth, cellHeight) * 0.85;
+    // Make windows wider when there's more horizontal space
+    const aspectRatio = 1.4; // wider than tall
+    const maxWidth = cellWidth * 0.9; // 90% of cell width
+    const maxHeight = cellHeight * 0.85; // 85% of cell height
+    
+    // Calculate window dimensions based on aspect ratio while respecting max sizes
+    let windowWidth: number;
+    let windowHeight: number;
+    
+    if (maxWidth / aspectRatio <= maxHeight) {
+      // Width is the limiting factor
+      windowWidth = maxWidth;
+      windowHeight = maxWidth / aspectRatio;
+    } else {
+      // Height is the limiting factor
+      windowHeight = maxHeight;
+      windowWidth = maxHeight * aspectRatio;
+    }
     
     return Array.from({ length: 25 }, (_, i) => {
       const row = Math.floor(i / gridSize);
@@ -57,22 +74,23 @@ export const Calendar: React.FC = () => {
       const gridLeft = (width - gridWidth) / 2;
       const gridTop = (height - gridHeight) / 2;
       
-      // Position within the grid
-      const baseX = gridLeft + (col * cellWidth) + ((cellWidth - windowSize) / 2);
-      const baseY = gridTop + (row * cellHeight) + ((cellHeight - windowSize) / 2);
+      // Position within the grid, centering windows in their cells
+      const baseX = gridLeft + (col * cellWidth) + ((cellWidth - windowWidth) / 2);
+      const baseY = gridTop + (row * cellHeight) + ((cellHeight - windowHeight) / 2);
       
       // Add small random offset
-      const maxOffset = Math.min(cellWidth, cellHeight) * 0.05;
-      const offsetX = (Math.random() - 0.5) * maxOffset;
-      const offsetY = (Math.random() - 0.5) * maxOffset;
+      const maxOffsetX = (cellWidth - windowWidth) * 0.1;
+      const maxOffsetY = (cellHeight - windowHeight) * 0.1;
+      const offsetX = (Math.random() - 0.5) * maxOffsetX;
+      const offsetY = (Math.random() - 0.5) * maxOffsetY;
       
       return {
         day: i + 1,
         isOpen: false,
         x: baseX + offsetX,
         y: baseY + offsetY,
-        width: `${windowSize}px`,
-        height: `${windowSize}px`,
+        width: `${windowWidth}px`,
+        height: `${windowHeight}px`,
         imageUrl: `/advent-calendar/images/day${i + 1}.jpg`,
       };
     });
