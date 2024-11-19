@@ -8,7 +8,7 @@ interface Props {
   onWindowClose: (day: number) => void;
 }
 
-export const CalendarWindow: React.FC<Props> = React.memo(({
+export const CalendarWindow: React.FC<Props> = ({
   window,
   onWindowClick,
   onWindowClose,
@@ -28,6 +28,7 @@ export const CalendarWindow: React.FC<Props> = React.memo(({
 
   const handleBackClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    console.log('Door back clicked for window:', window.day);
     onWindowClose(window.day);
   };
 
@@ -37,7 +38,6 @@ export const CalendarWindow: React.FC<Props> = React.memo(({
         className={`door ${window.isOpen ? 'open' : ''}`}
         style={{ 
           transformStyle: 'preserve-3d',
-          willChange: 'transform'
         }}
       >
         <div
@@ -60,10 +60,9 @@ export const CalendarWindow: React.FC<Props> = React.memo(({
             inset: '0',
             cursor: 'pointer',
             transform: 'rotateY(180deg)',
-            backgroundColor: window.isOpen ? 'rgba(255, 0, 0, 0.3)' : undefined,
+            backgroundColor: window.isOpen ? 'rgba(255, 0, 0, 0.3)' : undefined, // Debug color
             zIndex: 10,
             backfaceVisibility: 'hidden',
-            willChange: 'transform'
           }}
         />
       </div>
@@ -79,11 +78,8 @@ export const CalendarWindow: React.FC<Props> = React.memo(({
           src={window.imageUrl}
           alt={`Day ${window.day}`}
           className="w-full h-full object-cover rounded-lg"
-          loading="eager"
         />
       </div>
     </div>
   );
-});
-
-CalendarWindow.displayName = 'CalendarWindow';
+};
