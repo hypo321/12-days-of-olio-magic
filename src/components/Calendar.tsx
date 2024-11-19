@@ -279,8 +279,15 @@ export const Calendar: React.FC = () => {
 
   useEffect(() => {
     if (day && windows.length > 0) {
-      const selectedWindow = windows[parseInt(day) - 1];
+      const dayNumber = parseInt(day);
+      const selectedWindow = windows.find((w) => w.day === dayNumber);
       if (selectedWindow) {
+        console.log('Selected window:', {
+          day: selectedWindow.day,
+          position: { x: selectedWindow.x, y: selectedWindow.y },
+          size: { width: selectedWindow.width, height: selectedWindow.height },
+        });
+
         // Parse window dimensions
         const windowX = selectedWindow.x;
         const windowY = selectedWindow.y;
@@ -295,28 +302,35 @@ export const Calendar: React.FC = () => {
         const scale = Math.min(scaleX, scaleY);
 
         // Calculate the translation needed to center the target window
-        // We need to consider the scale because translate happens after scale in CSS transforms
-        const translateX =
-          containerSize.width / 2 -
-          (windowX * scale + (windowWidth * scale) / 2);
-        const translateY =
-          containerSize.height / 2 -
-          (windowY * scale + (windowHeight * scale) / 2);
+        // When using center transform-origin, we need to:
+        // 1. Calculate the current position relative to the center
+        const containerCenterX = containerSize.width / 2;
+        const containerCenterY = containerSize.height / 2;
+        const windowCenterX = windowX + windowWidth / 2;
+        const windowCenterY = windowY + windowHeight / 2;
 
-        console.log('Transform Debug:', {
+        // 2. Calculate the offset from center
+        const offsetX = containerCenterX - windowCenterX;
+        const offsetY = containerCenterY - windowCenterY;
+
+        // 3. Apply the scale factor to the offset
+        const translateX = offsetX * scale;
+        const translateY = offsetY * scale;
+
+        console.log('Transform calculation:', {
+          container: {
+            size: containerSize,
+            center: { x: containerCenterX, y: containerCenterY },
+          },
           window: {
-            number: selectedWindow.day,
-            x: windowX,
-            y: windowY,
-            width: windowWidth,
-            height: windowHeight,
+            day: selectedWindow.day,
+            position: { x: windowX, y: windowY },
+            center: { x: windowCenterX, y: windowCenterY },
+            size: { width: windowWidth, height: windowHeight },
           },
-          viewport: containerSize,
-          transform: {
-            scale,
-            translateX,
-            translateY,
-          },
+          scale: scale,
+          offset: { x: offsetX, y: offsetY },
+          translate: { x: translateX, y: translateY },
         });
 
         setZoomTransform({ scale, translateX, translateY });
@@ -342,14 +356,14 @@ export const Calendar: React.FC = () => {
         <LoadingScreen progress={loadingProgress} />
       ) : (
         <div
-          className="relative w-full h-full transition-transform duration-1000 ease-in-out pointer-events-none"
+          className="relative w-full h-full transition-transform duration-[3000ms] ease-in-out pointer-events-none"
           style={{
             transform: `scale(${zoomTransform.scale}) translate(${
               zoomTransform.translateX / zoomTransform.scale
             }px, ${
               zoomTransform.translateY / zoomTransform.scale
             }px)`,
-            transformOrigin: '0 0',
+            transformOrigin: 'center center',
           }}
         >
           <div
