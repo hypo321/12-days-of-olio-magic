@@ -8,7 +8,7 @@ interface Props {
   onWindowClose: (day: number) => void;
 }
 
-export const CalendarWindow: React.FC<Props> = ({
+export const CalendarWindow: React.FC<Props> = React.memo(({
   window,
   onWindowClick,
   onWindowClose,
@@ -17,7 +17,7 @@ export const CalendarWindow: React.FC<Props> = ({
     backgroundImage: `url("${BACKGROUND_IMAGE_URL}")`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    transform: `translate(${-window.x}px, ${-window.y}px) `,
+    transform: `translate(${-window.x}px, ${-window.y}px)`,
     width: '100vw',
     height: '100vh',
     position: 'absolute' as const,
@@ -26,9 +26,20 @@ export const CalendarWindow: React.FC<Props> = ({
     transformOrigin: '0 0',
   };
 
+  const handleBackClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onWindowClose(window.day);
+  };
+
   return (
-    <div className="calendar-window">
-      <div className={`door ${window.isOpen ? 'open' : ''}`}>
+    <div className="calendar-window" style={{ perspective: '1000px' }}>
+      <div 
+        className={`door ${window.isOpen ? 'open' : ''}`}
+        style={{ 
+          transformStyle: 'preserve-3d',
+          willChange: 'transform'
+        }}
+      >
         <div
           className="door-front"
           onClick={(e) => {
@@ -43,19 +54,36 @@ export const CalendarWindow: React.FC<Props> = ({
         </div>
         <div
           className="door-back"
-          onClick={(e) => {
-            e.stopPropagation();
-            onWindowClose(window.day);
+          onClick={handleBackClick}
+          style={{
+            position: 'absolute',
+            inset: '0',
+            cursor: 'pointer',
+            transform: 'rotateY(180deg)',
+            backgroundColor: window.isOpen ? 'rgba(255, 0, 0, 0.3)' : undefined,
+            zIndex: 10,
+            backfaceVisibility: 'hidden',
+            willChange: 'transform'
           }}
         />
       </div>
-      <div className="content-behind">
+      <div 
+        className="content-behind"
+        style={{
+          position: 'absolute',
+          inset: '0',
+          zIndex: 1,
+        }}
+      >
         <img
           src={window.imageUrl}
           alt={`Day ${window.day}`}
           className="w-full h-full object-cover rounded-lg"
+          loading="eager"
         />
       </div>
     </div>
   );
-};
+});
+
+CalendarWindow.displayName = 'CalendarWindow';

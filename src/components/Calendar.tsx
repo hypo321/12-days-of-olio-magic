@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CalendarWindow as CalendarWindowType } from '../types';
 import { CalendarWindow } from './CalendarWindow';
@@ -33,6 +33,13 @@ export const Calendar: React.FC = () => {
   const { day } = useParams();
   const navigate = useNavigate();
 
+  // Add state for zoom transition
+  const [zoomTransform, setZoomTransform] = useState({ 
+    scale: 1, 
+    translateX: 0, 
+    translateY: 0 
+  });
+
   const generateNewWindows = (width: number, height: number): WindowData[] => {
     const gridSize = 5; // 5x5 grid for 25 windows
     
@@ -63,6 +70,12 @@ export const Calendar: React.FC = () => {
       windowHeight = maxHeight;
       windowWidth = maxHeight * aspectRatio;
     }
+
+    console.log('Grid Debug:', {
+      viewport: { width, height },
+      cell: { width: cellWidth, height: cellHeight },
+      window: { width: windowWidth, height: windowHeight }
+    });
     
     return Array.from({ length: 25 }, (_, i) => {
       const row = Math.floor(i / gridSize);
@@ -83,12 +96,25 @@ export const Calendar: React.FC = () => {
       const maxOffsetY = (cellHeight - windowHeight) * 0.1;
       const offsetX = (Math.random() - 0.5) * maxOffsetX;
       const offsetY = (Math.random() - 0.5) * maxOffsetY;
+
+      const finalX = baseX + offsetX;
+      const finalY = baseY + offsetY;
+
+      if (i === 0) {
+        console.log('Window 1 Position Debug:', {
+          gridPosition: { row, col },
+          gridOffset: { left: gridLeft, top: gridTop },
+          basePosition: { x: baseX, y: baseY },
+          randomOffset: { x: offsetX, y: offsetY },
+          finalPosition: { x: finalX, y: finalY }
+        });
+      }
       
       return {
         day: i + 1,
         isOpen: false,
-        x: baseX + offsetX,
-        y: baseY + offsetY,
+        x: finalX,
+        y: finalY,
         width: `${windowWidth}px`,
         height: `${windowHeight}px`,
         imageUrl: `/advent-calendar/images/day${i + 1}.jpg`,
@@ -172,6 +198,51 @@ export const Calendar: React.FC = () => {
 
   useEffect(() => {
     if (day && windows.length > 0) {
+      const selectedWindow = windows[parseInt(day) - 1];
+      if (selectedWindow) {
+        // Parse window dimensions
+        const windowX = selectedWindow.x;
+        const windowY = selectedWindow.y;
+        const windowWidth = parseFloat(selectedWindow.width);
+        const windowHeight = parseFloat(selectedWindow.height);
+
+        // Calculate the scale needed to make the window fill most of the viewport
+        const targetWidth = containerSize.width * 0.8; // 80% of viewport
+        const targetHeight = containerSize.height * 0.8;
+        const scaleX = targetWidth / windowWidth;
+        const scaleY = targetHeight / windowHeight;
+        const scale = Math.min(scaleX, scaleY);
+
+        // Calculate the translation needed to center the target window
+        // We need to consider the scale because translate happens after scale in CSS transforms
+        const translateX = containerSize.width / 2 - (windowX * scale + (windowWidth * scale) / 2);
+        const translateY = containerSize.height / 2 - (windowY * scale + (windowHeight * scale) / 2);
+
+        console.log('Transform Debug:', {
+          window: {
+            number: selectedWindow.day,
+            x: windowX,
+            y: windowY,
+            width: windowWidth,
+            height: windowHeight
+          },
+          viewport: containerSize,
+          transform: {
+            scale,
+            translateX,
+            translateY
+          }
+        });
+
+        setZoomTransform({ scale, translateX, translateY });
+      }
+    } else {
+      setZoomTransform({ scale: 1, translateX: 0, translateY: 0 });
+    }
+  }, [day, windows, containerSize]);
+
+  useEffect(() => {
+    if (day && windows.length > 0) {
       const dayNumber = parseInt(day);
       const targetWindow = windows.find(w => w.day === dayNumber);
       if (targetWindow && !targetWindow.isOpen) {
@@ -203,69 +274,83 @@ export const Calendar: React.FC = () => {
     });
   };
 
-  const handleWindowClick = (day: number) => {
-    setWindows(prev => {
-      const newWindows = prev.map(w =>
-        w.day === day ? { ...w, isOpen: true } : w
-      );
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        windows: newWindows,
-        viewportSize: containerSize
-      }));
+  const handleWindowClick = useCallback((day: number) => {
+    console.time('window-open');
+    setWindows((prevWindows) => {
+      const newWindows = [...prevWindows];
+      const windowIndex = newWindows.findIndex((w) => w.day === day);
+      if (windowIndex !== -1) {
+        newWindows[windowIndex] = {
+          ...newWindows[windowIndex],
+          isOpen: true,
+        };
+      }
       return newWindows;
     });
+    console.timeEnd('window-open');
     navigate(`/day/${day}`);
-  };
+  }, [navigate]);
 
-  const handleWindowClose = (day: number) => {
-    setWindows(prev => {
-      const newWindows = prev.map(w =>
-        w.day === day ? { ...w, isOpen: false } : w
-      );
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        windows: newWindows,
-        viewportSize: containerSize
-      }));
+  const handleWindowClose = useCallback((day: number) => {
+    console.time('window-close');
+    setWindows((prevWindows) => {
+      const newWindows = [...prevWindows];
+      const windowIndex = newWindows.findIndex((w) => w.day === day);
+      if (windowIndex !== -1) {
+        newWindows[windowIndex] = {
+          ...newWindows[windowIndex],
+          isOpen: false,
+        };
+      }
       return newWindows;
     });
+    console.timeEnd('window-close');
     navigate('/');
-  };
-
-  if (isLoading) {
-    return <LoadingScreen progress={loadingProgress} />;
-  }
+  }, [navigate]);
 
   return (
-    <div className="fixed inset-0 overflow-hidden">
-      <div 
-        className="absolute inset-0 bg-[#f8f8f8]"
-        style={{
-          backgroundImage: allImagesLoaded ? `url(${BACKGROUND_IMAGE_URL})` : 'none',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: allImagesLoaded ? 1 : 0,
-        }}
-      />
-      {allImagesLoaded && (
-        <div className="relative w-full h-full">
-          {windows.map((window) => (
-            <div
-              key={window.day}
-              className="absolute"
-              style={{
-                left: `${window.x}px`,
-                top: `${window.y}px`,
-                width: window.width,
-                height: window.height,
-              }}
-            >
-              <CalendarWindow
-                window={window}
-                onWindowClick={handleWindowClick}
-                onWindowClose={handleWindowClose}
-              />
+    <div className="relative w-screen h-screen overflow-hidden">
+      {isLoading ? (
+        <LoadingScreen progress={loadingProgress} />
+      ) : (
+        <div 
+          className="relative w-full h-full transition-transform duration-1000 ease-in-out pointer-events-none"
+          style={{
+            transform: `scale(${zoomTransform.scale}) translate(${zoomTransform.translateX / zoomTransform.scale}px, ${zoomTransform.translateY / zoomTransform.scale}px)`,
+            transformOrigin: '0 0'
+          }}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url("${BACKGROUND_IMAGE_URL}")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'brightness(0.7)',
+            }}
+          />
+          {allImagesLoaded && (
+            <div className="relative w-full h-full">
+              {windows.map((window) => (
+                <div
+                  key={window.day}
+                  className="absolute pointer-events-auto"
+                  style={{
+                    left: `${window.x}px`,
+                    top: `${window.y}px`,
+                    width: window.width,
+                    height: window.height,
+                  }}
+                >
+                  <CalendarWindow
+                    window={window}
+                    onWindowClick={handleWindowClick}
+                    onWindowClose={handleWindowClose}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>
