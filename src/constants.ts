@@ -1,2 +1,2 @@
 export const BACKGROUND_IMAGE_URL =
-  '/olio-christmas.jpg';
+  '/advent-calendar/olio-christmas.jpg';

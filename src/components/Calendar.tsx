@@ -127,7 +127,7 @@ export const Calendar: React.FC = () => {
         y: finalY,
         width: `${windowWidth}px`,
         height: `${windowHeight}px`,
-        imageUrl: `/thumbnails/day${scrambledDays[i]}.jpg`,
+        imageUrl: `/advent-calendar/thumbnails/day${scrambledDays[i]}.jpg`,
       };
     });
   };
@@ -201,7 +201,7 @@ export const Calendar: React.FC = () => {
           BACKGROUND_IMAGE_URL,
           ...Array.from(
             { length: 25 },
-            (_, i) => `/thumbnails/day${i + 1}.jpg`
+            (_, i) => `/advent-calendar/thumbnails/day${i + 1}.jpg`
           ),
         ];
 
