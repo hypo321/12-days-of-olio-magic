@@ -4,6 +4,7 @@ import { CalendarWindow as CalendarWindowType } from '../types';
 import { CalendarWindow } from './CalendarWindow';
 import { LoadingScreen } from './LoadingScreen';
 import { BACKGROUND_IMAGE_URL } from '../constants';
+import { canOpenDoor } from '../utils';
 
 const STORAGE_KEY = 'advent-calendar-windows';
 
@@ -75,8 +76,10 @@ export const Calendar: React.FC = () => {
     }
 
     // Create an array of scrambled day numbers (1-25)
-    const scrambledDays = Array.from({ length: 25 }, (_, i) => i + 1)
-      .sort(() => Math.random() - 0.5);
+    const scrambledDays = Array.from(
+      { length: 25 },
+      (_, i) => i + 1
+    ).sort(() => Math.random() - 0.5);
 
     console.log('Grid Debug:', {
       viewport: { width, height },
@@ -155,39 +158,72 @@ export const Calendar: React.FC = () => {
     });
   };
 
-  const handleWindowClick = useCallback((day: number) => {
-    setWindows((prev) => {
-      const newWindows = prev.map((w) =>
-        w.day === day ? { ...w, isOpen: true } : w
-      );
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({
-          windows: newWindows,
-          viewportSize: containerSize,
-        })
-      );
-      return newWindows;
-    });
-    navigate(`/day/${day}`);
-  }, [containerSize, navigate]);
+  const handleWindowClick = useCallback(
+    (clickedDay: number) => {
+      if (!day) {
+        // Set a small delay to allow the CSS transition to start
+        requestAnimationFrame(() => {
+          navigate(`/day/${clickedDay}`);
+        });
+      } else {
+        // Check if the door can be opened when trying to open it
+        if (!canOpenDoor(clickedDay)) {
+          return;
+        }
+        // If we're zoomed in, toggle the window
+        setWindows((prevWindows) => {
+          const newWindows = [...prevWindows];
+          const windowIndex = newWindows.findIndex(
+            (w) => w.day === clickedDay
+          );
+          if (windowIndex !== -1) {
+            newWindows[windowIndex] = {
+              ...newWindows[windowIndex],
+              isOpen: !newWindows[windowIndex].isOpen,
+            };
+          }
+          localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({
+              windows: newWindows,
+              viewportSize: containerSize,
+            })
+          );
+          return newWindows;
+        });
+      }
+    },
+    [containerSize, day, navigate]
+  );
 
-  const handleWindowClose = useCallback((day: number) => {
-    setWindows((prev) => {
-      const newWindows = prev.map((w) =>
-        w.day === day ? { ...w, isOpen: false } : w
-      );
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({
-          windows: newWindows,
-          viewportSize: containerSize,
-        })
-      );
-      return newWindows;
-    });
-    navigate('/');
-  }, [containerSize, navigate]);
+  const handleWindowClose = useCallback(
+    (clickedDay: number) => {
+      // Close the window first
+      setWindows((prevWindows) => {
+        const newWindows = [...prevWindows];
+        const windowIndex = newWindows.findIndex(
+          (w) => w.day === clickedDay
+        );
+        if (windowIndex !== -1) {
+          newWindows[windowIndex] = {
+            ...newWindows[windowIndex],
+            isOpen: false,
+          };
+        }
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            windows: newWindows,
+            viewportSize: containerSize,
+          })
+        );
+        return newWindows;
+      });
+      // Then navigate back
+      navigate('/');
+    },
+    [navigate, containerSize]
+  );
 
   useEffect(() => {
     const loadAllImages = async () => {
@@ -290,7 +326,9 @@ export const Calendar: React.FC = () => {
       }
     };
 
-    window.addEventListener('wheel', handleScroll, { passive: false });
+    window.addEventListener('wheel', handleScroll, {
+      passive: false,
+    });
     return () => window.removeEventListener('wheel', handleScroll);
   }, [day, navigate]);
 
@@ -302,7 +340,10 @@ export const Calendar: React.FC = () => {
         console.log('Selected window:', {
           day: selectedWindow.day,
           position: { x: selectedWindow.x, y: selectedWindow.y },
-          size: { width: selectedWindow.width, height: selectedWindow.height },
+          size: {
+            width: selectedWindow.width,
+            height: selectedWindow.height,
+          },
         });
 
         // Parse window dimensions
@@ -357,16 +398,6 @@ export const Calendar: React.FC = () => {
     }
   }, [day, windows, containerSize]);
 
-  useEffect(() => {
-    if (day && windows.length > 0) {
-      const dayNumber = parseInt(day);
-      const targetWindow = windows.find((w) => w.day === dayNumber);
-      if (targetWindow && !targetWindow.isOpen) {
-        handleWindowClick(dayNumber);
-      }
-    }
-  }, [day, windows, handleWindowClick]);
-
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       {isLoading ? (
@@ -378,7 +409,7 @@ export const Calendar: React.FC = () => {
               navigate('/');
             }
           }}
-          className="relative w-full h-full transition-transform duration-[3000ms] ease-in-out pointer-events-none"
+          className="relative w-full h-full transition-transform duration-[2000ms] ease-in-out pointer-events-none"
           style={{
             transform: `scale(${zoomTransform.scale}) translate(${
               zoomTransform.translateX / zoomTransform.scale
@@ -413,9 +444,11 @@ export const Calendar: React.FC = () => {
                   }}
                 >
                   <CalendarWindow
+                    key={window.day}
                     window={window}
                     onWindowClick={handleWindowClick}
                     onWindowClose={handleWindowClose}
+                    day={day}
                   />
                 </div>
               ))}

@@ -1,18 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { CalendarWindow as CalendarWindowType } from '../types';
 import { BACKGROUND_IMAGE_URL } from '../constants';
+import { canOpenDoor, getOpeningDateMessage } from '../utils';
 
 interface Props {
   window: CalendarWindowType;
   onWindowClick: (day: number) => void;
   onWindowClose: (day: number) => void;
+  day?: string; // Add day prop to check if zoomed in
 }
 
 export const CalendarWindow: React.FC<Props> = ({
   window,
   onWindowClick,
   onWindowClose,
+  day,
 }) => {
+  const [showMessage, setShowMessage] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
+  const [isFadingOut, setIsFadingOut] = useState(false);
+
   const backgroundStyle = {
     backgroundImage: `url("${BACKGROUND_IMAGE_URL}")`,
     backgroundSize: 'cover',
@@ -32,10 +39,22 @@ export const CalendarWindow: React.FC<Props> = ({
     onWindowClose(window.day);
   };
 
+  useEffect(() => {
+    if (!day && showMessage) {
+      // Start fade out when zooming out
+      setIsFadingOut(true);
+      const timer = setTimeout(() => {
+        setShowMessage(false);
+        setIsFadingOut(false);
+      }, 300); // Match the fadeOut animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [day, showMessage]);
+
   return (
     <div className="calendar-window" style={{ perspective: '1000px' }}>
       <div 
-        className={`door ${window.isOpen ? 'open' : ''}`}
+        className={`door ${window.isOpen ? 'open' : ''} ${!canOpenDoor(window.day) ? 'locked' : ''} ${isShaking ? 'shake' : ''}`}
         style={{ 
           transformStyle: 'preserve-3d',
         }}
@@ -44,13 +63,23 @@ export const CalendarWindow: React.FC<Props> = ({
           className="door-front"
           onClick={(e) => {
             e.stopPropagation();
-            if (!window.isOpen) {
-              onWindowClick(window.day);
+            const isZoomedIn = !!day; 
+            if (isZoomedIn && !canOpenDoor(window.day)) {
+              setIsShaking(true);
+              setShowMessage(true);
+              setTimeout(() => setIsShaking(false), 820); // Animation duration + small buffer
+              return;
             }
+            onWindowClick(window.day);
           }}
         >
           <div className="door-front-image" style={backgroundStyle} />
           <div className="door-number">{window.day}</div>
+          {showMessage && !canOpenDoor(window.day) && (
+            <div className={`date-message ${isFadingOut ? 'fade-out' : ''}`}>
+              {getOpeningDateMessage(window.day)}
+            </div>
+          )}
         </div>
         <div
           className="door-back"
@@ -69,16 +98,15 @@ export const CalendarWindow: React.FC<Props> = ({
       <div 
         className="content-behind"
         style={{
-          position: 'absolute',
-          inset: '0',
-          zIndex: 1,
+          backgroundColor: !canOpenDoor(window.day) ? '#e5e5e5' : undefined
         }}
       >
-        <img
-          src={window.imageUrl}
-          alt={`Day ${window.day}`}
-          className="w-full h-full object-cover rounded-lg"
-        />
+        {canOpenDoor(window.day) && (
+          <img
+            src={window.imageUrl}
+            alt={`Day ${window.day} content`}
+          />
+        )}
       </div>
     </div>
   );
