@@ -153,6 +153,7 @@
     @apply absolute inset-x-4 inset-y-4 text-center flex items-center justify-center;
     font-family: 'Kaushan Script', cursive;
     color: #1e293b;
+    padding: 1rem;
     font-size: 0.6rem;
     background-color: #e7e5e4;
     pointer-events: none;

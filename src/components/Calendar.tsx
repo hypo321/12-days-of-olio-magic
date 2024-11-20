@@ -434,11 +434,14 @@ export const Calendar: React.FC = () => {
           {allImagesLoaded && (
             <div className="relative w-full h-full">
               {windows.map((window) => (
-                <div 
+                <div
                   key={window.day}
-                  style={{ 
+                  style={{
                     willChange: 'transform',
-                    transform: day && parseInt(day) === window.day ? 'translateZ(0)' : 'none'
+                    transform:
+                      day && parseInt(day) === window.day
+                        ? 'translateZ(0)'
+                        : 'none',
                   }}
                 >
                   <CalendarWindow
