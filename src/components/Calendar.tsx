@@ -411,6 +411,7 @@ export const Calendar: React.FC = () => {
           }}
           className="relative w-full h-full transition-transform duration-[2000ms] ease-in-out pointer-events-none"
           style={{
+            willChange: 'transform',
             transform: `scale(${zoomTransform.scale}) translate(${
               zoomTransform.translateX / zoomTransform.scale
             }px, ${
@@ -433,18 +434,14 @@ export const Calendar: React.FC = () => {
           {allImagesLoaded && (
             <div className="relative w-full h-full">
               {windows.map((window) => (
-                <div
+                <div 
                   key={window.day}
-                  className="absolute pointer-events-auto"
-                  style={{
-                    left: `${window.x}px`,
-                    top: `${window.y}px`,
-                    width: window.width,
-                    height: window.height,
+                  style={{ 
+                    willChange: 'transform',
+                    transform: day && parseInt(day) === window.day ? 'translateZ(0)' : 'none'
                   }}
                 >
                   <CalendarWindow
-                    key={window.day}
                     window={window}
                     onWindowClick={handleWindowClick}
                     onWindowClose={handleWindowClose}

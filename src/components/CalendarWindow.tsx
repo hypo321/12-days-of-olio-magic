@@ -52,11 +52,22 @@ export const CalendarWindow: React.FC<Props> = ({
   }, [day, showMessage]);
 
   return (
-    <div className="calendar-window" style={{ perspective: '1000px' }}>
+    <div 
+      className="calendar-window absolute pointer-events-auto" 
+      style={{ 
+        perspective: '1000px',
+        left: `${window.x}px`,
+        top: `${window.y}px`,
+        width: window.width,
+        height: window.height,
+        willChange: 'transform',
+      }}
+    >
       <div 
         className={`door ${window.isOpen ? 'open' : ''} ${!canOpenDoor(window.day) ? 'locked' : ''} ${isShaking ? 'shake' : ''}`}
         style={{ 
           transformStyle: 'preserve-3d',
+          willChange: 'transform',
         }}
       >
         <div
