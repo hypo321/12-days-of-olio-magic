@@ -74,10 +74,15 @@ export const Calendar: React.FC = () => {
       windowWidth = maxHeight * aspectRatio;
     }
 
+    // Create an array of scrambled day numbers (1-25)
+    const scrambledDays = Array.from({ length: 25 }, (_, i) => i + 1)
+      .sort(() => Math.random() - 0.5);
+
     console.log('Grid Debug:', {
       viewport: { width, height },
       cell: { width: cellWidth, height: cellHeight },
       window: { width: windowWidth, height: windowHeight },
+      scrambledDays,
     });
 
     return Array.from({ length: 25 }, (_, i) => {
@@ -116,13 +121,13 @@ export const Calendar: React.FC = () => {
       }
 
       return {
-        day: i + 1,
+        day: scrambledDays[i],
         isOpen: false,
         x: finalX,
         y: finalY,
         width: `${windowWidth}px`,
         height: `${windowHeight}px`,
-        imageUrl: `/advent-calendar/thumbnails/day${i + 1}.jpg`,
+        imageUrl: `/advent-calendar/thumbnails/day${scrambledDays[i]}.jpg`,
       };
     });
   };
@@ -278,6 +283,18 @@ export const Calendar: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const handleScroll = (e: WheelEvent) => {
+      if (day) {
+        e.preventDefault();
+        navigate('/');
+      }
+    };
+
+    window.addEventListener('wheel', handleScroll, { passive: false });
+    return () => window.removeEventListener('wheel', handleScroll);
+  }, [day, navigate]);
+
+  useEffect(() => {
     if (day && windows.length > 0) {
       const dayNumber = parseInt(day);
       const selectedWindow = windows.find((w) => w.day === dayNumber);
@@ -356,6 +373,11 @@ export const Calendar: React.FC = () => {
         <LoadingScreen progress={loadingProgress} />
       ) : (
         <div
+          onClick={() => {
+            if (day) {
+              navigate('/');
+            }
+          }}
           className="relative w-full h-full transition-transform duration-[3000ms] ease-in-out pointer-events-none"
           style={{
             transform: `scale(${zoomTransform.scale}) translate(${
@@ -373,6 +395,8 @@ export const Calendar: React.FC = () => {
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               filter: 'brightness(0.7)',
+              pointerEvents: 'auto',
+              cursor: day ? 'pointer' : 'default',
             }}
           />
           {allImagesLoaded && (
