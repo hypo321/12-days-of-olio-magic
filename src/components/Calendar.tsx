@@ -50,8 +50,7 @@ export const Calendar: React.FC = () => {
     // Determine if we're in portrait mode and should use 4 columns
     const isPortrait = height > width;
     const columns = isPortrait ? 4 : 5;
-    const totalDoors = isPortrait ? 24 : 25;
-    const rows = Math.ceil(totalDoors / columns); // Calculate rows needed (6 rows for 4 columns, 5 rows for 5 columns)
+    const rows = Math.ceil(25 / columns); // Calculate rows needed (6 rows for 4 columns, 5 rows for 5 columns)
 
     // Calculate available space
     const availableWidth = width;
@@ -82,19 +81,21 @@ export const Calendar: React.FC = () => {
       windowWidth = maxHeight * aspectRatio;
     }
 
-    // Create an array of scrambled day numbers (1-24/25)
-    const scrambledDays = Array.from({ length: totalDoors }, (_, i) => i + 1)
-      .sort(() => Math.random() - 0.5);
+    // Create an array of scrambled day numbers (1-25)
+    const scrambledDays = Array.from(
+      { length: 25 },
+      (_, i) => i + 1
+    ).sort(() => Math.random() - 0.5);
 
     console.log('Grid Debug:', {
       viewport: { width, height },
       cell: { width: cellWidth, height: cellHeight },
       window: { width: windowWidth, height: windowHeight },
       scrambledDays,
-      layout: { columns, rows, isPortrait, totalDoors },
+      layout: { columns, rows, isPortrait },
     });
 
-    return Array.from({ length: totalDoors }, (_, i) => {
+    return Array.from({ length: 25 }, (_, i) => {
       const row = Math.floor(i / columns);
       const col = i % columns;
 
@@ -406,7 +407,7 @@ export const Calendar: React.FC = () => {
       // Reset zoom state first
       setActiveDay(null);
       navigate('/');
-      
+
       // Then update container size which will trigger recalculation
       setContainerSize({
         width: window.innerWidth,

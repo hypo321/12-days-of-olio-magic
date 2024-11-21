@@ -185,31 +185,6 @@ box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   .loading-screen {
     animation: twinkle 2s infinite;
   }
-
-  .message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    z-index: 20;
-    padding: 20px;
-    font-size: 1.2rem;
-  }
-
-  @media (orientation: portrait) {
-    .message {
-      padding: 12px;
-      font-size: 1rem;
-    }
-  }
-
-  .message.fade-enter {
-    /* existing styles */
-  }
 }
 
 a {
