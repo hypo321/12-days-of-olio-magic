@@ -31,6 +31,8 @@ export const Calendar: React.FC = () => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const [activeDay, setActiveDay] = useState<string | null>(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const { day } = useParams();
   const navigate = useNavigate();
 
@@ -160,11 +162,8 @@ export const Calendar: React.FC = () => {
 
   const handleWindowClick = useCallback(
     (clickedDay: number) => {
-      if (!day) {
-        // Set a small delay to allow the CSS transition to start
-        requestAnimationFrame(() => {
-          navigate(`/day/${clickedDay}`);
-        });
+      if (!activeDay) {
+        setActiveDay(clickedDay.toString());
       } else {
         // Check if the door can be opened when trying to open it
         if (!canOpenDoor(clickedDay)) {
@@ -193,7 +192,7 @@ export const Calendar: React.FC = () => {
         });
       }
     },
-    [containerSize, day, navigate]
+    [containerSize, activeDay]
   );
 
   const handleWindowClose = useCallback(
@@ -296,6 +295,14 @@ export const Calendar: React.FC = () => {
         setAllImagesLoaded(true);
         await new Promise((resolve) => setTimeout(resolve, 100)); // Small delay to ensure state update
         setIsLoading(false);
+        // If we have a day parameter on initial load, wait then trigger zoom
+        if (isInitialLoad && day) {
+          setIsInitialLoad(false);
+          // Short delay before starting zoom
+          setTimeout(() => {
+            setActiveDay(day);
+          }, 100);
+        }
       } catch (error) {
         console.error('Error loading images:', error);
         setAllImagesLoaded(true);
@@ -303,38 +310,16 @@ export const Calendar: React.FC = () => {
       }
     };
 
+    // We only want to load images when container size changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadAllImages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [containerSize]);
 
+  // Handle URL-based zooming
   useEffect(() => {
-    const handleResize = () => {
-      setContainerSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = (e: WheelEvent) => {
-      if (day) {
-        e.preventDefault();
-        navigate('/');
-      }
-    };
-
-    window.addEventListener('wheel', handleScroll, {
-      passive: false,
-    });
-    return () => window.removeEventListener('wheel', handleScroll);
-  }, [day, navigate]);
-
-  useEffect(() => {
-    if (day && windows.length > 0) {
-      const dayNumber = parseInt(day);
+    if (activeDay && windows.length > 0) {
+      const dayNumber = parseInt(activeDay);
       const selectedWindow = windows.find((w) => w.day === dayNumber);
       if (selectedWindow) {
         console.log('Selected window:', {
@@ -392,11 +377,51 @@ export const Calendar: React.FC = () => {
         });
 
         setZoomTransform({ scale, translateX, translateY });
+        // Only update URL if it's not already correct
+        if (day !== activeDay) {
+          navigate(`/day/${dayNumber}`);
+        }
       }
     } else {
       setZoomTransform({ scale: 1, translateX: 0, translateY: 0 });
+      if (!isInitialLoad && !activeDay && day) {
+        navigate('/');
+      }
     }
-  }, [day, windows, containerSize]);
+  }, [
+    activeDay,
+    windows,
+    containerSize,
+    day,
+    navigate,
+    isInitialLoad,
+  ]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setContainerSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = (e: WheelEvent) => {
+      if (activeDay) {
+        e.preventDefault();
+        setActiveDay(null);
+      }
+    };
+
+    window.addEventListener('wheel', handleScroll, {
+      passive: false,
+    });
+    return () => window.removeEventListener('wheel', handleScroll);
+  }, [activeDay]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
@@ -405,11 +430,13 @@ export const Calendar: React.FC = () => {
       ) : (
         <div
           onClick={() => {
-            if (day) {
-              navigate('/');
+            if (activeDay) {
+              setActiveDay(null);
             }
           }}
-          className="relative w-full h-full transition-transform duration-[2000ms] ease-in-out pointer-events-none"
+          className={`relative w-full h-full transition-transform duration-[2000ms] ${
+            isInitialLoad ? '' : 'ease-in-out'
+          } pointer-events-none`}
           style={{
             willChange: 'transform',
             transform: `scale(${zoomTransform.scale}) translate(${
@@ -428,7 +455,7 @@ export const Calendar: React.FC = () => {
               backgroundPosition: 'center',
               filter: 'brightness(0.7)',
               pointerEvents: 'auto',
-              cursor: day ? 'pointer' : 'default',
+              cursor: activeDay ? 'pointer' : 'default',
             }}
           />
           {allImagesLoaded && (
@@ -439,7 +466,7 @@ export const Calendar: React.FC = () => {
                   style={{
                     willChange: 'transform',
                     transform:
-                      day && parseInt(day) === window.day
+                      activeDay && parseInt(activeDay) === window.day
                         ? 'translateZ(0)'
                         : 'none',
                   }}
@@ -448,7 +475,7 @@ export const Calendar: React.FC = () => {
                     window={window}
                     onWindowClick={handleWindowClick}
                     onWindowClose={handleWindowClose}
-                    day={day}
+                    day={day || null}
                   />
                 </div>
               ))}

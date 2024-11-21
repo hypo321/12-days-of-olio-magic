@@ -8,7 +8,7 @@ interface Props {
   window: CalendarWindowType;
   onWindowClick: (day: number) => void;
   onWindowClose: (day: number) => void;
-  day?: string; // Add day prop to check if zoomed in
+  day: string | null; // Add day prop to check if zoomed in
 }
 
 export const CalendarWindow: React.FC<Props> = ({
