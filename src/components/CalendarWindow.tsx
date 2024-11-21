@@ -20,6 +20,7 @@ export const CalendarWindow: React.FC<Props> = ({
   const [showMessage, setShowMessage] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
+  const [showContent, setShowContent] = useState(false);
 
   const backgroundStyle = {
     backgroundImage: `url("${BACKGROUND_IMAGE_URL}")`,
@@ -51,6 +52,19 @@ export const CalendarWindow: React.FC<Props> = ({
       return () => clearTimeout(timer);
     }
   }, [day, showMessage]);
+
+  // Handle content visibility with door animation timing
+  useEffect(() => {
+    if (window.isOpen) {
+      setShowContent(true);
+    } else {
+      // Wait for door closing animation to complete
+      const timer = setTimeout(() => {
+        setShowContent(false);
+      }, 300); // Match the door closing animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [window.isOpen]);
 
   return (
     <div 
@@ -111,7 +125,7 @@ export const CalendarWindow: React.FC<Props> = ({
         className="content-behind"
       >
         {/* Always show thumbnail when door is open */}
-        {window.isOpen && (
+        {showContent && (
           <img
             src={window.imageUrl}
             alt={`Day ${window.day} content`}
@@ -120,7 +134,7 @@ export const CalendarWindow: React.FC<Props> = ({
         {/* Show high quality content only when zoomed in and door is open */}
         <DayContent 
           day={window.day} 
-          isVisible={window.isOpen && !!day} 
+          isVisible={showContent && !!day}
         />
       </div>
     </div>
