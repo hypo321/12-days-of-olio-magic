@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CalendarWindow as CalendarWindowType } from '../types';
 import { BACKGROUND_IMAGE_URL } from '../constants';
 import { canOpenDoor, getOpeningDateMessage } from '../utils';
+import { DayContent } from './DayContent';
 
 interface Props {
   window: CalendarWindowType;
@@ -108,16 +109,19 @@ export const CalendarWindow: React.FC<Props> = ({
       </div>
       <div 
         className="content-behind"
-        style={{
-          backgroundColor: !canOpenDoor(window.day) ? '#e5e5e5' : undefined
-        }}
       >
-        {canOpenDoor(window.day) && (
+        {/* Always show thumbnail when door is open */}
+        {window.isOpen && (
           <img
             src={window.imageUrl}
             alt={`Day ${window.day} content`}
           />
         )}
+        {/* Show high quality content only when zoomed in and door is open */}
+        <DayContent 
+          day={window.day} 
+          isVisible={window.isOpen && !!day} 
+        />
       </div>
     </div>
   );
