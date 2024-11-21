@@ -47,19 +47,24 @@ export const Calendar: React.FC = () => {
     width: number,
     height: number
   ): WindowData[] => {
-    const gridSize = 5; // 5x5 grid for 25 windows
+    // Determine if we're in portrait mode and should use 4 columns
+    const isPortrait = height > width;
+    const columns = isPortrait ? 4 : 5;
+    const totalDoors = isPortrait ? 24 : 25;
+    const rows = Math.ceil(totalDoors / columns); // Calculate rows needed (6 rows for 4 columns, 5 rows for 5 columns)
 
     // Calculate available space
     const availableWidth = width;
     const availableHeight = height;
 
     // Calculate cell dimensions
-    const cellWidth = availableWidth / gridSize;
-    const cellHeight = availableHeight / gridSize;
+    const cellWidth = availableWidth / columns;
+    const cellHeight = availableHeight / rows;
 
     // Calculate window size to fit within cells
     // Make windows wider when there's more horizontal space
-    const aspectRatio = 1.4; // wider than tall
+    // In portrait mode, make doors more square
+    const aspectRatio = isPortrait ? 1.1 : 1.4;
     const maxWidth = cellWidth * 0.9; // 90% of cell width
     const maxHeight = cellHeight * 0.85; // 85% of cell height
 
@@ -77,26 +82,25 @@ export const Calendar: React.FC = () => {
       windowWidth = maxHeight * aspectRatio;
     }
 
-    // Create an array of scrambled day numbers (1-25)
-    const scrambledDays = Array.from(
-      { length: 25 },
-      (_, i) => i + 1
-    ).sort(() => Math.random() - 0.5);
+    // Create an array of scrambled day numbers (1-24/25)
+    const scrambledDays = Array.from({ length: totalDoors }, (_, i) => i + 1)
+      .sort(() => Math.random() - 0.5);
 
     console.log('Grid Debug:', {
       viewport: { width, height },
       cell: { width: cellWidth, height: cellHeight },
       window: { width: windowWidth, height: windowHeight },
       scrambledDays,
+      layout: { columns, rows, isPortrait, totalDoors },
     });
 
-    return Array.from({ length: 25 }, (_, i) => {
-      const row = Math.floor(i / gridSize);
-      const col = i % gridSize;
+    return Array.from({ length: totalDoors }, (_, i) => {
+      const row = Math.floor(i / columns);
+      const col = i % columns;
 
       // Calculate base position, centering the entire grid
-      const gridWidth = cellWidth * gridSize;
-      const gridHeight = cellHeight * gridSize;
+      const gridWidth = cellWidth * columns;
+      const gridHeight = cellHeight * rows;
       const gridLeft = (width - gridWidth) / 2;
       const gridTop = (height - gridHeight) / 2;
 
@@ -399,6 +403,11 @@ export const Calendar: React.FC = () => {
 
   useEffect(() => {
     const handleResize = () => {
+      // Reset zoom state first
+      setActiveDay(null);
+      navigate('/');
+      
+      // Then update container size which will trigger recalculation
       setContainerSize({
         width: window.innerWidth,
         height: window.innerHeight,
@@ -407,7 +416,7 @@ export const Calendar: React.FC = () => {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     const handleScroll = (e: WheelEvent) => {
