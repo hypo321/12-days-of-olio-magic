@@ -42,14 +42,18 @@ export const CalendarWindow: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (!day && showMessage) {
+    if (!day) {
+      // Reset state when zooming out
+      setIsShaking(false);
       // Start fade out when zooming out
-      setIsFadingOut(true);
-      const timer = setTimeout(() => {
-        setShowMessage(false);
-        setIsFadingOut(false);
-      }, 300); // Match the fadeOut animation duration
-      return () => clearTimeout(timer);
+      if (showMessage) {
+        setIsFadingOut(true);
+        const timer = setTimeout(() => {
+          setShowMessage(false);
+          setIsFadingOut(false);
+        }, 300); // Match the fadeOut animation duration
+        return () => clearTimeout(timer);
+      }
     }
   }, [day, showMessage]);
 
@@ -91,6 +95,7 @@ export const CalendarWindow: React.FC<Props> = ({
             e.stopPropagation();
             const isZoomedIn = !!day; 
             if (isZoomedIn && !canOpenDoor(window.day)) {
+              setIsFadingOut(false);
               setIsShaking(true);
               setShowMessage(true);
               setTimeout(() => setIsShaking(false), 820); // Animation duration + small buffer

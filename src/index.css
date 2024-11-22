@@ -9,7 +9,7 @@
 @layer components {
   .calendar-container {
     @apply fixed inset-0;
-    background: #f8f8f8;
+
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -52,7 +52,6 @@
     backface-visibility: hidden;
     overflow: hidden;
     z-index: 2;
-    background-color: white;
   }
 
   .door-front:hover {
@@ -127,6 +126,8 @@
 
   .content-behind img {
     @apply w-full h-full object-cover rounded-lg;
+    @apply shadow-[inset_0px_5px_15px_5px_rgba(0,0,0,0.4)] z-[1];
+
   }
 
   .window-transform {
@@ -185,6 +186,37 @@ box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   .loading-screen {
     animation: twinkle 2s infinite;
   }
+
+  .message {
+    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+    @apply bg-gray-50 rounded-lg shadow-lg text-center z-20;
+    @apply p-5 text-lg;
+    @apply transition-opacity duration-300;
+    opacity: 1;
+  }
+
+  .message.fade-enter {
+    opacity: 0;
+  }
+
+  .message.fade-enter-active {
+    opacity: 1;
+  }
+
+  .message.fade-exit {
+    opacity: 1;
+  }
+
+  .message.fade-exit-active {
+    opacity: 0;
+  }
+
+  @media (orientation: portrait) {
+    .message {
+      @apply p-3 text-base;
+    }
+  }
+
 }
 
 a {
