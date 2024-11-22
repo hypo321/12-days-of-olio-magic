@@ -24,32 +24,50 @@ const generatePage = (day, description) => {
   const dayDir = path.join(__dirname, '..', 'public', 'day', day.toString());
   fs.mkdirSync(dayDir, { recursive: true });
 
+  const title = `The 12 Days of Olio Magic - Day ${day}`;
+  const url = `https://12-days-of-olio-magic.vercel.app/day/${day}`;
+  const imageUrl = `https://12-days-of-olio-magic.vercel.app/images/og/day${day}.jpg`;
+
   const html = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Day ${day} - 12 Days of Olio Magic</title>
+    <title>${title}</title>
+
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="${title}" />
+    <meta name="description" content="${description}" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://12-days-of-olio-magic.vercel.app/day/${day}" />
-    <meta property="og:title" content="Day ${day} - 12 Days of Olio Magic" />
+    <meta property="og:url" content="${url}" />
+    <meta property="og:title" content="${title}" />
     <meta property="og:description" content="${description}" />
-    <meta property="og:image" content="https://12-days-of-olio-magic.vercel.app/images/og/day${day}.jpg" />
+    <meta property="og:image" content="${imageUrl}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="12 Days of Olio Magic" />
+    <meta property="og:locale" content="en_US" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://12-days-of-olio-magic.vercel.app/day/${day}" />
-    <meta property="twitter:title" content="Day ${day} - 12 Days of Olio Magic" />
+    <meta property="twitter:url" content="${url}" />
+    <meta property="twitter:title" content="${title}" />
     <meta property="twitter:description" content="${description}" />
-    <meta property="twitter:image" content="https://12-days-of-olio-magic.vercel.app/images/og/day${day}.jpg" />
+    <meta property="twitter:image" content="${imageUrl}" />
+    <meta name="twitter:creator" content="@Olio_ex" />
+    <meta name="twitter:site" content="@Olio_ex" />
+
+    <!-- Additional Meta -->
+    <meta name="theme-color" content="#FF0000" />
+    <link rel="canonical" href="${url}" />
 
     <!-- Redirect to the main app -->
     <meta http-equiv="refresh" content="0;url=/#/day/${day}" />
   </head>
   <body>
-    <p>Redirecting to Day ${day}...</p>
+    <p>Opening Day ${day} of the 12 Days of Olio Magic...</p>
   </body>
 </html>`;
 
