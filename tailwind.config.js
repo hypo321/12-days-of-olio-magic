@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       gridTemplateColumns: {
-        'calendar': 'repeat(5, minmax(0, 1fr))',
+        'calendar-landscape': 'repeat(4, minmax(0, 1fr))',
+        'calendar-portrait': 'repeat(3, minmax(0, 1fr))',
       },
     },
   },

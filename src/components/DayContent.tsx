@@ -10,7 +10,7 @@ export const DayContent: React.FC<DayContentProps> = ({ day, isVisible }) => {
   if (day !== 1) return null;
 
   const backgroundStyle = {
-    backgroundImage: `url("/advent-calendar/content/day1.jpg")`,
+    backgroundImage: `url("/content/day1.jpg")`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     opacity: isVisible ? 1 : 0,

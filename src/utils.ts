@@ -27,7 +27,7 @@ export function getCurrentAdventDay(): number | null {
   const daysSinceStart = Math.floor((today.getTime() - DAY_ONE_DATE.getTime()) / (1000 * 60 * 60 * 24));
   
   if (daysSinceStart < 0) return null;
-  if (daysSinceStart >= 25) return 25;
+  if (daysSinceStart >= 12) return 12;
   return daysSinceStart + 1;
 }
 

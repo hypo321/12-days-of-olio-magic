@@ -1,5 +1,5 @@
 export const BACKGROUND_IMAGE_URL =
-  '/advent-calendar/olio-christmas.jpg';
+  '/olio-christmas.jpg';
 
 // For testing, set to November 1st, 2024
 // For production, change to December 1st, 2024

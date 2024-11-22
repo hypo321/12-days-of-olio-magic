@@ -120,7 +120,6 @@
     transform: translateZ(-1px);
     background-size: cover;
     background-position: center;
-    pointer-events: none;
     @apply shadow-[inset_0px_5px_15px_5px_rgba(0,0,0,0.4)] z-[1];
   }
 

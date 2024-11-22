@@ -128,19 +128,34 @@ export const CalendarWindow: React.FC<Props> = ({
       </div>
       <div 
         className="content-behind"
+        onClick={(e) => {
+          e.stopPropagation();
+          // Only handle click when zoomed out and door is open
+          if (!day && window.isOpen) {
+            onWindowClick(window.day);
+          }
+        }}
+        style={{
+          cursor: (!day && window.isOpen) ? 'pointer' : 'default'
+        }}
       >
         {/* Always show thumbnail when door is open */}
         {showContent && (
           <img
             src={window.imageUrl}
             alt={`Day ${window.day} content`}
+            style={{
+              pointerEvents: 'none'  // Prevent image from interfering with clicks
+            }}
           />
         )}
         {/* Show high quality content only when zoomed in and door is open */}
-        <DayContent 
-          day={window.day} 
-          isVisible={showContent && !!day}
-        />
+        {showContent && !!day && (
+          <DayContent 
+            day={window.day} 
+            isVisible={true}
+          />
+        )}
       </div>
     </div>
   );

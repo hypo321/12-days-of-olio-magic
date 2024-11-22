@@ -47,10 +47,10 @@ export const Calendar: React.FC = () => {
     width: number,
     height: number
   ): WindowData[] => {
-    // Determine if we're in portrait mode and should use 4 columns
+    // Determine if we're in portrait mode
     const isPortrait = height > width;
-    const columns = isPortrait ? 4 : 5;
-    const rows = Math.ceil(25 / columns); // Calculate rows needed (6 rows for 4 columns, 5 rows for 5 columns)
+    const columns = isPortrait ? 3 : 4;
+    const rows = isPortrait ? 4 : 3;
 
     // Calculate available space
     const availableWidth = width;
@@ -61,9 +61,12 @@ export const Calendar: React.FC = () => {
     const cellHeight = availableHeight / rows;
 
     // Calculate window size to fit within cells
-    // Make windows wider when there's more horizontal space
-    // In portrait mode, make doors more square
-    const aspectRatio = isPortrait ? 1.1 : 1.4;
+    // Make windows match the viewport's aspect ratio more closely
+    const viewportAspectRatio = width / height;
+    const aspectRatio = isPortrait ? 
+      Math.min(1.1, viewportAspectRatio * 1.2) : // In portrait, slightly taller
+      Math.max(1.2, viewportAspectRatio * 0.8);  // In landscape, slightly wider
+    
     const maxWidth = cellWidth * 0.9; // 90% of cell width
     const maxHeight = cellHeight * 0.85; // 85% of cell height
 
@@ -81,9 +84,9 @@ export const Calendar: React.FC = () => {
       windowWidth = maxHeight * aspectRatio;
     }
 
-    // Create an array of scrambled day numbers (1-25)
+    // Create an array of scrambled day numbers (1-12)
     const scrambledDays = Array.from(
-      { length: 25 },
+      { length: 12 },
       (_, i) => i + 1
     ).sort(() => Math.random() - 0.5);
 
@@ -95,7 +98,7 @@ export const Calendar: React.FC = () => {
       layout: { columns, rows, isPortrait },
     });
 
-    return Array.from({ length: 25 }, (_, i) => {
+    return Array.from({ length: 12 }, (_, i) => {
       const row = Math.floor(i / columns);
       const col = i % columns;
 
@@ -120,16 +123,6 @@ export const Calendar: React.FC = () => {
       const finalX = baseX + offsetX;
       const finalY = baseY + offsetY;
 
-      if (i === 0) {
-        console.log('Window 1 Position Debug:', {
-          gridPosition: { row, col },
-          gridOffset: { left: gridLeft, top: gridTop },
-          basePosition: { x: baseX, y: baseY },
-          randomOffset: { x: offsetX, y: offsetY },
-          finalPosition: { x: finalX, y: finalY },
-        });
-      }
-
       return {
         day: scrambledDays[i],
         isOpen: false,
@@ -137,7 +130,7 @@ export const Calendar: React.FC = () => {
         y: finalY,
         width: `${windowWidth}px`,
         height: `${windowHeight}px`,
-        imageUrl: `/advent-calendar/thumbnails/day${scrambledDays[i]}.jpg`,
+        imageUrl: `/thumbnails/day${scrambledDays[i]}.jpg`,
       };
     });
   };
@@ -240,8 +233,8 @@ export const Calendar: React.FC = () => {
         const imageUrls = [
           BACKGROUND_IMAGE_URL,
           ...Array.from(
-            { length: 25 },
-            (_, i) => `/advent-calendar/thumbnails/day${i + 1}.jpg`
+            { length: 12 },
+            (_, i) => `/thumbnails/day${i + 1}.jpg`
           ),
         ];
 
