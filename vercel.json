@@ -1,0 +1,10 @@
+{
+  "routes": [
+    { "src": "/day/[1-9]", "dest": "/day/$1/index.html" },
+    { "src": "/day/1[0-2]", "dest": "/day/$1/index.html" },
+    { "src": "^/$", "dest": "/index.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
+}
