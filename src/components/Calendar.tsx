@@ -216,7 +216,8 @@ export const Calendar: React.FC = () => {
         );
         return newWindows;
       });
-      // Then navigate back
+      // Clear active day and navigate back
+      setActiveDay(null);
       navigate('/');
     },
     [navigate, containerSize]
@@ -417,6 +418,7 @@ export const Calendar: React.FC = () => {
       if (activeDay) {
         e.preventDefault();
         setActiveDay(null);
+        navigate('/');
       }
     };
 
@@ -424,7 +426,7 @@ export const Calendar: React.FC = () => {
       passive: false,
     });
     return () => window.removeEventListener('wheel', handleScroll);
-  }, [activeDay]);
+  }, [activeDay, navigate]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
@@ -435,6 +437,7 @@ export const Calendar: React.FC = () => {
           onClick={() => {
             if (activeDay) {
               setActiveDay(null);
+              navigate('/');
             }
           }}
           className={`relative w-full h-full transition-transform duration-[2000ms] ${

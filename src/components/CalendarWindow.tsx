@@ -150,10 +150,10 @@ export const CalendarWindow: React.FC<Props> = ({
           />
         )}
         {/* Show high quality content only when zoomed in and door is open */}
-        {showContent && !!day && (
+        {showContent && (
           <DayContent 
             day={window.day} 
-            isVisible={true}
+            isVisible={!!day}
           />
         )}
       </div>
