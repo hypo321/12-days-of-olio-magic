@@ -162,6 +162,7 @@ export const Calendar: React.FC = () => {
     (clickedDay: number) => {
       if (!activeDay) {
         setActiveDay(clickedDay.toString());
+        navigate(`/day/${clickedDay}`);
       } else {
         // Check if the door can be opened when trying to open it
         if (!canOpenDoor(clickedDay)) {
@@ -190,7 +191,7 @@ export const Calendar: React.FC = () => {
         });
       }
     },
-    [containerSize, activeDay]
+    [containerSize, activeDay, navigate]
   );
 
   const handleWindowClose = useCallback(
