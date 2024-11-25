@@ -63,10 +63,10 @@ export const Calendar: React.FC = () => {
     // Calculate window size to fit within cells
     // Make windows match the viewport's aspect ratio more closely
     const viewportAspectRatio = width / height;
-    const aspectRatio = isPortrait ? 
-      Math.min(1.1, viewportAspectRatio * 1.2) : // In portrait, slightly taller
-      Math.max(1.2, viewportAspectRatio * 0.8);  // In landscape, slightly wider
-    
+    const aspectRatio = isPortrait
+      ? Math.min(1.1, viewportAspectRatio * 1.2) // In portrait, slightly taller
+      : Math.max(1.2, viewportAspectRatio * 0.8); // In landscape, slightly wider
+
     const maxWidth = cellWidth * 0.9; // 90% of cell width
     const maxHeight = cellHeight * 0.85; // 85% of cell height
 
@@ -414,20 +414,20 @@ export const Calendar: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [navigate]);
 
-  useEffect(() => {
-    const handleScroll = (e: WheelEvent) => {
-      if (activeDay) {
-        e.preventDefault();
-        setActiveDay(null);
-        navigate('/');
-      }
-    };
+  // useEffect(() => {
+  //   const handleScroll = (e: WheelEvent) => {
+  //     if (activeDay) {
+  //       e.preventDefault();
+  //       setActiveDay(null);
+  //       navigate('/');
+  //     }
+  //   };
 
-    window.addEventListener('wheel', handleScroll, {
-      passive: false,
-    });
-    return () => window.removeEventListener('wheel', handleScroll);
-  }, [activeDay, navigate]);
+  //   window.addEventListener('wheel', handleScroll, {
+  //     passive: false,
+  //   });
+  //   return () => window.removeEventListener('wheel', handleScroll);
+  // }, [activeDay, navigate]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
