@@ -14,7 +14,8 @@ interface Quote {
 }
 
 interface ContentData {
-  backgroundImage: string;
+  backgroundImage?: string;
+  videoUrl?: string;
   title: string;
   subtitle?: string;
   description: string;
@@ -153,11 +154,10 @@ const CONTENT_DATA: Record<number, ContentData> = {
     ],
   },
   12: {
-    backgroundImage: '/content/day12-full.jpg',
+    videoUrl: 'https://www.youtube.com/watch?v=QfKfXHhjixQ',
     title: 'Join the Movement ',
     subtitle: 'Be Part of the Solution',
-    description:
-      "Whether you're sharing food, saving surplus, or spreading the word, there's a place for you in the Olio community. Together, we can build a more sustainable future.",
+    description: "Whether you're sharing food, saving surplus, or spreading the word, there's a place for you in the Olio community. Together, we can build a more sustainable future.",
     ctaLink: 'https://Olioapp.com/en/get-involved/',
     ctaText: 'Get Involved Today',
   },
@@ -232,16 +232,28 @@ export const DayContent: React.FC<DayContentProps> = ({
       animate={{ opacity: isVisible ? 1 : 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: isActiveDay
-            ? `url("${content.backgroundImage}")`
-            : `url("/content/day${day}-thumb.jpg")`,
-          opacity: 0.7,
-        }}
-      />
-
+      {content.videoUrl ? (
+        <div className="absolute inset-0">
+          <iframe
+            className="w-full h-full"
+            src={content.videoUrl.replace('watch?v=', 'embed/')}
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      ) : (
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: isActiveDay
+              ? `url("${content.backgroundImage}")`
+              : `url("/content/day${day}-thumb.jpg")`,
+            opacity: 0.7,
+          }}
+        />
+      )}
       <div className="relative z-10 w-full h-full grid place-items-center p-4">
         <div className="w-full max-w-[90%] max-h-[90%] overflow-y-auto scrollbar-hide">
           <motion.div
@@ -294,8 +306,8 @@ export const DayContent: React.FC<DayContentProps> = ({
             {content.stats && (
               <motion.div
                 className="grid gap-4"
-                style={{ 
-                  gridTemplateColumns: `repeat(${content.stats.length}, 1fr)`
+                style={{
+                  gridTemplateColumns: `repeat(${content.stats.length}, 1fr)`,
                 }}
                 variants={{
                   hidden: { y: 20, opacity: 0 },
