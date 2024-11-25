@@ -3,12 +3,13 @@ import { CalendarWindow as CalendarWindowType } from '../types';
 import { BACKGROUND_IMAGE_URL } from '../constants';
 import { canOpenDoor, getOpeningDateMessage } from '../utils';
 import { DayContent } from './DayContent';
+import { useParams } from 'react-router-dom';
 
 interface Props {
   window: CalendarWindowType;
   onWindowClick: (day: number) => void;
   onWindowClose: (day: number) => void;
-  day: string | null; // Add day prop to check if zoomed in
+  day: string | null;
 }
 
 export const CalendarWindow: React.FC<Props> = ({
@@ -21,6 +22,8 @@ export const CalendarWindow: React.FC<Props> = ({
   const [isShaking, setIsShaking] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [showContent, setShowContent] = useState(false);
+  const { day: activeDay } = useParams();
+  const isActiveDay = activeDay === window.day.toString();
 
   const backgroundStyle = {
     backgroundImage: `url("${BACKGROUND_IMAGE_URL}")`,
@@ -35,6 +38,14 @@ export const CalendarWindow: React.FC<Props> = ({
     transformOrigin: '0 0',
   };
 
+  const thumbnailStyle = {
+    backgroundImage: `url("/content/day${window.day}-thumb.jpg")`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    width: '100%',
+    height: '100%',
+  };
+
   const handleBackClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     console.log('Door back clicked for window:', window.day);
@@ -43,29 +54,25 @@ export const CalendarWindow: React.FC<Props> = ({
 
   useEffect(() => {
     if (!day) {
-      // Reset state when zooming out
       setIsShaking(false);
-      // Start fade out when zooming out
       if (showMessage) {
         setIsFadingOut(true);
         const timer = setTimeout(() => {
           setShowMessage(false);
           setIsFadingOut(false);
-        }, 300); // Match the fadeOut animation duration
+        }, 300);
         return () => clearTimeout(timer);
       }
     }
   }, [day, showMessage]);
 
-  // Handle content visibility with door animation timing
   useEffect(() => {
     if (window.isOpen) {
       setShowContent(true);
     } else {
-      // Wait for door closing animation to complete
       const timer = setTimeout(() => {
         setShowContent(false);
-      }, 300); // Match the door closing animation duration
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [window.isOpen]);
@@ -98,7 +105,7 @@ export const CalendarWindow: React.FC<Props> = ({
               setIsFadingOut(false);
               setIsShaking(true);
               setShowMessage(true);
-              setTimeout(() => setIsShaking(false), 820); // Animation duration + small buffer
+              setTimeout(() => setIsShaking(false), 820);
               return;
             }
             onWindowClick(window.day);
@@ -120,7 +127,7 @@ export const CalendarWindow: React.FC<Props> = ({
             inset: '0',
             cursor: 'pointer',
             transform: 'rotateY(180deg)',
-            backgroundColor: window.isOpen ? 'rgba(255, 0, 0, 0.3)' : undefined, // Debug color
+            backgroundColor: window.isOpen ? 'rgba(255, 0, 0, 0.3)' : undefined,
             zIndex: 10,
             backfaceVisibility: 'hidden',
           }}
@@ -130,7 +137,6 @@ export const CalendarWindow: React.FC<Props> = ({
         className="content-behind"
         onClick={(e) => {
           e.stopPropagation();
-          // Only handle click when zoomed out and door is open
           if (!day && window.isOpen) {
             onWindowClick(window.day);
           }
@@ -139,18 +145,10 @@ export const CalendarWindow: React.FC<Props> = ({
           cursor: (!day && window.isOpen) ? 'pointer' : 'default'
         }}
       >
-        {/* Always show thumbnail when door is open */}
         {showContent && (
-          <img
-            src={window.imageUrl}
-            alt={`Day ${window.day} content`}
-            style={{
-              pointerEvents: 'none'  // Prevent image from interfering with clicks
-            }}
-          />
+          <div style={thumbnailStyle} />
         )}
-        {/* Show high quality content only when zoomed in and door is open */}
-        {showContent && (
+        {showContent && isActiveDay && (
           <DayContent 
             day={window.day} 
             isVisible={!!day}
