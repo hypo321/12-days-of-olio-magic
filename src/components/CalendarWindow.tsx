@@ -134,7 +134,7 @@ export const CalendarWindow: React.FC<Props> = ({
         />
       </div>
       <div 
-        className="content-behind"
+        className="content-behind rounded-lg"
         onClick={(e) => {
           e.stopPropagation();
           if (!day && window.isOpen) {
@@ -146,7 +146,7 @@ export const CalendarWindow: React.FC<Props> = ({
         }}
       >
         {showContent && (
-          <div style={thumbnailStyle} />
+          <div style={thumbnailStyle} className="rounded-lg" />
         )}
         {showContent && isActiveDay && (
           <DayContent 

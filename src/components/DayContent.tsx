@@ -16,9 +16,10 @@ interface Quote {
 interface ContentData {
   backgroundImage?: string;
   videoUrl?: string;
-  title: string;
+  localVideo?: string;
+  title?: string;
   subtitle?: string;
-  description: string;
+  description?: string;
   quote?: Quote;
   stats?: Array<{ value: string; label: string }>;
   ctaLink?: string;
@@ -154,12 +155,7 @@ const CONTENT_DATA: Record<number, ContentData> = {
     ],
   },
   12: {
-    videoUrl: 'https://www.youtube.com/watch?v=QfKfXHhjixQ',
-    title: 'Join the Movement ',
-    subtitle: 'Be Part of the Solution',
-    description: "Whether you're sharing food, saving surplus, or spreading the word, there's a place for you in the Olio community. Together, we can build a more sustainable future.",
-    ctaLink: 'https://Olioapp.com/en/get-involved/',
-    ctaText: 'Get Involved Today',
+    localVideo: '/content/rickroll.mp4',
   },
 };
 
@@ -192,6 +188,46 @@ export const DayContent: React.FC<DayContentProps> = ({
 
   if (!content) return null;
 
+  // If it's day 12 and has a video, only show the video
+  if (content.videoUrl || content.localVideo) {
+    return (
+      <motion.div
+        ref={containerRef}
+        className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-lg bg-black"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isVisible ? 1 : 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {content.localVideo ? (
+          <video
+            className="w-full h-full"
+            autoPlay
+            muted
+            loop
+            playsInline
+            controls={false}
+          >
+            <source src={content.localVideo} type="video/mp4" />
+          </video>
+        ) : (
+          <iframe
+            className="w-full h-full"
+            src={`${content.videoUrl?.replace(
+              'watch?v=',
+              'embed/'
+            )}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&loop=1&playlist=${
+              content.videoUrl?.split('v=')[1]
+            }`}
+            title="Video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        )}
+      </motion.div>
+    );
+  }
+
   // Calculate base font size based on container dimensions
   const baseFontSize = Math.min(
     containerSize.width / 25,
@@ -200,7 +236,7 @@ export const DayContent: React.FC<DayContentProps> = ({
 
   // Adjust font sizes based on content amount
   const getFontSizes = () => {
-    const contentLength = content.description.length;
+    const contentLength = content.description?.length || 0;
     const hasStats = !!content.stats;
     const hasQuote = !!content.quote;
 
@@ -245,7 +281,7 @@ export const DayContent: React.FC<DayContentProps> = ({
         </div>
       ) : (
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center rounded-lg"
           style={{
             backgroundImage: isActiveDay
               ? `url("${content.backgroundImage}")`
