@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ interface DayContentProps {
 interface Quote {
   text: string;
   author: string;
-  location: string;
+  location?: string;
 }
 
 interface ContentData {
@@ -19,10 +19,7 @@ interface ContentData {
   subtitle?: string;
   description: string;
   quote?: Quote;
-  stats?: {
-    value: string;
-    label: string;
-  }[];
+  stats?: Array<{ value: string; label: string }>;
   ctaLink?: string;
   ctaText?: string;
 }
@@ -158,34 +155,65 @@ export const DayContent: React.FC<DayContentProps> = ({ day, isVisible }) => {
   const content = CONTENT_DATA[day];
   const { day: activeDay } = useParams();
   const isActiveDay = activeDay === day.toString();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        setContainerSize({ width, height });
+      }
+    });
+
+    resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
+  }, []);
+
   if (!content) return null;
 
-  // Calculate text scale factor based on content length
-  const descriptionLength = content.description.length;
-  const hasStats = !!content.stats;
-  const hasQuote = !!content.quote;
-  
-  // Adjust base font sizes based on content amount
-  const getTextScale = () => {
+  // Calculate base font size based on container dimensions
+  const baseFontSize = Math.min(
+    containerSize.width / 25,
+    containerSize.height / 35
+  );
+
+  // Adjust font sizes based on content amount
+  const getFontSizes = () => {
+    const contentLength = content.description.length;
+    const hasStats = !!content.stats;
+    const hasQuote = !!content.quote;
+    
     let scale = 1;
-    if (descriptionLength > 150) scale *= 0.85;
-    if (descriptionLength > 200) scale *= 0.85;
-    if (hasStats && hasQuote) scale *= 0.8;
-    if (content.subtitle) scale *= 0.9;
-    return scale;
+    if (contentLength > 150) scale *= 0.9;
+    if (contentLength > 200) scale *= 0.85;
+    if (hasStats && hasQuote) scale *= 0.9;
+
+    return {
+      title: `${baseFontSize * scale * 1.5}px`,
+      subtitle: `${baseFontSize * scale * 1.2}px`,
+      description: `${baseFontSize * scale}px`,
+      stats: {
+        value: `${baseFontSize * scale * 1.2}px`,
+        label: `${baseFontSize * scale * 0.8}px`,
+      },
+      quote: `${baseFontSize * scale * 0.9}px`,
+      button: `${baseFontSize * scale * 0.9}px`,
+    };
   };
 
-  const textScale = getTextScale();
+  const fontSizes = getFontSizes();
 
   return (
     <motion.div 
+      ref={containerRef}
       className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-lg bg-black/40"
       initial={{ opacity: 0 }}
       animate={{ opacity: isVisible ? 1 : 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Background Image - only load high quality for active day */}
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{ 
@@ -196,90 +224,122 @@ export const DayContent: React.FC<DayContentProps> = ({ day, isVisible }) => {
         }} 
       />
 
-      {/* Content Container */}
-      <div className="relative z-10 w-full h-full flex flex-col justify-center items-center p-2 text-white text-center">
-        <div className="w-full max-h-full overflow-y-auto scrollbar-hide py-1">
-          <motion.h1 
-            className={`text-[min(${2.2 * textScale}vw,1.2rem)] font-bold mb-1 leading-tight`}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
+      <div className="relative z-10 w-full h-full grid place-items-center p-4">
+        <div className="w-full max-w-[90%] max-h-[90%] overflow-y-auto scrollbar-hide">
+          <motion.div
+            className="grid gap-3 text-white text-center"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
           >
-            {content.title}
-          </motion.h1>
-          
-          {content.subtitle && (
-            <motion.h2 
-              className={`text-[min(${1.8 * textScale}vw,1rem)] mb-1 text-green-300 leading-tight`}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
+            <motion.h1 
+              className="font-bold leading-tight"
+              style={{ fontSize: fontSizes.title }}
+              variants={{
+                hidden: { y: 20, opacity: 0 },
+                visible: { y: 0, opacity: 1 }
+              }}
             >
-              {content.subtitle}
-            </motion.h2>
-          )}
+              {content.title}
+            </motion.h1>
+            
+            {content.subtitle && (
+              <motion.h2 
+                className="text-green-300 leading-tight"
+                style={{ fontSize: fontSizes.subtitle }}
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: { y: 0, opacity: 1 }
+                }}
+              >
+                {content.subtitle}
+              </motion.h2>
+            )}
 
-          <motion.p 
-            className={`text-[min(${1.5 * textScale}vw,0.875rem)] mb-2 max-w-[98%] mx-auto leading-snug`}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            {content.description}
-          </motion.p>
-
-          {content.stats && (
-            <motion.div 
-              className="grid grid-cols-3 gap-1 w-full max-w-[98%] mx-auto mb-1.5"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.5 }}
+            <motion.p 
+              className="leading-relaxed mx-auto"
+              style={{ fontSize: fontSizes.description }}
+              variants={{
+                hidden: { y: 20, opacity: 0 },
+                visible: { y: 0, opacity: 1 }
+              }}
             >
-              {content.stats.map((stat, index) => (
-                <div key={index} className="flex flex-col items-center">
-                  <span className={`text-[min(${1.8 * textScale}vw,1rem)] font-bold text-green-300 leading-tight`}>
-                    {stat.value}
-                  </span>
-                  <span className={`text-[min(${1.2 * textScale}vw,0.7rem)] text-gray-300 leading-tight`}>
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
-            </motion.div>
-          )}
+              {content.description}
+            </motion.p>
 
-          {content.quote && (
-            <motion.blockquote 
-              className={`italic text-[min(${1.3 * textScale}vw,0.8rem)] text-gray-300 max-w-[95%] mx-auto mb-1.5`}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.6 }}
-            >
-              <p className="mb-0.5">"{content.quote.text}"</p>
-              <footer className={`text-[min(${1.2 * textScale}vw,0.7rem)]`}>
-                <span className="font-semibold">{content.quote.author}</span>
-                {content.quote.location && (
-                  <span className={`block text-[min(${1.1 * textScale}vw,0.65rem)]`}>
-                    {content.quote.location}
-                  </span>
-                )}
-              </footer>
-            </motion.blockquote>
-          )}
+            {content.stats && (
+              <motion.div 
+                className="grid grid-cols-3 gap-4"
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: { y: 0, opacity: 1 }
+                }}
+              >
+                {content.stats.map((stat, index) => (
+                  <div key={index} className="flex flex-col items-center">
+                    <span 
+                      className="font-bold text-green-300"
+                      style={{ fontSize: fontSizes.stats.value }}
+                    >
+                      {stat.value}
+                    </span>
+                    <span 
+                      className="text-gray-300"
+                      style={{ fontSize: fontSizes.stats.label }}
+                    >
+                      {stat.label}
+                    </span>
+                  </div>
+                ))}
+              </motion.div>
+            )}
 
-          {content.ctaLink && (
-            <motion.a
-              href={content.ctaLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`inline-block bg-green-500 hover:bg-green-600 text-[min(${1.3 * textScale}vw,0.8rem)] px-2.5 py-1 rounded-full transition-colors mt-1`}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.7 }}
-            >
-              {content.ctaText || 'Learn More'}
-            </motion.a>
-          )}
+            {content.quote && (
+              <motion.blockquote 
+                className="italic text-gray-300"
+                style={{ fontSize: fontSizes.quote }}
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: { y: 0, opacity: 1 }
+                }}
+              >
+                <p>"{content.quote.text}"</p>
+                <footer className="mt-2">
+                  <span className="font-semibold">{content.quote.author}</span>
+                  {content.quote.location && (
+                    <span className="block opacity-75">
+                      {content.quote.location}
+                    </span>
+                  )}
+                </footer>
+              </motion.blockquote>
+            )}
+
+            {content.ctaLink && (
+              <motion.div
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: { y: 0, opacity: 1 }
+                }}
+              >
+                <a
+                  href={content.ctaLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-green-500 hover:bg-green-600 px-6 py-2 rounded-full transition-colors"
+                  style={{ fontSize: fontSizes.button }}
+                >
+                  {content.ctaText || 'Learn More'}
+                </a>
+              </motion.div>
+            )}
+          </motion.div>
         </div>
       </div>
     </motion.div>
