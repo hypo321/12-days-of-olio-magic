@@ -1,10 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/day/:day",
-      "destination": "/index.html"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
