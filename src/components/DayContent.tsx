@@ -202,7 +202,6 @@ export const DayContent: React.FC<DayContentProps> = ({
           <video
             className="w-full h-full"
             autoPlay
-            muted
             loop
             playsInline
             controls={false}
