@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 interface DayContentProps {
@@ -158,258 +158,95 @@ const CONTENT_DATA: Record<number, ContentData> = {
   },
 };
 
+const contentVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0
+  }
+};
+
 export const DayContent: React.FC<DayContentProps> = ({
   day,
   isVisible,
 }) => {
   const content = CONTENT_DATA[day];
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerSize, setContainerSize] = useState({
-    width: 0,
-    height: 0,
-  });
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect;
-        setContainerSize({ width, height });
-      }
-    });
-
-    resizeObserver.observe(containerRef.current);
-    return () => resizeObserver.disconnect();
-  }, []);
-
-  if (!content) return null;
-
-  // If it's day 12 and has a video, only show the video
-  if (content.videoUrl || content.localVideo) {
-    return (
-      <motion.div
-        ref={containerRef}
-        className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-lg bg-black"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isVisible ? 1 : 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        {content.localVideo ? (
-          <video
-            className="w-full h-full"
-            autoPlay
-            loop
-            playsInline
-            controls={false}
-          >
-            <source src={content.localVideo} type="video/mp4" />
-          </video>
-        ) : (
-          <iframe
-            className="w-full h-full"
-            src={`${content.videoUrl?.replace(
-              'watch?v=',
-              'embed/'
-            )}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&loop=1&playlist=${
-              content.videoUrl?.split('v=')[1]
-            }`}
-            title="Video player"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        )}
-      </motion.div>
-    );
-  }
-
-  // Calculate base font size based on container dimensions
-  const baseFontSize = Math.min(
-    containerSize.width / 25,
-    containerSize.height / 35
-  );
-
-  // Adjust font sizes based on content amount
-  const getFontSizes = () => {
-    const contentLength = content.description?.length || 0;
-    const hasStats = !!content.stats;
-    const hasQuote = !!content.quote;
-
-    let scale = 1;
-    if (contentLength > 150) scale *= 0.9;
-    if (contentLength > 200) scale *= 0.85;
-    if (hasStats && hasQuote) scale *= 0.9;
-
-    return {
-      title: `${baseFontSize * scale * 1.5}px`,
-      subtitle: `${baseFontSize * scale * 1.2}px`,
-      description: `${baseFontSize * scale}px`,
-      stats: {
-        value: `${baseFontSize * scale * 1.2}px`,
-        label: `${baseFontSize * scale * 0.8}px`,
-      },
-      quote: `${baseFontSize * scale * 0.9}px`,
-      button: `${baseFontSize * scale * 0.9}px`,
-    };
-  };
-
-  const fontSizes = getFontSizes();
 
   return (
-    <motion.div
-      ref={containerRef}
-      className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-lg bg-black/40"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: isVisible ? 1 : 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      {content.videoUrl ? (
-        <div className="absolute inset-0">
-          <iframe
-            className="w-full h-full"
-            src={content.videoUrl.replace('watch?v=', 'embed/')}
-            title="YouTube video player"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
-      ) : (
-        <div
-          className="absolute inset-0 bg-cover bg-center rounded-lg"
-          style={{
-            backgroundImage: `url("/content/day${day}.jpg")`,
-            opacity: 0.7,
-          }}
-        />
-      )}
-      <div className="relative z-10 w-full h-full grid place-items-center p-4">
-        <div className="w-full max-w-[90%] max-h-[90%] overflow-y-auto scrollbar-hide">
+    <div className="relative w-full h-full">
+      <div
+        className="absolute inset-0 bg-cover bg-center rounded-lg"
+        style={{
+          backgroundImage: `url("/content/day${day}.jpg")`,
+          opacity: 0.7,
+        }}
+      />
+      <div className="relative z-10 w-full h-full grid place-items-center p-8">
+        <div className="w-full max-w-4xl max-h-full overflow-y-auto scrollbar-hide">
           <motion.div
-            className="grid gap-3 text-white text-center"
+            className="grid gap-6 text-white text-center"
             initial="hidden"
-            animate="visible"
-            variants={{
-              visible: {
-                transition: {
-                  staggerChildren: 0.1,
-                },
-              },
-            }}
+            animate={isVisible ? "visible" : "hidden"}
+            variants={contentVariants}
           >
-            <motion.h1
-              className="font-bold leading-tight"
-              style={{ fontSize: fontSizes.title }}
-              variants={{
-                hidden: { y: 20, opacity: 0 },
-                visible: { y: 0, opacity: 1 },
-              }}
+            <motion.h2 
+              className="text-4xl md:text-5xl font-bold"
+              variants={itemVariants}
             >
               {content.title}
-            </motion.h1>
-
-            {content.subtitle && (
-              <motion.h2
-                className="text-green-300 leading-tight"
-                style={{ fontSize: fontSizes.subtitle }}
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: { y: 0, opacity: 1 },
-                }}
-              >
-                {content.subtitle}
-              </motion.h2>
-            )}
-
-            <motion.p
-              className="leading-relaxed mx-auto"
-              style={{ fontSize: fontSizes.description }}
-              variants={{
-                hidden: { y: 20, opacity: 0 },
-                visible: { y: 0, opacity: 1 },
-              }}
+            </motion.h2>
+            
+            <motion.div 
+              className="text-lg md:text-xl space-y-4"
+              variants={itemVariants}
             >
               {content.description}
-            </motion.p>
-
-            {content.stats && (
-              <motion.div
-                className="grid gap-4"
-                style={{
-                  gridTemplateColumns: `repeat(${content.stats.length}, 1fr)`,
-                }}
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: { y: 0, opacity: 1 },
-                }}
-              >
-                {content.stats.map((stat, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col items-center"
-                  >
-                    <span
-                      className="font-bold text-green-300"
-                      style={{ fontSize: fontSizes.stats.value }}
-                    >
-                      {stat.value}
-                    </span>
-                    <span
-                      className="text-gray-300"
-                      style={{ fontSize: fontSizes.stats.label }}
-                    >
-                      {stat.label}
-                    </span>
-                  </div>
-                ))}
-              </motion.div>
-            )}
-
-            {content.quote && (
-              <motion.blockquote
-                className="italic text-gray-300"
-                style={{ fontSize: fontSizes.quote }}
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: { y: 0, opacity: 1 },
-                }}
-              >
-                <p>"{content.quote.text}"</p>
-                <footer className="mt-2">
-                  <span className="font-semibold">
-                    {content.quote.author}
-                  </span>
-                  {content.quote.location && (
-                    <span className="block opacity-75">
-                      {content.quote.location}
-                    </span>
-                  )}
-                </footer>
-              </motion.blockquote>
-            )}
+            </motion.div>
 
             {content.ctaLink && (
               <motion.div
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: { y: 0, opacity: 1 },
-                }}
+                className="flex justify-center mt-4"
+                variants={itemVariants}
               >
                 <a
                   href={content.ctaLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block bg-green-500 hover:bg-green-600 px-6 py-2 rounded-full transition-colors"
-                  style={{ fontSize: fontSizes.button }}
+                  className="inline-flex items-center px-6 py-3 text-lg font-semibold text-black bg-white rounded-full hover:bg-gray-100 transition-colors"
                 >
                   {content.ctaText || 'Learn More'}
+                  <svg
+                    className="w-5 h-5 ml-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
                 </a>
               </motion.div>
             )}
           </motion.div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
