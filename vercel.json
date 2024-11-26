@@ -1,9 +1,8 @@
 {
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/day/[0-9]+", "dest": "/" },
+    { "src": "/(.*)", "dest": "/" }
   ],
   "cleanUrls": true,
   "trailingSlash": false,
