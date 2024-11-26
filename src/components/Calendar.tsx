@@ -32,8 +32,9 @@ export const Calendar = () => {
   const [isZooming, setIsZooming] = useState(false);
   const { day } = useParams<{ day?: string }>();
   const navigate = useNavigate();
-  const [activeDay, setActiveDay] = useState<string | null>(day || null);
+  const [activeDay, setActiveDay] = useState<string | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [shouldZoom, setShouldZoom] = useState(false);
 
   // Add state for zoom transform
   const [zoomTransform, setZoomTransform] = useState({
@@ -316,25 +317,26 @@ export const Calendar = () => {
 
   // Handle initial load and URL changes
   useEffect(() => {
-    if (!allImagesLoaded || windows.length === 0) return;
+    if (!allImagesLoaded || windows.length === 0 || !isInitialLoad) return;
 
-    if (isInitialLoad) {
-      // On initial load, show calendar first then zoom if needed
-      setZoomTransform({ scale: 1, translateX: 0, translateY: 0 });
-      if (day) {
-        const timer = setTimeout(() => {
-          setIsZooming(true);
-          setActiveDay(day);
-        }, 500);
-        return () => clearTimeout(timer);
-      }
-      setIsInitialLoad(false);
+    // Always start with zoomed out view
+    setZoomTransform({ scale: 1, translateX: 0, translateY: 0 });
+    
+    if (day) {
+      // Wait a bit to show the full calendar before zooming
+      const timer = setTimeout(() => {
+        setIsZooming(true);
+        setActiveDay(day);
+        setShouldZoom(true);
+      }, 1000); // Give more time to see the full calendar
+      return () => clearTimeout(timer);
     }
+    setIsInitialLoad(false);
   }, [allImagesLoaded, windows.length, day, isInitialLoad]);
 
   // Handle URL changes after initial load
   useEffect(() => {
-    if (isInitialLoad) return;
+    if (isInitialLoad || !shouldZoom) return;
 
     if (!day && activeDay) {
       // When URL changes to home, zoom out
@@ -345,7 +347,8 @@ export const Calendar = () => {
       setIsZooming(true);
       setActiveDay(day);
     }
-  }, [day, activeDay, isInitialLoad]);
+    setIsInitialLoad(false);
+  }, [day, activeDay, isInitialLoad, shouldZoom]);
 
   const handleTransitionEnd = useCallback(() => {
     setIsZooming(false);
