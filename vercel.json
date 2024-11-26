@@ -13,18 +13,18 @@
       }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/assets/(.*)",
-      "dest": "/dist/client/assets/$1"
+      "source": "/assets/:path*",
+      "destination": "/dist/client/assets/:path*"
     },
     {
-      "src": "/images/(.*)",
-      "dest": "/dist/client/images/$1"
+      "source": "/images/:path*",
+      "destination": "/dist/client/images/:path*"
     },
     {
-      "src": "/(.*)",
-      "dest": "/server.ts"
+      "source": "/(.*)",
+      "destination": "/server.ts"
     }
   ],
   "headers": [
