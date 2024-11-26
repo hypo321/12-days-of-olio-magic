@@ -282,9 +282,7 @@ export const DayContent: React.FC<DayContentProps> = ({
         <div
           className="absolute inset-0 bg-cover bg-center rounded-lg"
           style={{
-            backgroundImage: isActiveDay
-              ? `url("${content.backgroundImage}")`
-              : `url("/content/day${day}.jpg")`,
+            backgroundImage: `url("/content/day${day}.jpg")`,
             opacity: 0.7,
           }}
         />
