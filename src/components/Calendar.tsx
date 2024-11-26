@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CalendarWindow as CalendarWindowType } from '../types';
 import { CalendarWindow } from './CalendarWindow';
 import { LoadingScreen } from './LoadingScreen';
 import { BACKGROUND_IMAGE_URL } from '../constants';
 import { canOpenDoor } from '../utils';
-
-const STORAGE_KEY = 'advent-calendar-windows';
 
 interface Position {
   x: number;
@@ -22,7 +20,7 @@ interface CachedData {
   viewportSize: { width: number; height: number };
 }
 
-export const Calendar: React.FC = () => {
+export const Calendar = () => {
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
   const [windows, setWindows] = useState<WindowData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,12 +29,13 @@ export const Calendar: React.FC = () => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const [isZooming, setIsZooming] = useState(false);
+  const { day } = useParams<{ day?: string }>();
+  const navigate = useNavigate();
   const [activeDay, setActiveDay] = useState<string | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const { day } = useParams();
-  const navigate = useNavigate();
 
-  // Add state for zoom transition
+  // Add state for zoom transform
   const [zoomTransform, setZoomTransform] = useState({
     scale: 1,
     translateX: 0,
@@ -161,8 +160,9 @@ export const Calendar: React.FC = () => {
   const handleWindowClick = useCallback(
     (clickedDay: number) => {
       if (!activeDay) {
+        setIsZooming(true);
         setActiveDay(clickedDay.toString());
-        navigate(`/day/${clickedDay}`);
+        navigate(`/day/${clickedDay}`, { replace: true });
       } else {
         // Check if the door can be opened when trying to open it
         if (!canOpenDoor(clickedDay)) {
@@ -181,7 +181,7 @@ export const Calendar: React.FC = () => {
             };
           }
           localStorage.setItem(
-            STORAGE_KEY,
+            'advent-calendar-windows',
             JSON.stringify({
               windows: newWindows,
               viewportSize: containerSize,
@@ -193,6 +193,14 @@ export const Calendar: React.FC = () => {
     },
     [containerSize, activeDay, navigate]
   );
+
+  const handleBackgroundClick = useCallback(() => {
+    if (activeDay) {
+      setIsZooming(true);
+      setActiveDay(null);
+      navigate('/', { replace: true });
+    }
+  }, [activeDay, navigate]);
 
   const handleWindowClose = useCallback(
     (clickedDay: number) => {
@@ -209,7 +217,7 @@ export const Calendar: React.FC = () => {
           };
         }
         localStorage.setItem(
-          STORAGE_KEY,
+          'advent-calendar-windows',
           JSON.stringify({
             windows: newWindows,
             viewportSize: containerSize,
@@ -219,7 +227,7 @@ export const Calendar: React.FC = () => {
       });
       // Clear active day and navigate back
       setActiveDay(null);
-      navigate('/');
+      navigate('/', { replace: true });
     },
     [navigate, containerSize]
   );
@@ -256,7 +264,6 @@ export const Calendar: React.FC = () => {
               })
               .catch((error) => {
                 console.error('Failed to load image:', error);
-                // Continue loading other images even if one fails
                 loaded++;
                 setLoadingProgress((loaded / imageUrls.length) * 100);
               })
@@ -264,7 +271,9 @@ export const Calendar: React.FC = () => {
         );
 
         // Initialize windows
-        const savedData = localStorage.getItem(STORAGE_KEY);
+        const savedData = localStorage.getItem(
+          'advent-calendar-windows'
+        );
         if (savedData) {
           const { windows: savedWindows, viewportSize } = JSON.parse(
             savedData
@@ -293,16 +302,8 @@ export const Calendar: React.FC = () => {
 
         // Mark all images as loaded and remove loading screen
         setAllImagesLoaded(true);
-        await new Promise((resolve) => setTimeout(resolve, 100)); // Small delay to ensure state update
+        await new Promise((resolve) => setTimeout(resolve, 100));
         setIsLoading(false);
-        // If we have a day parameter on initial load, wait then trigger zoom
-        if (isInitialLoad && day) {
-          setIsInitialLoad(false);
-          // Short delay before starting zoom
-          setTimeout(() => {
-            setActiveDay(day);
-          }, 100);
-        }
       } catch (error) {
         console.error('Error loading images:', error);
         setAllImagesLoaded(true);
@@ -310,98 +311,90 @@ export const Calendar: React.FC = () => {
       }
     };
 
-    // We only want to load images when container size changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadAllImages();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [containerSize]);
 
-  // Handle URL-based zooming
+  // Handle URL changes and initial load
   useEffect(() => {
-    if (activeDay && windows.length > 0) {
+    if (!allImagesLoaded || windows.length === 0) return;
+
+    if (day && isInitialLoad) {
+      // On initial load with day parameter, show calendar first then zoom
+      setZoomTransform({ scale: 1, translateX: 0, translateY: 0 });
+      const timer = setTimeout(() => {
+        setIsZooming(true);
+        setActiveDay(day);
+        setIsInitialLoad(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    } else if (!isInitialLoad) {
+      setActiveDay(day || null);
+    }
+  }, [day, allImagesLoaded, windows.length, isInitialLoad]);
+
+  // Handle URL changes after initial load
+  useEffect(() => {
+    if (isInitialLoad) return;
+
+    if (!day && activeDay) {
+      // When URL changes to home, zoom out
+      setIsZooming(true);
+      setActiveDay(null);
+    } else if (day && day !== activeDay) {
+      // When URL changes to a different day, update active day
+      setIsZooming(true);
+      setActiveDay(day);
+    }
+  }, [day, activeDay, isInitialLoad]);
+
+  const handleTransitionEnd = useCallback(() => {
+    setIsZooming(false);
+  }, []);
+
+  // Handle zoom animations
+  useEffect(() => {
+    if (!windows.length) return;
+
+    if (activeDay) {
       const dayNumber = parseInt(activeDay);
       const selectedWindow = windows.find((w) => w.day === dayNumber);
       if (selectedWindow) {
-        console.log('Selected window:', {
-          day: selectedWindow.day,
-          position: { x: selectedWindow.x, y: selectedWindow.y },
-          size: {
-            width: selectedWindow.width,
-            height: selectedWindow.height,
-          },
-        });
-
-        // Parse window dimensions
+        // Calculate zoom transform
         const windowX = selectedWindow.x;
         const windowY = selectedWindow.y;
         const windowWidth = parseFloat(selectedWindow.width);
         const windowHeight = parseFloat(selectedWindow.height);
 
-        // Calculate the scale needed to make the window fill most of the viewport
-        const targetWidth = containerSize.width * 0.8; // 80% of viewport
+        const targetWidth = containerSize.width * 0.8;
         const targetHeight = containerSize.height * 0.8;
         const scaleX = targetWidth / windowWidth;
         const scaleY = targetHeight / windowHeight;
         const scale = Math.min(scaleX, scaleY);
 
-        // Calculate the translation needed to center the target window
-        // When using center transform-origin, we need to:
-        // 1. Calculate the current position relative to the center
         const containerCenterX = containerSize.width / 2;
         const containerCenterY = containerSize.height / 2;
         const windowCenterX = windowX + windowWidth / 2;
         const windowCenterY = windowY + windowHeight / 2;
 
-        // 2. Calculate the offset from center
         const offsetX = containerCenterX - windowCenterX;
         const offsetY = containerCenterY - windowCenterY;
 
-        // 3. Apply the scale factor to the offset
         const translateX = offsetX * scale;
         const translateY = offsetY * scale;
 
-        console.log('Transform calculation:', {
-          container: {
-            size: containerSize,
-            center: { x: containerCenterX, y: containerCenterY },
-          },
-          window: {
-            day: selectedWindow.day,
-            position: { x: windowX, y: windowY },
-            center: { x: windowCenterX, y: windowCenterY },
-            size: { width: windowWidth, height: windowHeight },
-          },
-          scale: scale,
-          offset: { x: offsetX, y: offsetY },
-          translate: { x: translateX, y: translateY },
-        });
-
         setZoomTransform({ scale, translateX, translateY });
-        // Only update URL if it's not already correct
-        if (day !== activeDay) {
-          navigate(`/day/${dayNumber}`);
-        }
       }
     } else {
+      // Reset zoom when no active day
       setZoomTransform({ scale: 1, translateX: 0, translateY: 0 });
-      if (!isInitialLoad && !activeDay && day) {
-        navigate('/');
-      }
     }
-  }, [
-    activeDay,
-    windows,
-    containerSize,
-    day,
-    navigate,
-    isInitialLoad,
-  ]);
+  }, [activeDay, windows, containerSize]);
 
   useEffect(() => {
     const handleResize = () => {
       // Reset zoom state first
       setActiveDay(null);
-      navigate('/');
+      navigate('/', { replace: true });
 
       // Then update container size which will trigger recalculation
       setContainerSize({
@@ -414,35 +407,16 @@ export const Calendar: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [navigate]);
 
-  // useEffect(() => {
-  //   const handleScroll = (e: WheelEvent) => {
-  //     if (activeDay) {
-  //       e.preventDefault();
-  //       setActiveDay(null);
-  //       navigate('/');
-  //     }
-  //   };
-
-  //   window.addEventListener('wheel', handleScroll, {
-  //     passive: false,
-  //   });
-  //   return () => window.removeEventListener('wheel', handleScroll);
-  // }, [activeDay, navigate]);
-
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       {isLoading ? (
         <LoadingScreen progress={loadingProgress} />
       ) : (
         <div
-          onClick={() => {
-            if (activeDay) {
-              setActiveDay(null);
-              navigate('/');
-            }
-          }}
-          className={`relative w-full h-full transition-transform duration-[2000ms] ${
-            isInitialLoad ? '' : 'ease-in-out'
+          onClick={handleBackgroundClick}
+          onTransitionEnd={handleTransitionEnd}
+          className={`relative w-full h-full transition-all duration-1000 ${
+            isZooming ? 'ease-in-out' : ''
           } pointer-events-none`}
           style={{
             willChange: 'transform',
@@ -470,11 +444,14 @@ export const Calendar: React.FC = () => {
               {windows.map((window) => (
                 <div
                   key={window.day}
+                  className={`transition-transform duration-1000 ${
+                    isZooming ? 'ease-in-out' : ''
+                  }`}
                   style={{
                     willChange: 'transform',
                     transform:
                       activeDay && parseInt(activeDay) === window.day
-                        ? 'translateZ(0)'
+                        ? 'translateZ(20px)'
                         : 'none',
                   }}
                 >
