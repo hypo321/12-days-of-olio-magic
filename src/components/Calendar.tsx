@@ -32,7 +32,7 @@ export const Calendar = () => {
   const [isZooming, setIsZooming] = useState(false);
   const { day } = useParams<{ day?: string }>();
   const navigate = useNavigate();
-  const [activeDay, setActiveDay] = useState<string | null>(null);
+  const [activeDay, setActiveDay] = useState<string | null>(day || null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // Add state for zoom transform
@@ -314,23 +314,23 @@ export const Calendar = () => {
     loadAllImages();
   }, [containerSize]);
 
-  // Handle URL changes and initial load
+  // Handle initial load and URL changes
   useEffect(() => {
     if (!allImagesLoaded || windows.length === 0) return;
 
-    if (day && isInitialLoad) {
-      // On initial load with day parameter, show calendar first then zoom
+    if (isInitialLoad) {
+      // On initial load, show calendar first then zoom if needed
       setZoomTransform({ scale: 1, translateX: 0, translateY: 0 });
-      const timer = setTimeout(() => {
-        setIsZooming(true);
-        setActiveDay(day);
-        setIsInitialLoad(false);
-      }, 500);
-      return () => clearTimeout(timer);
-    } else if (!isInitialLoad) {
-      setActiveDay(day || null);
+      if (day) {
+        const timer = setTimeout(() => {
+          setIsZooming(true);
+          setActiveDay(day);
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+      setIsInitialLoad(false);
     }
-  }, [day, allImagesLoaded, windows.length, isInitialLoad]);
+  }, [allImagesLoaded, windows.length, day, isInitialLoad]);
 
   // Handle URL changes after initial load
   useEffect(() => {
