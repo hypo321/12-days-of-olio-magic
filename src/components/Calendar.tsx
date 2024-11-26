@@ -317,11 +317,12 @@ export const Calendar = () => {
 
   // Handle initial load and URL changes
   useEffect(() => {
-    if (!allImagesLoaded || windows.length === 0 || !isInitialLoad) return;
+    if (!allImagesLoaded || windows.length === 0 || !isInitialLoad)
+      return;
 
     // Always start with zoomed out view
     setZoomTransform({ scale: 1, translateX: 0, translateY: 0 });
-    
+
     if (day) {
       // Wait a bit to show the full calendar before zooming
       const timer = setTimeout(() => {
@@ -409,6 +410,98 @@ export const Calendar = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [navigate]);
+
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (activeDay) {
+        e.preventDefault();
+        setIsZooming(true);
+        setActiveDay(null);
+        navigate('/', { replace: true });
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [activeDay, navigate]);
+
+  // Add keyboard navigation handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!activeDay) return;
+
+      const currentDay = parseInt(activeDay);
+
+      // Handle ESC, Space, or Return
+      if (
+        e.key === 'Escape' ||
+        e.key === ' ' ||
+        e.key === 'Enter' ||
+        e.key === 'Backspace'
+      ) {
+        e.preventDefault();
+        setIsZooming(true);
+        setActiveDay(null);
+        navigate('/', { replace: true });
+        return;
+      }
+
+      // Handle left arrow
+      if (e.key === 'ArrowLeft' && currentDay > 1) {
+        e.preventDefault();
+        const prevDay = currentDay - 1;
+        // First zoom out
+        setIsZooming(true);
+        setActiveDay(null);
+        navigate('/', { replace: true });
+        // Then zoom into the previous day after a short delay
+        setTimeout(() => {
+          setIsZooming(true);
+          setActiveDay(prevDay.toString());
+          navigate(`/day/${prevDay}`, { replace: true });
+        }, 1000);
+        return;
+      }
+
+      // Handle right arrow
+      if (e.key === 'ArrowRight' && currentDay < 12) {
+        e.preventDefault();
+        const nextDay = currentDay + 1;
+        // First zoom out
+        setIsZooming(true);
+        setActiveDay(null);
+        navigate('/', { replace: true });
+        // Then zoom into the next day after a short delay
+        setTimeout(() => {
+          setIsZooming(true);
+          setActiveDay(nextDay.toString());
+          navigate(`/day/${nextDay}`, { replace: true });
+        }, 1000);
+        return;
+      }
+
+      // Handle number keys 1-9
+      const num = parseInt(e.key);
+      if (!isNaN(num) && num >= 1 && num <= 9) {
+        e.preventDefault();
+        if (num === currentDay) return; // Don't do anything if it's the same day
+
+        // First zoom out
+        setIsZooming(true);
+        setActiveDay(null);
+        navigate('/', { replace: true });
+        // Then zoom into the selected day after a short delay
+        setTimeout(() => {
+          setIsZooming(true);
+          setActiveDay(num.toString());
+          navigate(`/day/${num}`, { replace: true });
+        }, 1000);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeDay, navigate]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
