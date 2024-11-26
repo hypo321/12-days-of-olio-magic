@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { CalendarWindow as CalendarWindowType } from '../types';
 import { BACKGROUND_IMAGE_URL } from '../constants';
 import { canOpenDoor, getOpeningDateMessage } from '../utils';
-import { DayContent } from './DayContent';
 import { useParams } from 'react-router-dom';
+import { useModal } from '../contexts/ModalContext';
+import { ContentModal } from './ContentModal';
 
 interface Props {
   window: CalendarWindowType;
@@ -22,8 +23,9 @@ export const CalendarWindow: React.FC<Props> = ({
   const [isShaking, setIsShaking] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [showContent, setShowContent] = useState(false);
+  const { openModal, closeModal } = useModal();
   const { day: activeDay } = useParams();
-  const isActiveDay = activeDay === window.day.toString();
+  const isActiveDay = activeDay === String(window.day);
 
   const backgroundStyle = {
     backgroundImage: `url("${BACKGROUND_IMAGE_URL}")`,
@@ -76,6 +78,31 @@ export const CalendarWindow: React.FC<Props> = ({
       return () => clearTimeout(timer);
     }
   }, [window.isOpen]);
+
+  useEffect(() => {
+    console.log('Door state changed:', {
+      windowDay: window.day,
+      isOpen: window.isOpen,
+      activeDay,
+      isActiveDay,
+      day
+    });
+
+    if (window.isOpen && activeDay === String(window.day)) {
+      console.log('Opening modal for day:', window.day);
+      const timer = setTimeout(() => {
+        openModal(window.day);
+      }, 700); // Match the door opening animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [window.isOpen, activeDay, window.day, openModal]);
+
+  useEffect(() => {
+    if (!day) {
+      console.log('Closing modal - zoomed out');
+      closeModal();
+    }
+  }, [day, closeModal]);
 
   return (
     <div 
@@ -142,19 +169,19 @@ export const CalendarWindow: React.FC<Props> = ({
           }
         }}
         style={{
-          cursor: (!day && window.isOpen) ? 'pointer' : 'default'
+          cursor: window.isOpen ? 'pointer' : 'default'
         }}
       >
         {showContent && (
           <div style={thumbnailStyle} className="rounded-lg" />
         )}
-        {showContent && isActiveDay && (
-          <DayContent 
-            day={window.day} 
-            isVisible={!!day}
-          />
-        )}
       </div>
+
+      <ContentModal 
+        isOpen={false} 
+        day={window.day}
+        onClose={() => {}}
+      />
     </div>
   );
 };

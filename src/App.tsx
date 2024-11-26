@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom';
 import { Calendar } from './components/Calendar';
 import { Helmet } from 'react-helmet-async';
+import { ModalProvider } from './contexts/ModalContext';
+import { ContentModal } from './components/ContentModal';
+import { useModal } from './contexts/ModalContext';
 
 const CalendarRoute = () => {
   const { day } = useParams();
@@ -59,15 +62,32 @@ const CalendarRoute = () => {
   );
 };
 
+const AppContent = () => {
+  const { isModalOpen, activeDay, closeModal } = useModal();
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-red-100 to-green-100">
+      <Routes>
+        <Route path="/" element={<CalendarRoute />} />
+        <Route path="/day/:day" element={<CalendarRoute />} />
+      </Routes>
+      {activeDay !== null && (
+        <ContentModal 
+          isOpen={isModalOpen} 
+          day={activeDay}
+          onClose={closeModal}
+        />
+      )}
+    </div>
+  );
+};
+
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-b from-red-100 to-green-100">
-        <Routes>
-          <Route path="/" element={<CalendarRoute />} />
-          <Route path="/day/:day" element={<CalendarRoute />} />
-        </Routes>
-      </div>
+      <ModalProvider>
+        <AppContent />
+      </ModalProvider>
     </Router>
   );
 }
