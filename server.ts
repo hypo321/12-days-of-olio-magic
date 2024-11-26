@@ -46,7 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Read the index.html template
     const template = fs.readFileSync(
-      path.join(process.cwd(), 'dist', 'client', 'index.html'),
+      path.join(process.cwd(), 'dist', 'index.html'),
       'utf-8'
     )
 

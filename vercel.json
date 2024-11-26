@@ -9,18 +9,18 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist/client"
+        "distDir": "dist"
       }
     }
   ],
   "rewrites": [
     {
       "source": "/assets/:path*",
-      "destination": "/dist/client/assets/:path*"
+      "destination": "/dist/assets/:path*"
     },
     {
       "source": "/images/:path*",
-      "destination": "/dist/client/images/:path*"
+      "destination": "/dist/images/:path*"
     },
     {
       "source": "/(.*)",
