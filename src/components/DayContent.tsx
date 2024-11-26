@@ -284,12 +284,12 @@ export const DayContent: React.FC<DayContentProps> = ({
           style={{
             backgroundImage: isActiveDay
               ? `url("${content.backgroundImage}")`
-              : `url("/content/day${day}-thumb.jpg")`,
+              : `url("/content/day${day}.jpg")`,
             opacity: 0.7,
           }}
         />
       )}
-      <div className="relative z-10 w-full h-full grid place-items-center">
+      <div className="relative z-10 w-full h-full grid place-items-center p-4">
         <div className="w-full max-w-[90%] max-h-[90%] overflow-y-auto scrollbar-hide">
           <motion.div
             className="grid gap-3 text-white text-center"
