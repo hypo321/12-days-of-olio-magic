@@ -1,8 +1,7 @@
 {
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/day/[0-9]+", "dest": "/" },
-    { "src": "/(.*)", "dest": "/" }
+  "rewrites": [
+    { "source": "/day/:day", "destination": "/" },
+    { "source": "/(.*)", "destination": "/" }
   ],
   "cleanUrls": true,
   "trailingSlash": false,
