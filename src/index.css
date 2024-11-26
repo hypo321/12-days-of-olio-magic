@@ -120,13 +120,11 @@
     transform: translateZ(-1px);
     background-size: cover;
     background-position: center;
-    @apply shadow-[inset_0px_5px_15px_5px_rgba(0,0,0,0.4)] z-[1];
-  }
+    z-index: 1;}
 
   .content-behind img {
     @apply w-full h-full object-cover rounded-lg;
-    @apply shadow-[inset_0px_5px_15px_5px_rgba(0,0,0,0.4)] z-[1];
-
+  z-index: 1;
   }
 
   .window-transform {

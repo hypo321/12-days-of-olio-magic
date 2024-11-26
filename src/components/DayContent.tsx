@@ -289,7 +289,7 @@ export const DayContent: React.FC<DayContentProps> = ({
           }}
         />
       )}
-      <div className="relative z-10 w-full h-full grid place-items-center p-4">
+      <div className="relative z-10 w-full h-full grid place-items-center">
         <div className="w-full max-w-[90%] max-h-[90%] overflow-y-auto scrollbar-hide">
           <motion.div
             className="grid gap-3 text-white text-center"
