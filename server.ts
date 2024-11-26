@@ -1,52 +1,6 @@
+import { VercelRequest, VercelResponse } from '@vercel/node'
 import fs from 'fs'
 import path from 'path'
-import { fileURLToPath } from 'url'
-import express from 'express'
-import { createServer as createViteServer } from 'vite'
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
-async function createServer() {
-  const app = express()
-
-  // Create Vite server in middleware mode
-  const vite = await createViteServer({
-    server: { middlewareMode: true },
-    appType: 'custom'
-  })
-
-  // Use vite's connect instance as middleware
-  app.use(vite.middlewares)
-
-  app.use('*', async (req, res) => {
-    const url = req.originalUrl
-    const dayMatch = url.match(/\/day\/(\d+)/)
-    const day = dayMatch ? dayMatch[1] : null
-
-    try {
-      // Read index.html
-      let template = fs.readFileSync(
-        path.resolve(__dirname, 'index.html'),
-        'utf-8'
-      )
-
-      // Apply Vite HTML transforms
-      template = await vite.transformIndexHtml(url, template)
-
-      // Generate meta tags based on the URL
-      const metaTags = generateMetaTags(day)
-      template = template.replace('</head>', `${metaTags}</head>`)
-
-      res.status(200).set({ 'Content-Type': 'text/html' }).end(template)
-    } catch (e) {
-      vite.ssrFixStacktrace(e)
-      console.error(e)
-      res.status(500).end(e.message)
-    }
-  })
-
-  app.listen(5173)
-}
 
 function generateMetaTags(day: string | null) {
   if (!day) {
@@ -84,4 +38,26 @@ function generateMetaTags(day: string | null) {
   `
 }
 
-createServer()
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  try {
+    const url = req.url || '/'
+    const dayMatch = url.match(/\/day\/(\d+)/)
+    const day = dayMatch ? dayMatch[1] : null
+
+    // Read the index.html template
+    const template = fs.readFileSync(
+      path.join(process.cwd(), 'dist', 'client', 'index.html'),
+      'utf-8'
+    )
+
+    // Insert meta tags
+    const metaTags = generateMetaTags(day)
+    const html = template.replace('</head>', `${metaTags}</head>`)
+
+    res.setHeader('Content-Type', 'text/html')
+    res.status(200).send(html)
+  } catch (error) {
+    console.error('Server error:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
+  }
+}
