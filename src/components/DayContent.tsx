@@ -1,6 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useParams } from 'react-router-dom';
 
 interface DayContentProps {
   day: number;
@@ -164,8 +163,6 @@ export const DayContent: React.FC<DayContentProps> = ({
   isVisible,
 }) => {
   const content = CONTENT_DATA[day];
-  const { day: activeDay } = useParams();
-  const isActiveDay = activeDay === day.toString();
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({
     width: 0,
