@@ -222,26 +222,14 @@ export const CalendarWindow: React.FC<Props> = ({
         className="content-behind rounded-lg"
         onClick={(e) => {
           e.stopPropagation();
-          console.log('Content behind clicked:', {
-            isOpen: window.isOpen,
-            isZoomedOut: !day,
-            day: window.day
-          });
+          // When zoomed out and door is open, zoom in on tap
           if (!day && window.isOpen) {
-            onWindowClick(window.day);
-          }
-        }}
-        onTouchEnd={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          if (!day && window.isOpen) {
-            console.log('Touch end on content-behind, triggering zoom for day:', window.day);
+            console.log('Tapped open door while zoomed out, zooming in:', window.day);
             onWindowClick(window.day);
           }
         }}
         style={{
           cursor: window.isOpen ? 'pointer' : 'default',
-          touchAction: window.isOpen ? 'none' : 'auto',
         }}
       >
         {showContent && (
