@@ -23,7 +23,7 @@ export const CalendarWindow: React.FC<Props> = ({
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
-  const [isSwiping, setIsSwiping] = useState(false);
+  const [swipeStartedOnBack, setSwipeStartedOnBack] = useState(false);
   const { openModal, closeModal } = useModal();
   const { day: activeDay } = useParams();
   const isActiveDay = activeDay === String(window.day);
@@ -55,32 +55,46 @@ export const CalendarWindow: React.FC<Props> = ({
     onWindowClose(window.day);
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
+  const handleWindowTouchStart = (e: React.TouchEvent, isBack: boolean = false) => {
     const touch = e.touches[0];
     setTouchStart({ x: touch.clientX, y: touch.clientY });
-    setIsSwiping(false);
+    setSwipeStartedOnBack(isBack);
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleWindowTouchMove = (e: React.TouchEvent) => {
     if (!touchStart) return;
     
     const touch = e.touches[0];
-    const deltaX = touchStart.x - touch.clientX;
-    const deltaY = Math.abs(touchStart.y - touch.clientY);
+    const deltaX = touch.clientX - touchStart.x;  // Positive for right swipe
+    const deltaY = touch.clientY - touchStart.y;  // Positive for down swipe
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     
-    // If horizontal movement is greater than vertical and exceeds threshold
-    if (deltaX > 50 && deltaY < 30) {
-      setIsSwiping(true);
+    // If started on back and swiping right with enough distance (works both zoomed in and out)
+    if (swipeStartedOnBack && deltaX > 50 && window.isOpen) {
+      handleBackClick(e as any);
+      setTouchStart(null);
+      return;
+    }
+
+    // When zoomed out and not starting on back, any significant swipe on a door triggers zoom
+    if (!day && !swipeStartedOnBack && distance > 30) {
+      console.log('Swipe detected while zoomed out, zooming into door:', window.day);
+      onWindowClick(window.day);
+      setTouchStart(null);
+      return;
+    }
+    
+    // If not started on back and swiping left with enough distance while zoomed in
+    if (!swipeStartedOnBack && deltaX < -50 && day && !window.isOpen && canOpenDoor(window.day)) {
+      console.log('Left swipe detected, opening door:', window.day);
+      onWindowClick(window.day);
+      setTouchStart(null);
     }
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (isSwiping && day && !window.isOpen && canOpenDoor(window.day)) {
-      console.log('Swipe detected, opening door:', window.day);
-      onWindowClick(window.day);
-    }
+  const handleWindowTouchEnd = () => {
     setTouchStart(null);
-    setIsSwiping(false);
+    setSwipeStartedOnBack(false);
   };
 
   useEffect(() => {
@@ -144,6 +158,9 @@ export const CalendarWindow: React.FC<Props> = ({
         height: window.height,
         willChange: 'transform',
       }}
+      onTouchStart={(e) => handleWindowTouchStart(e)}
+      onTouchMove={handleWindowTouchMove}
+      onTouchEnd={handleWindowTouchEnd}
     >
       <div
         className={`door ${window.isOpen ? 'open' : ''} ${
@@ -153,9 +170,6 @@ export const CalendarWindow: React.FC<Props> = ({
           transformStyle: 'preserve-3d',
           willChange: 'transform',
         }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
       >
         <div
           className="door-front"
@@ -187,6 +201,10 @@ export const CalendarWindow: React.FC<Props> = ({
         <div
           className="door-back"
           onClick={handleBackClick}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            handleWindowTouchStart(e, true);
+          }}
           style={{
             position: 'absolute',
             inset: '0',
