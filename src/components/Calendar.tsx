@@ -34,7 +34,6 @@ export const Calendar = () => {
   const navigate = useNavigate();
   const [activeDay, setActiveDay] = useState<string | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [shouldZoom, setShouldZoom] = useState(false);
 
   // Add state for zoom transform
   const [zoomTransform, setZoomTransform] = useState({
@@ -227,9 +226,8 @@ export const Calendar = () => {
         return newWindows;
       });
       
-      // Reset all zoom-related states
+      // Reset zoom state and navigate
       setIsZooming(true);
-      setShouldZoom(true);
       setActiveDay(null);
       navigate('/', { replace: true });
     },
@@ -331,7 +329,6 @@ export const Calendar = () => {
       const timer = setTimeout(() => {
         setIsZooming(true);
         setActiveDay(day);
-        setShouldZoom(true);
       }, 1000); // Give more time to see the full calendar
       return () => clearTimeout(timer);
     }
@@ -345,12 +342,10 @@ export const Calendar = () => {
     if (!day && activeDay) {
       // When URL changes to home, zoom out
       setIsZooming(true);
-      setShouldZoom(true);
       setActiveDay(null);
     } else if (day && day !== activeDay) {
       // When URL changes to a different day, update active day
       setIsZooming(true);
-      setShouldZoom(true);
       setActiveDay(day);
     }
     setIsInitialLoad(false);
