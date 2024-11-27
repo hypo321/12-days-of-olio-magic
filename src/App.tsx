@@ -66,7 +66,7 @@ const AppContent = () => {
   const { isModalOpen, activeDay, closeModal } = useModal();
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-red-100 to-green-100">
+    <div className="min-h-screen bg-gradient-to-b from-gray-800 to-gray-900">
       <Routes>
         <Route path="/" element={<CalendarRoute />} />
         <Route path="/day/:day" element={<CalendarRoute />} />
