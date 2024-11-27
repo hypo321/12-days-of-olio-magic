@@ -27,7 +27,7 @@ interface ContentData {
 
 const CONTENT_DATA: Record<number, ContentData> = {
   1: {
-    backgroundImage: '/content/day1-full.jpg',
+    backgroundImage: '/content/day1.jpg',
     title: 'Welcome to 12 Days of Olio Magic! ',
     subtitle: "Together, we're building a world without waste",
     description:
@@ -41,7 +41,7 @@ const CONTENT_DATA: Record<number, ContentData> = {
     ctaText: 'Join Olio Today',
   },
   2: {
-    backgroundImage: '/content/day2-full.jpg',
+    backgroundImage: '/content/day2.jpg',
     title: 'Meet Our Founders ',
     subtitle: 'Tessa Clarke & Saasha Celestial-One',
     description:
@@ -53,7 +53,7 @@ const CONTENT_DATA: Record<number, ContentData> = {
     },
   },
   3: {
-    backgroundImage: '/content/day3-full.jpg',
+    backgroundImage: '/content/day3.jpg',
     title: 'Food Waste Heroes ',
     description:
       "Our incredible Food Waste Heroes save surplus food from local businesses and share it with their community. They're the heartbeat of Olio, turning potential waste into wonderful meals.",
@@ -65,7 +65,7 @@ const CONTENT_DATA: Record<number, ContentData> = {
     ctaText: 'Become a Food Waste Hero',
   },
   4: {
-    backgroundImage: '/content/day4-full.jpg',
+    backgroundImage: '/content/day4.jpg',
     title: 'Community Impact ',
     description:
       'Every share on Olio creates a ripple effect of positive change. From reducing CO2 emissions to helping neighbors in need, our community is making the world better one item at a time.',
@@ -76,7 +76,7 @@ const CONTENT_DATA: Record<number, ContentData> = {
     },
   },
   5: {
-    backgroundImage: '/content/day5-full.jpg',
+    backgroundImage: '/content/day5.jpg',
     title: 'Environmental Impact ',
     subtitle: 'Every Share Counts',
     description:
@@ -88,7 +88,7 @@ const CONTENT_DATA: Record<number, ContentData> = {
     ],
   },
   6: {
-    backgroundImage: '/content/day6-full.jpg',
+    backgroundImage: '/content/day6.jpg',
     title: 'Olio Made Matches ',
     description:
       "Beautiful friendships form every day through Olio. Our community doesn't just share food - they share stories, cultures, and create lasting connections.",
@@ -99,7 +99,7 @@ const CONTENT_DATA: Record<number, ContentData> = {
     },
   },
   7: {
-    backgroundImage: '/content/day7-full.jpg',
+    backgroundImage: '/content/day7.jpg',
     title: 'Zero Waste Living ',
     subtitle: 'Beyond Food Sharing',
     description:
@@ -110,7 +110,7 @@ const CONTENT_DATA: Record<number, ContentData> = {
     ],
   },
   8: {
-    backgroundImage: '/content/day8-full.jpg',
+    backgroundImage: '/content/day8.jpg',
     title: 'Global Movement ',
     description:
       'From Singapore to Sweden, Olio is bringing communities together worldwide. Our app is available in 60+ languages, making sharing possible across cultures and borders.',
@@ -121,7 +121,7 @@ const CONTENT_DATA: Record<number, ContentData> = {
     },
   },
   9: {
-    backgroundImage: '/content/day9-full.jpg',
+    backgroundImage: '/content/day9.jpg',
     title: 'Business Impact ',
     subtitle: 'Partnering for Change',
     description:
@@ -132,7 +132,7 @@ const CONTENT_DATA: Record<number, ContentData> = {
     ],
   },
   10: {
-    backgroundImage: '/content/day10-full.jpg',
+    backgroundImage: '/content/day10.jpg',
     title: 'Community Heroes ',
     description:
       'Our community is full of everyday heroes who go above and beyond. From organizing local sharing hubs to teaching others about food waste, these champions make Olio special.',
@@ -143,7 +143,7 @@ const CONTENT_DATA: Record<number, ContentData> = {
     },
   },
   11: {
-    backgroundImage: '/content/day11-full.jpg',
+    backgroundImage: '/content/day11.jpg',
     title: 'Future Vision ',
     subtitle: 'A World Without Waste',
     description:

@@ -233,12 +233,13 @@ export const Calendar = () => {
         setAllImagesLoaded(false);
         setLoadingProgress(0);
 
-        // Create an array of all image URLs
+        // Create an array of all image URLs to preload
         const imageUrls = [
           BACKGROUND_IMAGE_URL,
+          '/thumbnails/cardboard.jpg', // Only keep the cardboard texture for door backs
           ...Array.from(
             { length: 12 },
-            (_, i) => `/thumbnails/day${i + 1}.jpg`
+            (_, i) => `/content/day${i + 1}.jpg`
           ),
         ];
 
