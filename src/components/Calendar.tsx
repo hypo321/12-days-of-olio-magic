@@ -25,10 +25,10 @@ export const Calendar = () => {
   const [windows, setWindows] = useState<WindowData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [containerSize, setContainerSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
+  const [containerSize, setContainerSize] = useState(() => ({
+    width: window.visualViewport?.width || window.innerWidth,
+    height: window.visualViewport?.height || window.innerHeight,
+  }));
   const [isZooming, setIsZooming] = useState(false);
   const { day } = useParams<{ day?: string }>();
   const navigate = useNavigate();
@@ -355,6 +355,29 @@ export const Calendar = () => {
     setIsZooming(false);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.visualViewport?.width || window.innerWidth;
+      const height = window.visualViewport?.height || window.innerHeight;
+      
+      setContainerSize({ width, height });
+      setWindows(generateNewWindows(width, height));
+    };
+
+    // Handle both window resize and viewport changes (e.g., mobile browser UI showing/hiding)
+    window.addEventListener('resize', handleResize);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize);
+      }
+    };
+  }, []);
+
   // Handle zoom animations
   useEffect(() => {
     if (!windows.length) return;
@@ -363,20 +386,23 @@ export const Calendar = () => {
       const dayNumber = parseInt(activeDay);
       const selectedWindow = windows.find((w) => w.day === dayNumber);
       if (selectedWindow) {
-        // Calculate zoom transform
+        // Calculate zoom transform using visualViewport
         const windowX = selectedWindow.x;
         const windowY = selectedWindow.y;
         const windowWidth = parseFloat(selectedWindow.width);
         const windowHeight = parseFloat(selectedWindow.height);
 
-        const targetWidth = containerSize.width * 0.8;
-        const targetHeight = containerSize.height * 0.8;
+        const viewportWidth = window.visualViewport?.width || containerSize.width;
+        const viewportHeight = window.visualViewport?.height || containerSize.height;
+        
+        const targetWidth = viewportWidth * 0.8;
+        const targetHeight = viewportHeight * 0.8;
         const scaleX = targetWidth / windowWidth;
         const scaleY = targetHeight / windowHeight;
         const scale = Math.min(scaleX, scaleY);
 
-        const containerCenterX = containerSize.width / 2;
-        const containerCenterY = containerSize.height / 2;
+        const containerCenterX = viewportWidth / 2;
+        const containerCenterY = viewportHeight / 2;
         const windowCenterX = windowX + windowWidth / 2;
         const windowCenterY = windowY + windowHeight / 2;
 
@@ -393,23 +419,6 @@ export const Calendar = () => {
       setZoomTransform({ scale: 1, translateX: 0, translateY: 0 });
     }
   }, [activeDay, windows, containerSize]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      // Reset zoom state first
-      setActiveDay(null);
-      navigate('/', { replace: true });
-
-      // Then update container size which will trigger recalculation
-      setContainerSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [navigate]);
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
