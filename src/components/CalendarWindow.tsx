@@ -85,7 +85,7 @@ export const CalendarWindow: React.FC<Props> = ({
       isOpen: window.isOpen,
       activeDay,
       isActiveDay,
-      day
+      day,
     });
 
     if (window.isOpen && activeDay === String(window.day)) {
@@ -105,9 +105,9 @@ export const CalendarWindow: React.FC<Props> = ({
   }, [day, closeModal]);
 
   return (
-    <div 
-      className="calendar-window absolute pointer-events-auto" 
-      style={{ 
+    <div
+      className="calendar-window absolute pointer-events-auto"
+      style={{
         perspective: '1000px',
         left: `${window.x}px`,
         top: `${window.y}px`,
@@ -116,9 +116,11 @@ export const CalendarWindow: React.FC<Props> = ({
         willChange: 'transform',
       }}
     >
-      <div 
-        className={`door ${window.isOpen ? 'open' : ''} ${!canOpenDoor(window.day) ? 'locked' : ''} ${isShaking ? 'shake' : ''}`}
-        style={{ 
+      <div
+        className={`door ${window.isOpen ? 'open' : ''} ${
+          !canOpenDoor(window.day) ? 'locked' : ''
+        } ${isShaking ? 'shake' : ''}`}
+        style={{
           transformStyle: 'preserve-3d',
           willChange: 'transform',
         }}
@@ -127,7 +129,7 @@ export const CalendarWindow: React.FC<Props> = ({
           className="door-front"
           onClick={(e) => {
             e.stopPropagation();
-            const isZoomedIn = !!day; 
+            const isZoomedIn = !!day;
             if (isZoomedIn && !canOpenDoor(window.day)) {
               setIsFadingOut(false);
               setIsShaking(true);
@@ -141,7 +143,11 @@ export const CalendarWindow: React.FC<Props> = ({
           <div className="door-front-image" style={backgroundStyle} />
           <div className="door-number">{window.day}</div>
           {showMessage && !canOpenDoor(window.day) && (
-            <div className={`date-message ${isFadingOut ? 'fade-out' : ''}`}>
+            <div
+              className={`date-message ${
+                isFadingOut ? 'fade-out' : ''
+              }`}
+            >
               {getOpeningDateMessage(window.day)}
             </div>
           )}
@@ -154,13 +160,15 @@ export const CalendarWindow: React.FC<Props> = ({
             inset: '0',
             cursor: 'pointer',
             transform: 'rotateY(180deg)',
-            backgroundColor: window.isOpen ? 'rgba(255, 0, 0, 0.3)' : undefined,
+            backgroundColor: window.isOpen
+              ? 'rgba(255, 0, 0, 0.3)'
+              : undefined,
             zIndex: 10,
             backfaceVisibility: 'hidden',
           }}
         />
       </div>
-      <div 
+      <div
         className="content-behind rounded-lg"
         onClick={(e) => {
           e.stopPropagation();
@@ -169,19 +177,13 @@ export const CalendarWindow: React.FC<Props> = ({
           }
         }}
         style={{
-          cursor: window.isOpen ? 'pointer' : 'default'
+          cursor: window.isOpen ? 'pointer' : 'default',
         }}
       >
         {showContent && (
           <div style={thumbnailStyle} className="rounded-lg" />
         )}
       </div>
-
-      <ContentModal 
-        isOpen={false} 
-        day={window.day}
-        onClose={() => {}}
-      />
     </div>
   );
 };

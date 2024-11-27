@@ -154,7 +154,7 @@ const CONTENT_DATA: Record<number, ContentData> = {
     ],
   },
   12: {
-    localVideo: '/content/rickroll.mp4',
+    videoUrl: 'https://www.youtube.com/watch?v=ckhjdrOxBhU',
   },
 };
 
@@ -165,18 +165,18 @@ const contentVariants = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: "easeOut",
-      staggerChildren: 0.2
-    }
-  }
+      ease: 'easeOut',
+      staggerChildren: 0.2,
+    },
+  },
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
-    y: 0
-  }
+    y: 0,
+  },
 };
 
 export const DayContent: React.FC<DayContentProps> = ({
@@ -185,32 +185,50 @@ export const DayContent: React.FC<DayContentProps> = ({
 }) => {
   const content = CONTENT_DATA[day];
 
+  // If it's a video day, render the video player
+  if (content.videoUrl) {
+    const videoId = content.videoUrl.split('v=')[1];
+    return (
+      <div className="relative w-full h-full flex flex-col items-center justify-center bg-black aspect-video">
+        <iframe
+          className="w-full h-full"
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=1&showinfo=0&rel=0&modestbranding=1`}
+          title="YouTube video player"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full h-full">
       <div
         className="absolute inset-0 bg-cover bg-center rounded-lg"
         style={{
-          backgroundImage: `url("/content/day${day}.jpg")`,
-          opacity: 0.7,
+          backgroundImage: `url(/content/day${day}.jpg)`,
+          //filter: 'brightness(0.5)',
+          opacity: 0.5,
         }}
       />
+
       <div className="relative z-10 w-full h-full grid place-items-center p-8">
         <div className="w-full max-w-4xl max-h-full overflow-y-auto scrollbar-hide">
           <motion.div
             className="grid gap-6 text-white text-center"
             initial="hidden"
-            animate={isVisible ? "visible" : "hidden"}
+            animate={isVisible ? 'visible' : 'hidden'}
             variants={contentVariants}
           >
-            <motion.h2 
-              className="text-4xl md:text-5xl font-bold"
+            <motion.h2
+              className="text-4xl md:text-5xl font-bold drop-shadow-lg"
               variants={itemVariants}
             >
               {content.title}
             </motion.h2>
-            
-            <motion.div 
-              className="text-lg md:text-xl space-y-4"
+
+            <motion.div
+              className="text-lg md:text-xl space-y-4 drop-shadow-md"
               variants={itemVariants}
             >
               {content.description}
