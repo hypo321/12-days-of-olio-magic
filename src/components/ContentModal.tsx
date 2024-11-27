@@ -9,9 +9,16 @@ interface Props {
   onClose: () => void;
 }
 
-export const ContentModal: React.FC<Props> = ({ isOpen, day, onClose }) => {
+export const ContentModal: React.FC<Props> = ({
+  isOpen,
+  day,
+  onClose,
+}) => {
   const navigate = useNavigate();
-  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
+  const [touchStart, setTouchStart] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
 
   const handleClose = () => {
     // First close the modal which will trigger the fade out animation
@@ -29,15 +36,14 @@ export const ContentModal: React.FC<Props> = ({ isOpen, day, onClose }) => {
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!touchStart) return;
-    
+
     const touch = e.touches[0];
     const deltaX = touch.clientX - touchStart.x;
     const deltaY = touch.clientY - touchStart.y;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    
+
     // If swiped more than 50px in any direction
     if (distance > 50) {
-      console.log('Swipe detected on modal, closing');
       handleClose();
       setTouchStart(null);
     }
@@ -63,9 +69,9 @@ export const ContentModal: React.FC<Props> = ({ isOpen, day, onClose }) => {
             initial={{ opacity: 0, scale: 0.75 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.75 }}
-            transition={{ 
+            transition={{
               duration: 0.3,
-              ease: [0.4, 0, 0.2, 1] 
+              ease: [0.4, 0, 0.2, 1],
             }}
             className="fixed inset-4 md:inset-10 z-50 flex items-center justify-center"
             onTouchStart={handleTouchStart}
@@ -77,8 +83,18 @@ export const ContentModal: React.FC<Props> = ({ isOpen, day, onClose }) => {
                 onClick={handleClose}
                 className="absolute top-4 right-4 text-white hover:text-gray-300 z-50"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
               <DayContent day={day} isVisible={isOpen} />

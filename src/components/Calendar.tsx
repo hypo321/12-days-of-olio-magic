@@ -89,14 +89,6 @@ export const Calendar = () => {
       (_, i) => i + 1
     ).sort(() => Math.random() - 0.5);
 
-    console.log('Grid Debug:', {
-      viewport: { width, height },
-      cell: { width: cellWidth, height: cellHeight },
-      window: { width: windowWidth, height: windowHeight },
-      scrambledDays,
-      layout: { columns, rows, isPortrait },
-    });
-
     return Array.from({ length: 12 }, (_, i) => {
       const row = Math.floor(i / columns);
       const col = i % columns;
@@ -225,7 +217,7 @@ export const Calendar = () => {
         );
         return newWindows;
       });
-      
+
       // Reset zoom state and navigate
       setIsZooming(true);
       setActiveDay(null);
@@ -358,8 +350,9 @@ export const Calendar = () => {
   useEffect(() => {
     const handleResize = () => {
       const width = window.visualViewport?.width || window.innerWidth;
-      const height = window.visualViewport?.height || window.innerHeight;
-      
+      const height =
+        window.visualViewport?.height || window.innerHeight;
+
       setContainerSize({ width, height });
       setWindows(generateNewWindows(width, height));
     };
@@ -373,7 +366,10 @@ export const Calendar = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
       if (window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', handleResize);
+        window.visualViewport.removeEventListener(
+          'resize',
+          handleResize
+        );
       }
     };
   }, []);
@@ -392,9 +388,11 @@ export const Calendar = () => {
         const windowWidth = parseFloat(selectedWindow.width);
         const windowHeight = parseFloat(selectedWindow.height);
 
-        const viewportWidth = window.visualViewport?.width || containerSize.width;
-        const viewportHeight = window.visualViewport?.height || containerSize.height;
-        
+        const viewportWidth =
+          window.visualViewport?.width || containerSize.width;
+        const viewportHeight =
+          window.visualViewport?.height || containerSize.height;
+
         const targetWidth = viewportWidth * 0.8;
         const targetHeight = viewportHeight * 0.8;
         const scaleX = targetWidth / windowWidth;

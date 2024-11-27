@@ -22,7 +22,10 @@ export const CalendarWindow: React.FC<Props> = ({
   const [isShaking, setIsShaking] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [showContent, setShowContent] = useState(false);
-  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
+  const [touchStart, setTouchStart] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const [swipeStartedOnBack, setSwipeStartedOnBack] = useState(false);
   const { openModal, closeModal } = useModal();
   const { day: activeDay } = useParams();
@@ -51,11 +54,13 @@ export const CalendarWindow: React.FC<Props> = ({
 
   const handleBackClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log('Door back clicked for window:', window.day);
     onWindowClose(window.day);
   };
 
-  const handleWindowTouchStart = (e: React.TouchEvent, isBack: boolean = false) => {
+  const handleWindowTouchStart = (
+    e: React.TouchEvent,
+    isBack: boolean = false
+  ) => {
     const touch = e.touches[0];
     setTouchStart({ x: touch.clientX, y: touch.clientY });
     setSwipeStartedOnBack(isBack);
@@ -63,12 +68,12 @@ export const CalendarWindow: React.FC<Props> = ({
 
   const handleWindowTouchMove = (e: React.TouchEvent) => {
     if (!touchStart) return;
-    
+
     const touch = e.touches[0];
-    const deltaX = touch.clientX - touchStart.x;  // Positive for right swipe
-    const deltaY = touch.clientY - touchStart.y;  // Positive for down swipe
+    const deltaX = touch.clientX - touchStart.x; // Positive for right swipe
+    const deltaY = touch.clientY - touchStart.y; // Positive for down swipe
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    
+
     // If started on back and swiping right with enough distance (works both zoomed in and out)
     if (swipeStartedOnBack && deltaX > 50 && window.isOpen) {
       handleBackClick(e as any);
@@ -78,15 +83,19 @@ export const CalendarWindow: React.FC<Props> = ({
 
     // When zoomed out and not starting on back, any significant swipe on a door triggers zoom
     if (!day && !swipeStartedOnBack && distance > 30) {
-      console.log('Swipe detected while zoomed out, zooming into door:', window.day);
       onWindowClick(window.day);
       setTouchStart(null);
       return;
     }
-    
+
     // If not started on back and swiping left with enough distance while zoomed in
-    if (!swipeStartedOnBack && deltaX < -50 && day && !window.isOpen && canOpenDoor(window.day)) {
-      console.log('Left swipe detected, opening door:', window.day);
+    if (
+      !swipeStartedOnBack &&
+      deltaX < -50 &&
+      day &&
+      !window.isOpen &&
+      canOpenDoor(window.day)
+    ) {
       onWindowClick(window.day);
       setTouchStart(null);
     }
@@ -123,16 +132,7 @@ export const CalendarWindow: React.FC<Props> = ({
   }, [window.isOpen]);
 
   useEffect(() => {
-    console.log('Door state changed:', {
-      windowDay: window.day,
-      isOpen: window.isOpen,
-      activeDay,
-      isActiveDay,
-      day,
-    });
-
     if (window.isOpen && activeDay === String(window.day)) {
-      console.log('Opening modal for day:', window.day);
       const timer = setTimeout(() => {
         openModal(window.day);
       }, 700); // Match the door opening animation duration
@@ -142,7 +142,6 @@ export const CalendarWindow: React.FC<Props> = ({
 
   useEffect(() => {
     if (!day) {
-      console.log('Closing modal - zoomed out');
       closeModal();
     }
   }, [day, closeModal]);
@@ -161,6 +160,13 @@ export const CalendarWindow: React.FC<Props> = ({
       onTouchStart={(e) => handleWindowTouchStart(e)}
       onTouchMove={handleWindowTouchMove}
       onTouchEnd={handleWindowTouchEnd}
+      onClick={(e) => {
+        e.stopPropagation();
+        // When zoomed out and door is open, zoom in on tap
+        if (!day && window.isOpen) {
+          onWindowClick(window.day);
+        }
+      }}
     >
       <div
         className={`door ${window.isOpen ? 'open' : ''} ${
@@ -224,7 +230,6 @@ export const CalendarWindow: React.FC<Props> = ({
           e.stopPropagation();
           // When zoomed out and door is open, zoom in on tap
           if (!day && window.isOpen) {
-            console.log('Tapped open door while zoomed out, zooming in:', window.day);
             onWindowClick(window.day);
           }
         }}
