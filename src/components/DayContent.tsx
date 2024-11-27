@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 interface DayContentProps {
@@ -179,6 +179,55 @@ const itemVariants = {
   },
 };
 
+const LiteYouTubeEmbed = ({ videoId }: { videoId: string }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  const loadVideo = useCallback(() => {
+    if (!isLoaded) {
+      setIsLoaded(true);
+    }
+  }, [isLoaded]);
+
+  useEffect(() => {
+    // Load video after a short delay to ensure smooth animation
+    const timer = setTimeout(loadVideo, 500);
+    return () => clearTimeout(timer);
+  }, [loadVideo]);
+
+  if (!isLoaded) {
+    return (
+      <div className="w-full h-full bg-black flex items-center justify-center">
+        <div className="animate-pulse">Loading...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-full bg-black">
+      <iframe
+        className="w-full h-full"
+        src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0&controls=1&showinfo=0&rel=0&modestbranding=1&enablejsapi=0&playsinline=1&iv_load_policy=3`}
+        title="YouTube video player"
+        allow="autoplay"
+        loading="lazy"
+        sandbox="allow-scripts allow-presentation allow-same-origin"
+        referrerPolicy="strict-origin"
+        allowFullScreen
+      />
+    </div>
+  );
+};
+
+const renderVideo = (content: ContentData) => {
+  if (!content.videoUrl) return null;
+  const videoId = content.videoUrl.split('v=')[1];
+  return (
+    <div className="relative w-full h-full flex flex-col items-center justify-center bg-black aspect-video">
+      <LiteYouTubeEmbed videoId={videoId} />
+    </div>
+  );
+};
+
 export const DayContent: React.FC<DayContentProps> = ({
   day,
   isVisible,
@@ -187,18 +236,7 @@ export const DayContent: React.FC<DayContentProps> = ({
 
   // If it's a video day, render the video player
   if (content.videoUrl) {
-    const videoId = content.videoUrl.split('v=')[1];
-    return (
-      <div className="relative w-full h-full flex flex-col items-center justify-center bg-black aspect-video">
-        <iframe
-          className="w-full h-full"
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=1&showinfo=0&rel=0&modestbranding=1`}
-          title="YouTube video player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-      </div>
-    );
+    return renderVideo(content);
   }
 
   return (
@@ -258,8 +296,12 @@ export const DayContent: React.FC<DayContentProps> = ({
               >
                 {content.stats.map((stat, index) => (
                   <div key={index} className="text-center">
-                    <div className="text-3xl md:text-4xl font-bold">{stat.value}</div>
-                    <div className="text-sm md:text-base opacity-90">{stat.label}</div>
+                    <div className="text-3xl md:text-4xl font-bold">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm md:text-base opacity-90">
+                      {stat.label}
+                    </div>
                   </div>
                 ))}
               </motion.div>
@@ -270,11 +312,15 @@ export const DayContent: React.FC<DayContentProps> = ({
                 className="mt-6 space-y-2"
                 variants={itemVariants}
               >
-                <div className="text-xl md:text-2xl italic">"{content.quote.text}"</div>
+                <div className="text-xl md:text-2xl italic">
+                  "{content.quote.text}"
+                </div>
                 <div className="text-lg opacity-90">
                   — {content.quote.author}
                   {content.quote.location && (
-                    <span className="opacity-75">, {content.quote.location}</span>
+                    <span className="opacity-75">
+                      , {content.quote.location}
+                    </span>
                   )}
                 </div>
               </motion.div>
