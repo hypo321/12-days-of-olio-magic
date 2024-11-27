@@ -22,6 +22,8 @@ export const CalendarWindow: React.FC<Props> = ({
   const [isShaking, setIsShaking] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [showContent, setShowContent] = useState(false);
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
+  const [isSwiping, setIsSwiping] = useState(false);
   const { openModal, closeModal } = useModal();
   const { day: activeDay } = useParams();
   const isActiveDay = activeDay === String(window.day);
@@ -51,6 +53,34 @@ export const CalendarWindow: React.FC<Props> = ({
     e.stopPropagation();
     console.log('Door back clicked for window:', window.day);
     onWindowClose(window.day);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    setTouchStart({ x: touch.clientX, y: touch.clientY });
+    setIsSwiping(false);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStart) return;
+    
+    const touch = e.touches[0];
+    const deltaX = touchStart.x - touch.clientX;
+    const deltaY = Math.abs(touchStart.y - touch.clientY);
+    
+    // If horizontal movement is greater than vertical and exceeds threshold
+    if (deltaX > 50 && deltaY < 30) {
+      setIsSwiping(true);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (isSwiping && day && !window.isOpen && canOpenDoor(window.day)) {
+      console.log('Swipe detected, opening door:', window.day);
+      onWindowClick(window.day);
+    }
+    setTouchStart(null);
+    setIsSwiping(false);
   };
 
   useEffect(() => {
@@ -123,6 +153,9 @@ export const CalendarWindow: React.FC<Props> = ({
           transformStyle: 'preserve-3d',
           willChange: 'transform',
         }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <div
           className="door-front"
@@ -171,12 +204,26 @@ export const CalendarWindow: React.FC<Props> = ({
         className="content-behind rounded-lg"
         onClick={(e) => {
           e.stopPropagation();
+          console.log('Content behind clicked:', {
+            isOpen: window.isOpen,
+            isZoomedOut: !day,
+            day: window.day
+          });
           if (!day && window.isOpen) {
+            onWindowClick(window.day);
+          }
+        }}
+        onTouchEnd={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (!day && window.isOpen) {
+            console.log('Touch end on content-behind, triggering zoom for day:', window.day);
             onWindowClick(window.day);
           }
         }}
         style={{
           cursor: window.isOpen ? 'pointer' : 'default',
+          touchAction: window.isOpen ? 'none' : 'auto',
         }}
       >
         {showContent && (
