@@ -9,7 +9,9 @@ interface ModalContextType {
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
-export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeDay, setActiveDay] = useState<number | null>(null);
 
@@ -20,9 +22,7 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setTimeout(() => {
-      setActiveDay(null);
-    }, 300); // Wait for animation to complete
+    // Don't clear activeDay here - let the Calendar component handle it
   };
 
   return (

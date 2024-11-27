@@ -13,8 +13,12 @@ export const ContentModal: React.FC<Props> = ({ isOpen, day, onClose }) => {
   const navigate = useNavigate();
 
   const handleClose = () => {
+    // First close the modal which will trigger the fade out animation
     onClose();
-    navigate('/');
+    // Then navigate back, which will trigger the zoom out animation
+    setTimeout(() => {
+      navigate('/', { replace: true });
+    }, 300); // Match the modal exit animation duration
   };
 
   return (
@@ -34,7 +38,7 @@ export const ContentModal: React.FC<Props> = ({ isOpen, day, onClose }) => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.75 }}
             transition={{ 
-              duration: 0.5,
+              duration: 0.3, // Match the backdrop animation duration
               ease: [0.4, 0, 0.2, 1] 
             }}
             className="fixed inset-4 md:inset-10 z-50 flex items-center justify-center"

@@ -226,7 +226,10 @@ export const Calendar = () => {
         );
         return newWindows;
       });
-      // Clear active day and navigate back
+      
+      // Reset all zoom-related states
+      setIsZooming(true);
+      setShouldZoom(true);
       setActiveDay(null);
       navigate('/', { replace: true });
     },
@@ -337,19 +340,21 @@ export const Calendar = () => {
 
   // Handle URL changes after initial load
   useEffect(() => {
-    if (isInitialLoad || !shouldZoom) return;
+    if (isInitialLoad) return;
 
     if (!day && activeDay) {
       // When URL changes to home, zoom out
       setIsZooming(true);
+      setShouldZoom(true);
       setActiveDay(null);
     } else if (day && day !== activeDay) {
       // When URL changes to a different day, update active day
       setIsZooming(true);
+      setShouldZoom(true);
       setActiveDay(day);
     }
     setIsInitialLoad(false);
-  }, [day, activeDay, isInitialLoad, shouldZoom]);
+  }, [day, activeDay, isInitialLoad]);
 
   const handleTransitionEnd = useCallback(() => {
     setIsZooming(false);

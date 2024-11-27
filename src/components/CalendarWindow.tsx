@@ -4,7 +4,6 @@ import { BACKGROUND_IMAGE_URL } from '../constants';
 import { canOpenDoor, getOpeningDateMessage } from '../utils';
 import { useParams } from 'react-router-dom';
 import { useModal } from '../contexts/ModalContext';
-import { ContentModal } from './ContentModal';
 
 interface Props {
   window: CalendarWindowType;
