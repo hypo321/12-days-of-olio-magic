@@ -40,10 +40,10 @@ export const ContentModal: React.FC<Props> = ({
     const touch = e.touches[0];
     const deltaX = touch.clientX - touchStart.x;
     const deltaY = touch.clientY - touchStart.y;
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-    // If swiped more than 50px in any direction
-    if (distance > 50) {
+    
+    // Only consider horizontal swipes
+    // Use absolute deltaX to handle both left and right swipes
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
       handleClose();
       setTouchStart(null);
     }

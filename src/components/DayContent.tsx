@@ -227,12 +227,58 @@ export const DayContent: React.FC<DayContentProps> = ({
               {content.title}
             </motion.h2>
 
+            {content.subtitle && (
+              <motion.h3
+                className="text-2xl md:text-3xl font-semibold drop-shadow-md"
+                variants={itemVariants}
+              >
+                {content.subtitle}
+              </motion.h3>
+            )}
+
             <motion.div
               className="text-lg md:text-xl space-y-4 drop-shadow-md"
               variants={itemVariants}
             >
               {content.description}
             </motion.div>
+
+            {content.stats && (
+              <motion.div
+                className={`grid gap-4 mt-6 ${
+                  content.stats.length === 1
+                    ? 'grid-cols-1'
+                    : content.stats.length === 2
+                    ? 'grid-cols-2'
+                    : content.stats.length === 4
+                    ? 'grid-cols-2 md:grid-cols-4'
+                    : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'
+                }`}
+                variants={itemVariants}
+              >
+                {content.stats.map((stat, index) => (
+                  <div key={index} className="text-center">
+                    <div className="text-3xl md:text-4xl font-bold">{stat.value}</div>
+                    <div className="text-sm md:text-base opacity-90">{stat.label}</div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+
+            {content.quote && (
+              <motion.div
+                className="mt-6 space-y-2"
+                variants={itemVariants}
+              >
+                <div className="text-xl md:text-2xl italic">"{content.quote.text}"</div>
+                <div className="text-lg opacity-90">
+                  — {content.quote.author}
+                  {content.quote.location && (
+                    <span className="opacity-75">, {content.quote.location}</span>
+                  )}
+                </div>
+              </motion.div>
+            )}
 
             {content.ctaLink && (
               <motion.div
