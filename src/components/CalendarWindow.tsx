@@ -29,7 +29,6 @@ export const CalendarWindow: React.FC<Props> = ({
   const [swipeStartedOnBack, setSwipeStartedOnBack] = useState(false);
   const { openModal, closeModal } = useModal();
   const { day: activeDay } = useParams();
-  const isActiveDay = activeDay === String(window.day);
 
   const backgroundStyle = {
     backgroundImage: `url("${BACKGROUND_IMAGE_URL}")`,
