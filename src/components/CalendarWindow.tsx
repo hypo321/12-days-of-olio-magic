@@ -51,6 +51,14 @@ export const CalendarWindow: React.FC<Props> = ({
     height: '100%',
   };
 
+  const fullImageStyle = {
+    backgroundImage: `url("/content/day${window.day}.jpg")`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    width: '100%',
+    height: '100%',
+  };
+
   const handleBackClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onWindowClose(window.day);
@@ -237,7 +245,10 @@ export const CalendarWindow: React.FC<Props> = ({
         }}
       >
         {showContent && (
-          <div style={thumbnailStyle} className="rounded-lg" />
+          <div 
+            style={day === String(window.day) ? fullImageStyle : thumbnailStyle} 
+            className="rounded-lg" 
+          />
         )}
       </div>
     </div>
