@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+// src/components/CalendarWindow.tsx
+
+import React from 'react';
 import { CalendarWindow as CalendarWindowType } from '../types';
 import { BACKGROUND_IMAGE_URL } from '../constants';
-import { canOpenDoor, getOpeningDateMessage } from '../utils';
-import { useParams } from 'react-router-dom';
 import { useModal } from '../contexts/ModalContext';
+import { useWindowInteractions } from '../hooks/useWindowInteractions';
 
 interface Props {
   window: CalendarWindowType;
@@ -16,19 +17,30 @@ export const CalendarWindow: React.FC<Props> = ({
   window,
   onWindowClick,
   onWindowClose,
-  day,
+  day: activeDay,
 }) => {
-  const [showMessage, setShowMessage] = useState(false);
-  const [isShaking, setIsShaking] = useState(false);
-  const [isFadingOut, setIsFadingOut] = useState(false);
-  const [showContent, setShowContent] = useState(false);
-  const [touchStart, setTouchStart] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
-  const [swipeStartedOnBack, setSwipeStartedOnBack] = useState(false);
   const { openModal, closeModal } = useModal();
-  const { day: activeDay } = useParams();
+  const { day: windowDay, isOpen } = window;
+
+  const {
+    showMessage,
+    isShaking,
+    isFadingOut,
+    showContent,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+    handleBackClick,
+    handleDoorFrontClick,
+    canOpenDoor,
+    openingDateMessage,
+  } = useWindowInteractions({
+    day: windowDay,
+    isOpen,
+    activeDay,
+    onWindowClick,
+    onWindowClose,
+  });
 
   const backgroundStyle = {
     backgroundImage: `url("${BACKGROUND_IMAGE_URL}")`,
@@ -44,7 +56,7 @@ export const CalendarWindow: React.FC<Props> = ({
   };
 
   const thumbnailStyle = {
-    backgroundImage: `url("/content/day${window.day}-thumb.jpg")`,
+    backgroundImage: `url("/content/day${windowDay}-thumb.jpg")`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     width: '100%',
@@ -52,106 +64,29 @@ export const CalendarWindow: React.FC<Props> = ({
   };
 
   const fullImageStyle = {
-    backgroundImage: `url("/content/day${window.day}.jpg")`,
+    backgroundImage: `url("/content/day${windowDay}.jpg")`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     width: '100%',
     height: '100%',
   };
 
-  const handleBackClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onWindowClose(window.day);
-  };
-
-  const handleWindowTouchStart = (
-    e: React.TouchEvent,
-    isBack: boolean = false
-  ) => {
-    const touch = e.touches[0];
-    setTouchStart({ x: touch.clientX, y: touch.clientY });
-    setSwipeStartedOnBack(isBack);
-  };
-
-  const handleWindowTouchMove = (e: React.TouchEvent) => {
-    if (!touchStart) return;
-
-    const touch = e.touches[0];
-    const deltaX = touch.clientX - touchStart.x; // Positive for right swipe
-    const deltaY = touch.clientY - touchStart.y; // Positive for down swipe
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-    // If started on back and swiping right with enough distance (works both zoomed in and out)
-    if (swipeStartedOnBack && deltaX > 50 && window.isOpen) {
-      handleBackClick(e as any);
-      setTouchStart(null);
-      return;
-    }
-
-    // When zoomed out and not starting on back, any significant swipe on a door triggers zoom
-    if (!day && !swipeStartedOnBack && distance > 30) {
-      onWindowClick(window.day);
-      setTouchStart(null);
-      return;
-    }
-
-    // If not started on back and swiping left with enough distance while zoomed in
-    if (
-      !swipeStartedOnBack &&
-      deltaX < -50 &&
-      day &&
-      !window.isOpen &&
-      canOpenDoor(window.day)
-    ) {
-      onWindowClick(window.day);
-      setTouchStart(null);
-    }
-  };
-
-  const handleWindowTouchEnd = () => {
-    setTouchStart(null);
-    setSwipeStartedOnBack(false);
-  };
-
-  useEffect(() => {
-    if (!day) {
-      setIsShaking(false);
-      if (showMessage) {
-        setIsFadingOut(true);
-        const timer = setTimeout(() => {
-          setShowMessage(false);
-          setIsFadingOut(false);
-        }, 300);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [day, showMessage]);
-
-  useEffect(() => {
-    if (window.isOpen) {
-      setShowContent(true);
-    } else {
+  // Handle modal opening when window is opened
+  React.useEffect(() => {
+    if (isOpen && activeDay === String(windowDay)) {
       const timer = setTimeout(() => {
-        setShowContent(false);
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [window.isOpen]);
-
-  useEffect(() => {
-    if (window.isOpen && activeDay === String(window.day)) {
-      const timer = setTimeout(() => {
-        openModal(window.day);
+        openModal(windowDay);
       }, 700); // Match the door opening animation duration
       return () => clearTimeout(timer);
     }
-  }, [window.isOpen, activeDay, window.day, openModal]);
+  }, [isOpen, activeDay, windowDay, openModal]);
 
-  useEffect(() => {
-    if (!day) {
+  // Close modal when navigating away
+  React.useEffect(() => {
+    if (!activeDay) {
       closeModal();
     }
-  }, [day, closeModal]);
+  }, [activeDay, closeModal]);
 
   return (
     <div
@@ -164,50 +99,36 @@ export const CalendarWindow: React.FC<Props> = ({
         height: window.height,
         willChange: 'transform',
       }}
-      onTouchStart={(e) => handleWindowTouchStart(e)}
-      onTouchMove={handleWindowTouchMove}
-      onTouchEnd={handleWindowTouchEnd}
+      onTouchStart={(e) => handleTouchStart(e)}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       onClick={(e) => {
         e.stopPropagation();
         // When zoomed out and door is open, zoom in on tap
-        if (!day && window.isOpen) {
-          onWindowClick(window.day);
+        if (!activeDay && isOpen) {
+          onWindowClick(windowDay);
         }
       }}
     >
       <div
-        className={`door ${window.isOpen ? 'open' : ''} ${
-          !canOpenDoor(window.day) ? 'locked' : ''
+        className={`door ${isOpen ? 'open' : ''} ${
+          !canOpenDoor ? 'locked' : ''
         } ${isShaking ? 'shake' : ''}`}
         style={{
           transformStyle: 'preserve-3d',
           willChange: 'transform',
         }}
       >
-        <div
-          className="door-front"
-          onClick={(e) => {
-            e.stopPropagation();
-            const isZoomedIn = !!day;
-            if (isZoomedIn && !canOpenDoor(window.day)) {
-              setIsFadingOut(false);
-              setIsShaking(true);
-              setShowMessage(true);
-              setTimeout(() => setIsShaking(false), 820);
-              return;
-            }
-            onWindowClick(window.day);
-          }}
-        >
+        <div className="door-front" onClick={handleDoorFrontClick}>
           <div className="door-front-image" style={backgroundStyle} />
-          <div className="door-number">{window.day}</div>
-          {showMessage && !canOpenDoor(window.day) && (
+          <div className="door-number">{windowDay}</div>
+          {showMessage && !canOpenDoor && (
             <div
               className={`date-message ${
                 isFadingOut ? 'fade-out' : ''
               }`}
             >
-              {getOpeningDateMessage(window.day)}
+              {openingDateMessage}
             </div>
           )}
         </div>
@@ -216,14 +137,14 @@ export const CalendarWindow: React.FC<Props> = ({
           onClick={handleBackClick}
           onTouchStart={(e) => {
             e.stopPropagation();
-            handleWindowTouchStart(e, true);
+            handleTouchStart(e, true);
           }}
           style={{
             position: 'absolute',
             inset: '0',
             cursor: 'pointer',
             transform: 'rotateY(180deg)',
-            backgroundColor: window.isOpen
+            backgroundColor: isOpen
               ? 'rgba(255, 0, 0, 0.3)'
               : undefined,
             zIndex: 10,
@@ -236,18 +157,22 @@ export const CalendarWindow: React.FC<Props> = ({
         onClick={(e) => {
           e.stopPropagation();
           // When zoomed out and door is open, zoom in on tap
-          if (!day && window.isOpen) {
-            onWindowClick(window.day);
+          if (!activeDay && isOpen) {
+            onWindowClick(windowDay);
           }
         }}
         style={{
-          cursor: window.isOpen ? 'pointer' : 'default',
+          cursor: isOpen ? 'pointer' : 'default',
         }}
       >
         {showContent && (
-          <div 
-            style={day === String(window.day) ? fullImageStyle : thumbnailStyle} 
-            className="rounded-lg" 
+          <div
+            style={
+              activeDay === String(windowDay)
+                ? fullImageStyle
+                : thumbnailStyle
+            }
+            className="rounded-lg"
           />
         )}
       </div>

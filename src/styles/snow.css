@@ -1,0 +1,137 @@
+/* Create multiple snowflake animations */
+@keyframes snowfall-1 {
+  0% {
+    transform: translate(0, -10px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(10vw, 100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes snowfall-2 {
+  0% {
+    transform: translate(0, -10px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-10vw, 100vh) rotate(-360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes snowfall-3 {
+  0% {
+    transform: translate(0, -10px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(5vw, 100vh) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes snowfall-4 {
+  0% {
+    transform: translate(0, -10px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-5vw, 100vh) rotate(-180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes snowfall-5 {
+  0% {
+    transform: translate(0, -10px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.snowflake {
+  @apply absolute bg-white rounded-full opacity-80;
+  filter: blur(1px);
+  pointer-events: none;
+}
+
+.snowflake:nth-child(5n + 1) {
+  width: 0.3vw;
+  height: 0.3vw;
+  animation: snowfall-1 10s linear infinite;
+}
+
+.snowflake:nth-child(5n + 2) {
+  width: 0.4vw;
+  height: 0.4vw;
+  animation: snowfall-2 12s linear infinite;
+}
+
+.snowflake:nth-child(5n + 3) {
+  width: 0.2vw;
+  height: 0.2vw;
+  animation: snowfall-3 8s linear infinite;
+}
+
+.snowflake:nth-child(5n + 4) {
+  width: 0.5vw;
+  height: 0.5vw;
+  animation: snowfall-4 15s linear infinite;
+}
+
+.snowflake:nth-child(5n) {
+  width: 0.35vw;
+  height: 0.35vw;
+  animation: snowfall-5 11s linear infinite;
+}
+
+/* Add random delays to snowflakes */
+.snowflake:nth-child(2n) {
+  animation-delay: -2s;
+}
+
+.snowflake:nth-child(3n) {
+  animation-delay: -4s;
+}
+
+.snowflake:nth-child(4n) {
+  animation-delay: -6s;
+}
+
+.snowflake:nth-child(5n) {
+  animation-delay: -8s;
+}
+
+/* Add random starting positions */
+.snowflake:nth-child(7n) {
+  left: 10%;
+}
+
+.snowflake:nth-child(7n + 1) {
+  left: 25%;
+}
+
+.snowflake:nth-child(7n + 2) {
+  left: 40%;
+}
+
+.snowflake:nth-child(7n + 3) {
+  left: 55%;
+}
+
+.snowflake:nth-child(7n + 4) {
+  left: 70%;
+}
+
+.snowflake:nth-child(7n + 5) {
+  left: 85%;
+}
+
+.snowflake:nth-child(7n + 6) {
+  left: 95%;
+}

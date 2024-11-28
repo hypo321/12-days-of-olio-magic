@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { ModalProvider } from './contexts/ModalContext';
 import { ContentModal } from './components/ContentModal';
 import { useModal } from './contexts/ModalContext';
+import { SnowEffect } from './components/SnowEffect';
 
 const CalendarRoute = () => {
   const { day } = useParams();
@@ -37,23 +38,23 @@ const CalendarRoute = () => {
           <>
             <title>The 12 Days of Olio Magic</title>
             <meta name="title" content="The 12 Days of Olio Magic" />
-            <meta name="description" content="Join us for 12 days of magical surprises in our interactive advent calendar! Each day brings a new festive delight. " />
+            <meta name="description" content="Join us for a magical journey through 12 days of Olio surprises! Open a new door each day to discover something special." />
             
             {/* Open Graph / Facebook */}
             <meta property="og:type" content="website" />
-            <meta property="og:url" content="https://12-days-of-olio-magic.vercel.app/" />
+            <meta property="og:url" content="https://12-days-of-olio-magic.vercel.app" />
             <meta property="og:title" content="The 12 Days of Olio Magic" />
-            <meta property="og:description" content="Join us for 12 days of magical surprises in our interactive advent calendar! Each day brings a new festive delight. " />
+            <meta property="og:description" content="Join us for a magical journey through 12 days of Olio surprises! Open a new door each day to discover something special." />
             <meta property="og:image" content="https://12-days-of-olio-magic.vercel.app/images/og/main.jpg" />
             
             {/* Twitter */}
             <meta name="twitter:card" content="summary_large_image" />
-            <meta name="twitter:url" content="https://12-days-of-olio-magic.vercel.app/" />
+            <meta name="twitter:url" content="https://12-days-of-olio-magic.vercel.app" />
             <meta name="twitter:title" content="The 12 Days of Olio Magic" />
-            <meta name="twitter:description" content="Join us for 12 days of magical surprises in our interactive advent calendar! Each day brings a new festive delight. " />
+            <meta name="twitter:description" content="Join us for a magical journey through 12 days of Olio surprises! Open a new door each day to discover something special." />
             <meta name="twitter:image" content="https://12-days-of-olio-magic.vercel.app/images/og/main.jpg" />
             
-            <link rel="canonical" href="https://12-days-of-olio-magic.vercel.app/" />
+            <link rel="canonical" href="https://12-days-of-olio-magic.vercel.app" />
           </>
         )}
       </Helmet>
@@ -67,6 +68,7 @@ const AppContent = () => {
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-800 to-gray-900">
+      <SnowEffect />
       <Routes>
         <Route path="/" element={<CalendarRoute />} />
         <Route path="/day/:day" element={<CalendarRoute />} />

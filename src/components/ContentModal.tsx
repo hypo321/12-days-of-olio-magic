@@ -40,10 +40,13 @@ export const ContentModal: React.FC<Props> = ({
     const touch = e.touches[0];
     const deltaX = touch.clientX - touchStart.x;
     const deltaY = touch.clientY - touchStart.y;
-    
+
     // Only consider horizontal swipes
     // Use absolute deltaX to handle both left and right swipes
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+    if (
+      Math.abs(deltaX) > Math.abs(deltaY) &&
+      Math.abs(deltaX) > 50
+    ) {
       handleClose();
       setTouchStart(null);
     }
