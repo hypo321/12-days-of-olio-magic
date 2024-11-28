@@ -1,34 +1,19 @@
+// src/components/Calendar.tsx
+
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { CalendarWindow as CalendarWindowType } from '../types';
 import { CalendarWindow } from './CalendarWindow';
 import { LoadingScreen } from './LoadingScreen';
 import { BACKGROUND_IMAGE_URL } from '../constants';
 import { canOpenDoor } from '../utils';
-
-interface Position {
-  x: number;
-  y: number;
-  width: string;
-  height: string;
-}
-
-interface WindowData extends CalendarWindowType, Position {}
-
-interface CachedData {
-  windows: WindowData[];
-  viewportSize: { width: number; height: number };
-}
+import { useCalendarWindows } from '../hooks/useCalendarWindows';
+import { getViewportSize } from '../utils/windowUtils';
+import { saveWindowData } from '../utils/localStorageUtils';
 
 export const Calendar = () => {
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
-  const [windows, setWindows] = useState<WindowData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [containerSize, setContainerSize] = useState(() => ({
-    width: window.visualViewport?.width || window.innerWidth,
-    height: window.visualViewport?.height || window.innerHeight,
-  }));
   const [isZooming, setIsZooming] = useState(false);
   const { day } = useParams<{ day?: string }>();
   const navigate = useNavigate();
@@ -42,125 +27,28 @@ export const Calendar = () => {
     translateY: 0,
   });
 
-  const generateNewWindows = (
-    width: number,
-    height: number
-  ): WindowData[] => {
-    // Determine if we're in portrait mode
-    const isPortrait = height > width;
-    const columns = isPortrait ? 3 : 4;
-    const rows = isPortrait ? 4 : 3;
+  // Get initial container size
+  const [containerSize, setContainerSize] = useState(
+    getViewportSize()
+  );
 
-    // Calculate available space
-    const availableWidth = width;
-    const availableHeight = height;
+  // Use the custom hook to manage calendar windows
+  const [windows, setWindows] = useCalendarWindows(containerSize);
 
-    // Calculate cell dimensions
-    const cellWidth = availableWidth / columns;
-    const cellHeight = availableHeight / rows;
-
-    // Calculate window size to fit within cells
-    // Make windows match the viewport's aspect ratio more closely
-    const viewportAspectRatio = width / height;
-    const aspectRatio = isPortrait
-      ? Math.min(1.1, viewportAspectRatio * 1.2) // In portrait, slightly taller
-      : Math.max(1.2, viewportAspectRatio * 0.8); // In landscape, slightly wider
-
-    const maxWidth = cellWidth * 0.9; // 90% of cell width
-    const maxHeight = cellHeight * 0.85; // 85% of cell height
-
-    // Calculate window dimensions based on aspect ratio while respecting max sizes
-    let windowWidth: number;
-    let windowHeight: number;
-
-    if (maxWidth / aspectRatio <= maxHeight) {
-      // Width is the limiting factor
-      windowWidth = maxWidth;
-      windowHeight = maxWidth / aspectRatio;
-    } else {
-      // Height is the limiting factor
-      windowHeight = maxHeight;
-      windowWidth = maxHeight * aspectRatio;
-    }
-
-    // Create an array of scrambled day numbers (1-12)
-    const scrambledDays = Array.from(
-      { length: 12 },
-      (_, i) => i + 1
-    ).sort(() => Math.random() - 0.5);
-
-    return Array.from({ length: 12 }, (_, i) => {
-      const row = Math.floor(i / columns);
-      const col = i % columns;
-
-      // Calculate base position, centering the entire grid
-      const gridWidth = cellWidth * columns;
-      const gridHeight = cellHeight * rows;
-      const gridLeft = (width - gridWidth) / 2;
-      const gridTop = (height - gridHeight) / 2;
-
-      // Position within the grid, centering windows in their cells
-      const baseX =
-        gridLeft + col * cellWidth + (cellWidth - windowWidth) / 2;
-      const baseY =
-        gridTop + row * cellHeight + (cellHeight - windowHeight) / 2;
-
-      // Add small random offset
-      const maxOffsetX = (cellWidth - windowWidth) * 0.1;
-      const maxOffsetY = (cellHeight - windowHeight) * 0.1;
-      const offsetX = (Math.random() - 0.5) * maxOffsetX;
-      const offsetY = (Math.random() - 0.5) * maxOffsetY;
-
-      const finalX = baseX + offsetX;
-      const finalY = baseY + offsetY;
-
-      return {
-        day: scrambledDays[i],
-        isOpen: false,
-        x: finalX,
-        y: finalY,
-        width: `${windowWidth}px`,
-        height: `${windowHeight}px`,
-        imageUrl: `/thumbnails/day${scrambledDays[i]}.jpg`,
-      };
-    });
-  };
-
-  const preloadImage = async (url: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-
-      const handleLoad = () => {
-        img.removeEventListener('load', handleLoad);
-        img.removeEventListener('error', handleError);
-        resolve();
-      };
-
-      const handleError = () => {
-        img.removeEventListener('load', handleLoad);
-        img.removeEventListener('error', handleError);
-        console.warn(`Failed to load image: ${url}`);
-        reject(new Error(`Failed to load image: ${url}`));
-      };
-
-      img.addEventListener('load', handleLoad);
-      img.addEventListener('error', handleError);
-      img.src = url;
-    });
-  };
-
+  // Handle window click events
   const handleWindowClick = useCallback(
     (clickedDay: number) => {
       if (!activeDay) {
+        // Zoom in to the selected day
         setIsZooming(true);
         setActiveDay(clickedDay.toString());
         navigate(`/day/${clickedDay}`, { replace: true });
       } else {
-        // Check if the door can be opened when trying to open it
+        // Check if the door can be opened
         if (!canOpenDoor(clickedDay)) {
           return;
         }
-        // If we're zoomed in, toggle the window
+        // Toggle the window's open state
         setWindows((prevWindows) => {
           const newWindows = [...prevWindows];
           const windowIndex = newWindows.findIndex(
@@ -172,20 +60,19 @@ export const Calendar = () => {
               isOpen: !newWindows[windowIndex].isOpen,
             };
           }
-          localStorage.setItem(
-            'advent-calendar-windows',
-            JSON.stringify({
-              windows: newWindows,
-              viewportSize: containerSize,
-            })
-          );
+          // Save updated windows to localStorage
+          saveWindowData({
+            windows: newWindows,
+            viewportSize: containerSize,
+          });
           return newWindows;
         });
       }
     },
-    [containerSize, activeDay, navigate]
+    [activeDay, navigate, setWindows, containerSize]
   );
 
+  // Handle background click to zoom out
   const handleBackgroundClick = useCallback(() => {
     if (activeDay) {
       setIsZooming(true);
@@ -194,9 +81,10 @@ export const Calendar = () => {
     }
   }, [activeDay, navigate]);
 
+  // Handle window close events
   const handleWindowClose = useCallback(
     (clickedDay: number) => {
-      // Close the window first
+      // Close the window
       setWindows((prevWindows) => {
         const newWindows = [...prevWindows];
         const windowIndex = newWindows.findIndex(
@@ -208,51 +96,68 @@ export const Calendar = () => {
             isOpen: false,
           };
         }
-        localStorage.setItem(
-          'advent-calendar-windows',
-          JSON.stringify({
-            windows: newWindows,
-            viewportSize: containerSize,
-          })
-        );
+        // Save updated windows to localStorage
+        saveWindowData({
+          windows: newWindows,
+          viewportSize: containerSize,
+        });
         return newWindows;
       });
 
-      // Reset zoom state and navigate
+      // Reset zoom state and navigate back
       setIsZooming(true);
       setActiveDay(null);
       navigate('/', { replace: true });
     },
-    [navigate, containerSize]
+    [navigate, setWindows, containerSize]
   );
 
+  // Preload images and set loading state
   useEffect(() => {
+    const preloadImage = async (url: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+
+        const handleLoad = () => {
+          img.removeEventListener('load', handleLoad);
+          img.removeEventListener('error', handleError);
+          resolve();
+        };
+
+        const handleError = () => {
+          img.removeEventListener('load', handleLoad);
+          img.removeEventListener('error', handleError);
+          console.warn(`Failed to load image: ${url}`);
+          reject(new Error(`Failed to load image: ${url}`));
+        };
+
+        img.addEventListener('load', handleLoad);
+        img.addEventListener('error', handleError);
+        img.src = url;
+      });
+    };
+
     const loadAllImages = async () => {
       try {
         setIsLoading(true);
         setAllImagesLoaded(false);
         setLoadingProgress(0);
 
-        // Create an array of all image URLs to preload
+        // List of images to preload
         const imageUrls = [
           BACKGROUND_IMAGE_URL,
-          '/thumbnails/cardboard.jpg', // Only keep the cardboard texture for door backs
+          '/thumbnails/cardboard.jpg', // Door back texture
           ...Array.from(
             { length: 12 },
             (_, i) => `/content/day${i + 1}.jpg`
           ),
         ];
 
-        // Load all images concurrently
-        const imagePromises = imageUrls.map((url) =>
-          preloadImage(url)
-        );
-
-        // Track progress
+        // Load images concurrently and track progress
         let loaded = 0;
         await Promise.all(
-          imagePromises.map((promise) =>
-            promise
+          imageUrls.map((url) =>
+            preloadImage(url)
               .then(() => {
                 loaded++;
                 setLoadingProgress((loaded / imageUrls.length) * 100);
@@ -265,39 +170,8 @@ export const Calendar = () => {
           )
         );
 
-        // Initialize windows
-        const savedData = localStorage.getItem(
-          'advent-calendar-windows'
-        );
-        if (savedData) {
-          const { windows: savedWindows, viewportSize } = JSON.parse(
-            savedData
-          ) as CachedData;
-          if (
-            viewportSize.width === containerSize.width &&
-            viewportSize.height === containerSize.height
-          ) {
-            setWindows(savedWindows);
-          } else {
-            setWindows(
-              generateNewWindows(
-                containerSize.width,
-                containerSize.height
-              )
-            );
-          }
-        } else {
-          setWindows(
-            generateNewWindows(
-              containerSize.width,
-              containerSize.height
-            )
-          );
-        }
-
-        // Mark all images as loaded and remove loading screen
+        // Images loaded
         setAllImagesLoaded(true);
-        await new Promise((resolve) => setTimeout(resolve, 100));
         setIsLoading(false);
       } catch (error) {
         console.error('Error loading images:', error);
@@ -307,22 +181,22 @@ export const Calendar = () => {
     };
 
     loadAllImages();
-  }, [containerSize]);
+  }, []);
 
   // Handle initial load and URL changes
   useEffect(() => {
     if (!allImagesLoaded || windows.length === 0 || !isInitialLoad)
       return;
 
-    // Always start with zoomed out view
+    // Start with zoomed-out view
     setZoomTransform({ scale: 1, translateX: 0, translateY: 0 });
 
     if (day) {
-      // Wait a bit to show the full calendar before zooming
+      // Zoom into the day after a delay
       const timer = setTimeout(() => {
         setIsZooming(true);
         setActiveDay(day);
-      }, 1000); // Give more time to see the full calendar
+      }, 1000);
       return () => clearTimeout(timer);
     }
     setIsInitialLoad(false);
@@ -333,32 +207,29 @@ export const Calendar = () => {
     if (isInitialLoad) return;
 
     if (!day && activeDay) {
-      // When URL changes to home, zoom out
+      // Zoom out when navigating back to home
       setIsZooming(true);
       setActiveDay(null);
     } else if (day && day !== activeDay) {
-      // When URL changes to a different day, update active day
+      // Zoom into the new day
       setIsZooming(true);
       setActiveDay(day);
     }
     setIsInitialLoad(false);
   }, [day, activeDay, isInitialLoad]);
 
+  // Handle transition end
   const handleTransitionEnd = useCallback(() => {
     setIsZooming(false);
   }, []);
 
+  // Update container size on window resize
   useEffect(() => {
     const handleResize = () => {
-      const width = window.visualViewport?.width || window.innerWidth;
-      const height =
-        window.visualViewport?.height || window.innerHeight;
-
-      setContainerSize({ width, height });
-      setWindows(generateNewWindows(width, height));
+      const size = getViewportSize();
+      setContainerSize(size);
     };
 
-    // Handle both window resize and viewport changes (e.g., mobile browser UI showing/hiding)
     window.addEventListener('resize', handleResize);
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', handleResize);
@@ -383,7 +254,7 @@ export const Calendar = () => {
       const dayNumber = parseInt(activeDay);
       const selectedWindow = windows.find((w) => w.day === dayNumber);
       if (selectedWindow) {
-        // Calculate zoom transform using visualViewport
+        // Calculate zoom transform
         const windowX = selectedWindow.x;
         const windowY = selectedWindow.y;
         const windowWidth = parseFloat(selectedWindow.width);
@@ -414,11 +285,12 @@ export const Calendar = () => {
         setZoomTransform({ scale, translateX, translateY });
       }
     } else {
-      // Reset zoom when no active day
+      // Reset zoom
       setZoomTransform({ scale: 1, translateX: 0, translateY: 0 });
     }
   }, [activeDay, windows, containerSize]);
 
+  // Handle wheel events to zoom out
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (activeDay) {
@@ -433,14 +305,14 @@ export const Calendar = () => {
     return () => window.removeEventListener('wheel', handleWheel);
   }, [activeDay, navigate]);
 
-  // Add keyboard navigation handler
+  // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!activeDay) return;
 
       const currentDay = parseInt(activeDay);
 
-      // Handle ESC, Space, or Return
+      // Handle ESC, Space, Enter, Backspace
       if (
         e.key === 'Escape' ||
         e.key === ' ' ||
@@ -454,15 +326,13 @@ export const Calendar = () => {
         return;
       }
 
-      // Handle left arrow
+      // Handle arrow keys
       if (e.key === 'ArrowLeft' && currentDay > 1) {
         e.preventDefault();
         const prevDay = currentDay - 1;
-        // First zoom out
         setIsZooming(true);
         setActiveDay(null);
         navigate('/', { replace: true });
-        // Then zoom into the previous day after a short delay
         setTimeout(() => {
           setIsZooming(true);
           setActiveDay(prevDay.toString());
@@ -471,15 +341,12 @@ export const Calendar = () => {
         return;
       }
 
-      // Handle right arrow
       if (e.key === 'ArrowRight' && currentDay < 12) {
         e.preventDefault();
         const nextDay = currentDay + 1;
-        // First zoom out
         setIsZooming(true);
         setActiveDay(null);
         navigate('/', { replace: true });
-        // Then zoom into the next day after a short delay
         setTimeout(() => {
           setIsZooming(true);
           setActiveDay(nextDay.toString());
@@ -490,15 +357,12 @@ export const Calendar = () => {
 
       // Handle number keys 1-9
       const num = parseInt(e.key);
-      if (!isNaN(num) && num >= 1 && num <= 9) {
+      if (!isNaN(num) && num >= 1 && num <= 12) {
         e.preventDefault();
-        if (num === currentDay) return; // Don't do anything if it's the same day
-
-        // First zoom out
+        if (num === currentDay) return;
         setIsZooming(true);
         setActiveDay(null);
         navigate('/', { replace: true });
-        // Then zoom into the selected day after a short delay
         setTimeout(() => {
           setIsZooming(true);
           setActiveDay(num.toString());
