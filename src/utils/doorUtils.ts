@@ -1,13 +1,15 @@
 // src/utils/doorUtils.ts
 
-import { isDev, unlockAllDoors } from './env';
-
 export const isDevelopmentMode = () => {
-  return isDev && unlockAllDoors === 'true';
+  return import.meta.env.DEV;
+};
+
+export const areAllDoorsUnlocked = () => {
+  return import.meta.env.VITE_UNLOCK_ALL_DOORS === 'true';
 };
 
 export const canOpenDoor = (day: number | string): boolean => {
-  if (isDevelopmentMode()) {
+  if (areAllDoorsUnlocked()) {
     return true;
   }
 
