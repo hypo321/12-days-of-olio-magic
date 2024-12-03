@@ -10,8 +10,24 @@ vi.mock('../../utils/windowGenerator');
 describe('useCalendarWindows', () => {
   const mockContainerSize = { width: 1000, height: 800 };
   const mockWindows = [
-    { day: 1, x: 100, y: 100, width: 100, height: 100, isOpen: false },
-    { day: 2, x: 200, y: 200, width: 100, height: 100, isOpen: false },
+    { 
+      day: 1, 
+      x: 100, 
+      y: 100, 
+      width: '100px', 
+      height: '100px', 
+      isOpen: false,
+      imageUrl: '/images/day1.jpg'
+    },
+    { 
+      day: 2, 
+      x: 200, 
+      y: 200, 
+      width: '100px', 
+      height: '100px', 
+      isOpen: false,
+      imageUrl: '/images/day2.jpg'
+    },
   ];
 
   beforeEach(() => {
