@@ -308,3 +308,33 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.conic-gradient {
+  position: relative;
+  width: 100%;
+  height: 100%; /* Required for the pseudo-element to have reference */
+}
+
+.conic-gradient::before {
+  content: '';
+    position: absolute;
+
+    top: 0;
+    left: 0;
+  right: 0;
+  bottom: 0;
+    z-index: -1; /* Place the gradient behind other content */
+  background: conic-gradient(
+    from 330deg,
+    #FFCE00 0%,  /* Brand yellow */
+    #FFB000 15%, /* Brand light orange */
+    #FB6501 30%, /* Brand orange */
+    #F75996 45%, /* Brand pink */
+    #F4226E 60%,  /* Brand reddish pink */
+    #FB6501 75%, /* Brand orange */
+    #FFB000 90%, /* Brand light orange */
+    #FFCE00 100%  /* Brand yellow */
+  );
+  filter: blur(30px);
+}
+
