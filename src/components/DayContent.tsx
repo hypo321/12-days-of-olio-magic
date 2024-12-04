@@ -23,7 +23,7 @@ export const DayContent: React.FC<DayContentProps> = ({
     return null;
   }
 
-  const isVideoDay = [1, 12].includes(day);
+  const isVideoDay = [12].includes(day);
   const bgColor = day % 2 === 0 ? 'bg-olio-lilac' : 'bg-olio-yellow';
   const textColor = 'text-gray-900';
 

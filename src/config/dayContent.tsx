@@ -5,13 +5,13 @@ import { Emoji } from '../components/Emoji';
 import { StatsGrid } from '../components/StatsGrid';
 import { QuoteBlock } from '../components/QuoteBlock';
 import { LiteYouTubeEmbed } from '../components/LiteYouTubeEmbed';
+import { AudioPlayer } from '../components/AudioPlayer';
 
-export const CONTENT_COMPONENTS: Record<number, () => React.ReactNode> = {
-  1: () => (
-    <div className="relative w-full h-full flex flex-col items-center justify-center bg-black aspect-video">
-      <LiteYouTubeEmbed videoId="PUdnFtSAg8c" />
-    </div>
-  ),
+export const CONTENT_COMPONENTS: Record<
+  number,
+  () => React.ReactNode
+> = {
+  1: () => <AudioPlayer fileName="welcome.mp3" />,
 
   2: () => (
     <>

@@ -397,7 +397,6 @@ export const Calendar = () => {
             transformOrigin: 'center center',
           }}
         >
-          {' '}
           <SnowEffect />
           <div
             className="absolute inset-0"

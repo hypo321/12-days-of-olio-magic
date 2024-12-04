@@ -84,11 +84,11 @@ export const ContentModal: React.FC<Props> = ({
             <div className="bg-black bg-opacity-90 rounded-lg w-full h-full overflow-hidden relative">
               <button
                 onClick={handleClose}
-                className="absolute top-4 right-4 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors z-50"
+                className="absolute top-2 right-2 md:top-4 md:right-4 p-2 rounded-full bg-black bg-opacity-30 hover:bg-opacity-50 text-white transition-all z-50"
                 aria-label="Close modal"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-4 h-4 md:w-6 md:h-6"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
