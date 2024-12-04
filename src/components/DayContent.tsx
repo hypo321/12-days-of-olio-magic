@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Emoji } from './Emoji';
 import { itemVariants, contentVariants } from '../utils/animations';
+import { ScreenEffect } from './ScreenEffect';
 
 interface DayContentProps {
   day: number;
@@ -98,6 +99,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
       </motion.h2>
 
       <Emoji name="party" />
+      <ScreenEffect effect="confetti" />
     </>
   ),
 
@@ -147,7 +149,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
         variants={itemVariants}
       >
-        And amazingly - we’ve just hit
+        And amazingly - we've just hit
       </motion.h2>
       <motion.h2
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
@@ -163,6 +165,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
       </motion.h3>
 
       <Emoji name="🚀" />
+      <ScreenEffect effect="confetti" />
     </>
   ),
 
@@ -178,7 +181,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         className="text-2xl md:text-3xl font-semibold drop-shadow-md"
         variants={itemVariants}
       >
-        without a snapshot of the human impact we’re having
+        without a snapshot of the human impact we're having
       </motion.h3>
 
       <Emoji name="🫶" />
