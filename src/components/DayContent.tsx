@@ -117,7 +117,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         in UK and Irish communities
       </motion.h3>
 
-      <Emoji name="🥘" />
+      <Emoji name="🏡🥘" />
     </>
   ),
 
@@ -130,7 +130,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         We saved x billion litres of water
       </motion.h2>
 
-      <Emoji name="swimmer" />
+      <Emoji name="💧🏊‍♀️" />
 
       <motion.h3
         className="text-2xl md:text-3xl font-semibold drop-shadow-md"
