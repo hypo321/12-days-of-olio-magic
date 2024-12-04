@@ -153,24 +153,22 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
         variants={itemVariants}
       >
-        Community Impact
+        We saved x billion litres of water
       </motion.h2>
 
-      <motion.p
-        className="text-lg md:text-xl space-y-4 drop-shadow-md"
+      <motion.img
+        src="/content/swimmer.png" // Replace with your actual image path
+        alt="30 million meals rescued"
+        className="mt-4 mx-auto rounded-lg max-w-full"
+        variants={itemVariants}
+      />
+
+      <motion.h3
+        className="text-2xl md:text-3xl font-semibold drop-shadow-md"
         variants={itemVariants}
       >
-        Every share on Olio creates a ripple effect of positive
-        change. From reducing CO2 emissions to helping neighbors in
-        need, our community is making the world better one item at a
-        time.
-      </motion.p>
-
-      <QuoteBlock
-        text="Olio has changed how I think about food waste. Now I can help my neighbors and save perfectly good food from the bin!"
-        author="Sarah"
-        location="London, UK"
-      />
+        Which is enough to fill x Olympic swimming pools
+      </motion.h3>
     </>
   ),
 
@@ -180,32 +178,23 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
         variants={itemVariants}
       >
-        Environmental Impact
+        We diverted x tonnes of Co2 from the atmosphere
       </motion.h2>
+
+      <motion.img
+        src="/content/sun-behind-cloud.png" // Replace with your actual image path
+        alt="30 million meals rescued"
+        className="mt-4 mx-auto rounded-lg max-w-full"
+        variants={itemVariants}
+      />
 
       <motion.h3
         className="text-2xl md:text-3xl font-semibold drop-shadow-md"
         variants={itemVariants}
       >
-        Every Share Counts
+        Which is the same as cancelling out x flights from London to
+        New York
       </motion.h3>
-
-      <motion.p
-        className="text-lg md:text-xl space-y-4 drop-shadow-md"
-        variants={itemVariants}
-      >
-        When you share on Olio, you're not just helping your community
-        - you're helping the planet. Each food share prevents methane
-        emissions and saves precious water resources.
-      </motion.p>
-
-      <StatsGrid
-        stats={[
-          { value: '40M+', label: 'Meals Saved' },
-          { value: '120M+', label: 'Car Miles Saved' },
-          { value: '6B+', label: 'Liters of Water Saved' },
-        ]}
-      />
     </>
   ),
 
