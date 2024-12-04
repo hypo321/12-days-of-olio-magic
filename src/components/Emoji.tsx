@@ -22,7 +22,7 @@ export const Emoji: React.FC<EmojiProps> = ({
   // Helper to check if a string contains only emoji characters
   const isEmojiCharacter = (str: string) => {
     const emojiRegex =
-      /^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]$/u;
+      /(?:\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\p{Emoji_Modifier_Base}(?:\p{Emoji_Modifier})?)/u;
     return emojiRegex.test(str);
   };
 

@@ -172,23 +172,16 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
         variants={itemVariants}
       >
-        Olio Made Matches
+        But those numbers mean nothing
       </motion.h2>
-
-      <motion.p
-        className="text-lg md:text-xl space-y-4 drop-shadow-md"
+      <motion.h3
+        className="text-2xl md:text-3xl font-semibold drop-shadow-md"
         variants={itemVariants}
       >
-        Beautiful friendships form every day through Olio. Our
-        community doesn't just share food - they share stories,
-        cultures, and create lasting connections.
-      </motion.p>
+        without a snapshot of the human impact we’re having
+      </motion.h3>
 
-      <QuoteBlock
-        text="Through Olio, I've met the most amazing neighbors. What started with sharing leftovers has turned into weekly community dinners!"
-        author="Maria"
-        location="Barcelona, Spain"
-      />
+      <Emoji name="🫶" />
     </>
   ),
 
