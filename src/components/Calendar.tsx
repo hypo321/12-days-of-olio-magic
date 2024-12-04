@@ -9,6 +9,7 @@ import { canOpenDoor } from '../utils';
 import { useCalendarWindows } from '../hooks/useCalendarWindows';
 import { getViewportSize } from '../utils/windowUtils';
 import { saveWindowData } from '../utils/localStorageUtils';
+import { SnowEffect } from './SnowEffect';
 
 export const Calendar = () => {
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
@@ -396,6 +397,8 @@ export const Calendar = () => {
             transformOrigin: 'center center',
           }}
         >
+          {' '}
+          <SnowEffect />
           <div
             className="absolute inset-0"
             style={{
