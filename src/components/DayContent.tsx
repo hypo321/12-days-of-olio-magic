@@ -82,14 +82,14 @@ const LiteYouTubeEmbed = ({ videoId }: { videoId: string }) => (
 
 /** Content Components **/
 
-const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
-  1: (
+const CONTENT_COMPONENTS: Record<number, () => React.ReactNode> = {
+  1: () => (
     <div className="relative w-full h-full flex flex-col items-center justify-center bg-black aspect-video">
       <LiteYouTubeEmbed videoId="PUdnFtSAg8c" />
     </div>
   ),
 
-  2: (
+  2: () => (
     <>
       <motion.h2
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
@@ -99,11 +99,10 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
       </motion.h2>
 
       <Emoji name="party" />
-      <ScreenEffect effect="confetti" />
     </>
   ),
 
-  3: (
+  3: () => (
     <>
       <motion.h2
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
@@ -123,7 +122,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
     </>
   ),
 
-  4: (
+  4: () => (
     <>
       <motion.h2
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
@@ -143,7 +142,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
     </>
   ),
 
-  5: (
+  5: () => (
     <>
       <motion.h2
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
@@ -165,17 +164,16 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
       </motion.h3>
 
       <Emoji name="🚀" />
-      <ScreenEffect effect="confetti" />
     </>
   ),
 
-  6: (
+  6: () => (
     <>
       <motion.h2
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
         variants={itemVariants}
       >
-        But those numbers mean nothing
+        But those numbers mean nothing...
       </motion.h2>
       <motion.h3
         className="text-2xl md:text-3xl font-semibold drop-shadow-md"
@@ -188,7 +186,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
     </>
   ),
 
-  7: (
+  7: () => (
     <>
       <motion.h2
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
@@ -223,7 +221,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
     </>
   ),
 
-  8: (
+  8: () => (
     <>
       <motion.h2
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
@@ -249,7 +247,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
     </>
   ),
 
-  9: (
+  9: () => (
     <>
       <motion.h2
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
@@ -283,7 +281,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
     </>
   ),
 
-  10: (
+  10: () => (
     <>
       <motion.h2
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
@@ -309,7 +307,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
     </>
   ),
 
-  11: (
+  11: () => (
     <>
       <motion.h2
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
@@ -343,11 +341,20 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
     </>
   ),
 
-  12: (
+  12: () => (
     <div className="relative w-full h-full flex flex-col items-center justify-center bg-black aspect-video">
       <LiteYouTubeEmbed videoId="ckhjdrOxBhU" />
     </div>
   ),
+};
+
+// Define which days have effects
+const DAY_EFFECTS: Partial<
+  Record<number, { effect: 'confetti' | 'hearts' }>
+> = {
+  2: { effect: 'confetti' },
+  5: { effect: 'confetti' },
+  6: { effect: 'hearts' },
 };
 
 /** DayContent Component **/
@@ -355,18 +362,20 @@ export const DayContent: React.FC<DayContentProps> = ({
   day,
   isVisible,
 }) => {
-  const content = CONTENT_COMPONENTS[day];
+  console.log(`DayContent ${day} visibility:`, isVisible);
 
-  if (!content) {
+  const ContentComponent = CONTENT_COMPONENTS[day];
+  const dayEffect = DAY_EFFECTS[day];
+
+  if (!ContentComponent) {
     return null;
   }
 
-  // Determine if the day is a video day by checking if content is a video component
   const isVideoDay = [1, 12].includes(day); // Add any video days here
 
   if (isVideoDay) {
     // For video days, render the content directly
-    return content;
+    return ContentComponent();
   }
 
   // Alternate between lilac and yellow backgrounds
@@ -380,14 +389,20 @@ export const DayContent: React.FC<DayContentProps> = ({
         className={`absolute inset-0 ${bgColor} rounded-lg opacity-95`}
       />
       <div className="relative z-10 w-full h-full grid place-items-center p-8">
-        <div className="w-full max-w-4xl max-h-full overflow-y-auto scrollbar-hide">
+        <div className="relative w-full max-w-4xl max-h-full overflow-y-auto scrollbar-hide">
+          {isVisible && dayEffect && (
+            <ScreenEffect
+              effect={dayEffect.effect}
+              className="absolute inset-0"
+            />
+          )}
           <motion.div
-            className={`grid gap-6 ${textColor} text-center`}
+            className={`relative grid gap-6 ${textColor} text-center`}
             initial="hidden"
             animate={isVisible ? 'visible' : 'hidden'}
             variants={contentVariants}
           >
-            {content}
+            {ContentComponent()}
           </motion.div>
         </div>
       </div>

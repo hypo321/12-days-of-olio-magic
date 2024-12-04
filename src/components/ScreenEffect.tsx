@@ -1,14 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
+import './ScreenEffect.css';
 
-type EffectType = 'confetti';
+type EffectType = 'confetti' | 'hearts';
 
 interface ScreenEffectProps {
   effect: EffectType;
+  className?: string;
 }
 
-export const ScreenEffect: React.FC<ScreenEffectProps> = ({ effect }) => {
+const HEART_COLORS = ['#FF69B4', '#FF1493', '#FF0000', '#FF4500'];
+
+export const ScreenEffect: React.FC<ScreenEffectProps> = ({ effect, className = '' }) => {
+  const [items, setItems] = useState<number[]>([]);
+
   useEffect(() => {
+    if (effect === 'hearts') {
+      const itemCount = 30;
+      setItems(Array.from({ length: itemCount }, (_, i) => i));
+    }
+    
     if (effect === 'confetti') {
       const duration = 3 * 1000;
       const animationEnd = Date.now() + duration;
@@ -27,7 +38,6 @@ export const ScreenEffect: React.FC<ScreenEffectProps> = ({ effect }) => {
 
         const particleCount = 50;
 
-        // Launch confetti from both sides
         confetti({
           particleCount,
           angle: randomInRange(55, 125),
@@ -51,6 +61,33 @@ export const ScreenEffect: React.FC<ScreenEffectProps> = ({ effect }) => {
     }
   }, [effect]);
 
-  // This component doesn't render anything
+  if (effect === 'hearts') {
+    return (
+      <div className={`screen-effect-container ${className}`}>
+        {items.map((index) => {
+          const randomColor = HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)];
+          const randomSize = Math.random() * (3 - 1.5) + 1.5;
+          
+          return (
+            <span
+              key={index}
+              className="heart"
+              style={{
+                left: `${Math.random() * 100}%`,
+                bottom: '0',
+                fontSize: `${randomSize}rem`,
+                color: randomColor,
+                filter: 'drop-shadow(0 0 5px rgba(255,105,180,0.3))',
+                animationDelay: `${Math.random() * 2}s`,
+              }}
+            >
+              ❤️
+            </span>
+          );
+        })}
+      </div>
+    );
+  }
+
   return null;
 };
