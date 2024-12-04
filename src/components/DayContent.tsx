@@ -115,7 +115,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
 
       <motion.img
         src="/content/party.png" // Replace with your actual image path
-        alt="30 million meals rescued"
+        alt="celebrate"
         className="mt-4 mx-auto rounded-lg max-w-full"
         variants={itemVariants}
       />
@@ -140,7 +140,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
 
       <motion.img
         src="/content/party.png" // Replace with your actual image path
-        alt="30 million meals rescued"
+        alt="celebrate"
         className="mt-4 mx-auto rounded-lg max-w-full"
         variants={itemVariants}
       />
@@ -158,7 +158,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
 
       <motion.img
         src="/content/swimmer.png" // Replace with your actual image path
-        alt="30 million meals rescued"
+        alt="swimmer"
         className="mt-4 mx-auto rounded-lg max-w-full"
         variants={itemVariants}
       />
@@ -183,7 +183,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
 
       <motion.img
         src="/content/sun-behind-cloud.png" // Replace with your actual image path
-        alt="30 million meals rescued"
+        alt="sun behind cloud"
         className="mt-4 mx-auto rounded-lg max-w-full"
         variants={itemVariants}
       />
