@@ -110,30 +110,14 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
         variants={itemVariants}
       >
-        Meet Our Founders
+        We rescued 30 million meals in 12 months
       </motion.h2>
 
-      <motion.h3
-        className="text-2xl md:text-3xl font-semibold drop-shadow-md"
+      <motion.img
+        src="/content/party.png" // Replace with your actual image path
+        alt="30 million meals rescued"
+        className="mt-4 mx-auto rounded-lg max-w-full"
         variants={itemVariants}
-      >
-        Tessa Clarke &amp; Saasha Celestial-One
-      </motion.h3>
-
-      <motion.p
-        className="text-lg md:text-xl space-y-4 drop-shadow-md"
-        variants={itemVariants}
-      >
-        From a simple idea of not wanting to throw away food when
-        moving house, Tessa and Saasha built Olio into a global
-        movement. Their vision? A world where nothing goes to waste
-        and every single person has enough to eat.
-      </motion.p>
-
-      <QuoteBlock
-        text="I thought to myself, 'This is crazy. Why isn't there an app for this?'"
-        author="Tessa Clarke"
-        location="Olio Co-founder"
       />
     </>
   ),
@@ -144,48 +128,22 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
         variants={itemVariants}
       >
-        Food Waste Heroes
+        Those meals fed xxx,xxx households
       </motion.h2>
 
-      <motion.p
-        className="text-lg md:text-xl space-y-4 drop-shadow-md"
+      <motion.h3
+        className="text-2xl md:text-3xl font-semibold drop-shadow-md"
         variants={itemVariants}
       >
-        Our incredible Food Waste Heroes save surplus food from local
-        businesses and share it with their community. They're the
-        heartbeat of Olio, turning potential waste into wonderful
-        meals.
-      </motion.p>
+        in UK and Irish communities
+      </motion.h3>
 
-      <StatsGrid
-        stats={[
-          { value: '35K+', label: 'Food Waste Heroes' },
-          { value: '5M+', label: 'Meals Saved Monthly' },
-        ]}
+      <motion.img
+        src="/content/party.png" // Replace with your actual image path
+        alt="30 million meals rescued"
+        className="mt-4 mx-auto rounded-lg max-w-full"
+        variants={itemVariants}
       />
-
-      <motion.a
-        href="https://Olioapp.com/en/get-involved/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center px-6 py-3 text-lg font-semibold text-black bg-white rounded-full hover:bg-gray-100 transition-colors mt-4"
-        variants={itemVariants}
-      >
-        Become a Food Waste Hero
-        <svg
-          className="w-5 h-5 ml-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M14 5l7 7m0 0l-7 7m7-7H3"
-          />
-        </svg>
-      </motion.a>
     </>
   ),
 
