@@ -405,20 +405,20 @@ export const DayContent: React.FC<DayContentProps> = ({
     return content;
   }
 
-  // For other days, render with background and motion effects
+  // Alternate between lilac and yellow backgrounds
+  const bgColor = day % 2 === 0 ? 'bg-olio-lilac' : 'bg-olio-yellow';
+  const textColor = 'text-gray-900'; // Dark text for both backgrounds since they're light
+
+  // For other days, render with solid background and motion effects
   return (
     <div className="relative w-full h-full">
       <div
-        className="absolute inset-0 bg-cover bg-center rounded-lg"
-        style={{
-          backgroundImage: `url(/content/day${day}.jpg)`,
-          opacity: 0.5,
-        }}
+        className={`absolute inset-0 ${bgColor} rounded-lg opacity-95`}
       />
       <div className="relative z-10 w-full h-full grid place-items-center p-8">
         <div className="w-full max-w-4xl max-h-full overflow-y-auto scrollbar-hide">
           <motion.div
-            className="grid gap-6 text-white text-center"
+            className={`grid gap-6 ${textColor} text-center`}
             initial="hidden"
             animate={isVisible ? 'visible' : 'hidden'}
             variants={contentVariants}

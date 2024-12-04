@@ -6,6 +6,12 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        'olio': {
+          lilac: '#DDDBEC',
+          yellow: '#FFCE00',
+        },
+      },
       fontFamily: {
         'heading': ['Cosmica', 'system-ui', 'sans-serif'],
         'body': ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
