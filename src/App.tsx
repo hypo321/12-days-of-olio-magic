@@ -9,6 +9,9 @@ import { Helmet } from 'react-helmet-async';
 import { ModalProvider } from './contexts/ModalContext';
 import { ContentModal } from './components/ContentModal';
 import { useModal } from './contexts/ModalContext';
+import { BackgroundMusic } from './components/BackgroundMusic';
+import { WelcomeModal } from './components/WelcomeModal';
+import { useState, useEffect } from 'react';
 
 const CalendarRoute = () => {
   const { day } = useParams();
@@ -151,6 +154,23 @@ const AppContent = () => {
 };
 
 function App() {
+  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
+  const [musicEnabled, setMusicEnabled] = useState(false);
+
+  // Check if user has already made a choice
+  useEffect(() => {
+    const hasChosenMusic = localStorage.getItem('musicPreference');
+    if (hasChosenMusic !== null) {
+      setShowWelcomeModal(false);
+      setMusicEnabled(hasChosenMusic === 'true');
+    }
+  }, []);
+
+  const handleMusicChoice = (enable: boolean) => {
+    localStorage.setItem('musicPreference', enable.toString());
+    setMusicEnabled(enable);
+  };
+
   return (
     <Router
       future={{
@@ -159,7 +179,21 @@ function App() {
       }}
     >
       <ModalProvider>
-        <AppContent />
+        <div className="min-h-screen bg-gradient-to-b from-blue-900 via-purple-900 to-pink-900 text-white relative overflow-hidden">
+          <WelcomeModal
+            isOpen={showWelcomeModal}
+            onClose={() => setShowWelcomeModal(false)}
+            onMusicChoice={handleMusicChoice}
+          />
+          <BackgroundMusic
+            fileName="ES_A Wishful Night - Martin Landstrom.mp3"
+            volume={0.2}
+            initiallyEnabled={musicEnabled}
+          />
+          <main className="relative">
+            <AppContent />
+          </main>
+        </div>
       </ModalProvider>
     </Router>
   );
