@@ -1,28 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Emoji } from './Emoji';
+import { itemVariants, contentVariants } from '../utils/animations';
 
 interface DayContentProps {
   day: number;
   isVisible: boolean;
 }
-
-const contentVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: 'easeOut',
-      staggerChildren: 0.2,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-};
 
 /** Additional Components **/
 
@@ -113,12 +97,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         We rescued 30 million meals in 12 months
       </motion.h2>
 
-      <motion.img
-        src="/content/party.png" // Replace with your actual image path
-        alt="celebrate"
-        className="mt-4 mx-auto rounded-lg max-w-full"
-        variants={itemVariants}
-      />
+      <Emoji name="party" />
     </>
   ),
 
@@ -138,12 +117,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         in UK and Irish communities
       </motion.h3>
 
-      <motion.img
-        src="/content/party.png" // Replace with your actual image path
-        alt="celebrate"
-        className="mt-4 mx-auto rounded-lg max-w-full"
-        variants={itemVariants}
-      />
+      <Emoji name="🥘" />
     </>
   ),
 
@@ -156,12 +130,7 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         We saved x billion litres of water
       </motion.h2>
 
-      <motion.img
-        src="/content/swimmer.png" // Replace with your actual image path
-        alt="swimmer"
-        className="mt-4 mx-auto rounded-lg max-w-full"
-        variants={itemVariants}
-      />
+      <Emoji name="swimmer" />
 
       <motion.h3
         className="text-2xl md:text-3xl font-semibold drop-shadow-md"
@@ -178,23 +147,22 @@ const CONTENT_COMPONENTS: Record<number, React.ReactNode> = {
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
         variants={itemVariants}
       >
-        We diverted x tonnes of Co2 from the atmosphere
+        And amazingly - we’ve just hit
       </motion.h2>
-
-      <motion.img
-        src="/content/sun-behind-cloud.png" // Replace with your actual image path
-        alt="sun behind cloud"
-        className="mt-4 mx-auto rounded-lg max-w-full"
+      <motion.h2
+        className="text-4xl md:text-5xl font-bold drop-shadow-lg"
         variants={itemVariants}
-      />
-
+      >
+        100 million meals rescued
+      </motion.h2>
       <motion.h3
         className="text-2xl md:text-3xl font-semibold drop-shadow-md"
         variants={itemVariants}
       >
-        Which is the same as cancelling out x flights from London to
-        New York
+        since we were first founded in 2015
       </motion.h3>
+
+      <Emoji name="🚀" />
     </>
   ),
 
