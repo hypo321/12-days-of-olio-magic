@@ -405,7 +405,7 @@ export const Calendar = () => {
               backgroundImage: `url("${BACKGROUND_IMAGE_URL}")`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'brightness(0.7)',
+              filter: 'brightness(0.95)',
               pointerEvents: 'auto',
               cursor: activeDay ? 'pointer' : 'default',
             }}
