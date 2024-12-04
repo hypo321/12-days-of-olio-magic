@@ -5,8 +5,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Cosmica';
+  src: url('/fonts/Cosmica-Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Cosmica', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
