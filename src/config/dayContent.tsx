@@ -11,7 +11,23 @@ export const CONTENT_COMPONENTS: Record<
   number,
   () => React.ReactNode
 > = {
-  1: () => <AudioPlayer fileName="welcome.mp3" />,
+  1: () => (
+    <>
+      <motion.h2
+        className="text-4xl md:text-5xl font-bold drop-shadow-lg"
+        variants={itemVariants}
+      >
+        Welcome!
+      </motion.h2>
+      <AudioPlayer fileName="welcome.mp3" play />
+      <motion.p
+        className="text-lg md:text-xl space-y-4 drop-shadow-md"
+        variants={itemVariants}
+      >
+        A message from Olio founders, Tessa and Saasha
+      </motion.p>
+    </>
+  ),
 
   2: () => (
     <>
@@ -275,6 +291,7 @@ export const CONTENT_COMPONENTS: Record<
 export const DAY_EFFECTS: Partial<
   Record<number, { effect: 'confetti' | 'hearts' }>
 > = {
+  1: { effect: 'hearts' },
   2: { effect: 'confetti' },
   5: { effect: 'confetti' },
   6: { effect: 'hearts' },

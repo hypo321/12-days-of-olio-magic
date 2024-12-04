@@ -11,15 +11,18 @@ interface ScreenEffectProps {
 
 const HEART_COLORS = ['#FF69B4', '#FF1493', '#FF0000', '#FF4500'];
 
-export const ScreenEffect: React.FC<ScreenEffectProps> = ({ effect, className = '' }) => {
+export const ScreenEffect: React.FC<ScreenEffectProps> = ({
+  effect,
+  className = '',
+}) => {
   const [items, setItems] = useState<number[]>([]);
 
   useEffect(() => {
     if (effect === 'hearts') {
-      const itemCount = 30;
+      const itemCount = 60;
       setItems(Array.from({ length: itemCount }, (_, i) => i));
     }
-    
+
     if (effect === 'confetti') {
       const duration = 3 * 1000;
       const animationEnd = Date.now() + duration;
@@ -65,9 +68,12 @@ export const ScreenEffect: React.FC<ScreenEffectProps> = ({ effect, className = 
     return (
       <div className={`screen-effect-container ${className}`}>
         {items.map((index) => {
-          const randomColor = HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)];
+          const randomColor =
+            HEART_COLORS[
+              Math.floor(Math.random() * HEART_COLORS.length)
+            ];
           const randomSize = Math.random() * (3 - 1.5) + 1.5;
-          
+
           return (
             <span
               key={index}
@@ -78,7 +84,7 @@ export const ScreenEffect: React.FC<ScreenEffectProps> = ({ effect, className = 
                 fontSize: `${randomSize}rem`,
                 color: randomColor,
                 filter: 'drop-shadow(0 0 5px rgba(255,105,180,0.3))',
-                animationDelay: `${Math.random() * 2}s`,
+                animationDelay: `${Math.random() * 5}s`,
               }}
             >
               ❤️
