@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'heading': ['Cosmica', 'system-ui', 'sans-serif'],
+        'body': ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+      },
       gridTemplateColumns: {
         'calendar-landscape': 'repeat(4, minmax(0, 1fr))',
         'calendar-portrait': 'repeat(3, minmax(0, 1fr))',
