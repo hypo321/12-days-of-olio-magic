@@ -154,10 +154,15 @@ const AppContent = () => {
   const [musicEnabled, setMusicEnabled] = useState(false);
 
   useEffect(() => {
+    console.log('AppContent mounted');
+    console.log('Current path:', location.pathname);
     const hasChosenMusic = localStorage.getItem('musicPreference');
+    console.log('Music preference from localStorage:', hasChosenMusic);
     if (location.pathname === '/welcome') {
+      console.log('Navigated to /welcome');
       setShowWelcomeModal(true);
     } else if (hasChosenMusic === null) {
+      console.log('First visit detected, showing welcome modal');
       setShowWelcomeModal(true);
     } else {
       setMusicEnabled(hasChosenMusic === 'true');
@@ -165,6 +170,7 @@ const AppContent = () => {
   }, [location.pathname]);
 
   const handleMusicChoice = (enable: boolean) => {
+    console.log('User chose music:', enable);
     localStorage.setItem('musicPreference', enable.toString());
     setMusicEnabled(enable);
     setShowWelcomeModal(false);
