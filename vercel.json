@@ -2,6 +2,10 @@
   "version": 2,
   "builds": [
     {
+      "src": "server.ts",
+      "use": "@vercel/node"
+    },
+    {
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
@@ -9,78 +13,29 @@
       }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "^/assets/(.*)",
-      "dest": "/assets/$1"
+      "source": "/assets/:path*",
+      "destination": "/dist/assets/:path*"
     },
     {
-      "src": "^/images/(.*)",
-      "dest": "/images/$1"
+      "source": "/images/:path*",
+      "destination": "/dist/images/:path*"
     },
     {
-      "src": "^/content/(.*)",
-      "dest": "/content/$1"
-    },
+      "source": "/(.*)",
+      "destination": "/server.ts"
+    }
+  ],
+  "headers": [
     {
-      "src": "^/day_share2/(.*)",
-      "dest": "/day_share2/$1"
-    },
-    {
-      "src": "^/thumbnails/(.*)",
-      "dest": "/thumbnails/$1"
-    },
-    {
-      "src": "^/manifest.json",
-      "dest": "/manifest.json"
-    },
-    {
-      "src": "^/favicon.ico",
-      "dest": "/favicon.ico"
-    },
-    {
-      "src": "^/favicon.svg",
-      "dest": "/favicon.svg"
-    },
-    {
-      "src": "^/favicon-96x96.png",
-      "dest": "/favicon-96x96.png"
-    },
-    {
-      "src": "^/apple-touch-icon.png",
-      "dest": "/apple-touch-icon.png"
-    },
-    {
-      "src": "^/web-app-manifest-192x192.png",
-      "dest": "/web-app-manifest-192x192.png"
-    },
-    {
-      "src": "^/web-app-manifest-512x512.png",
-      "dest": "/web-app-manifest-512x512.png"
-    },
-    {
-      "src": "^/site.webmanifest",
-      "dest": "/site.webmanifest"
-    },
-    {
-      "src": "^/background.jpg",
-      "dest": "/background.jpg"
-    },
-    {
-      "src": "^/cardboard.jpg",
-      "dest": "/cardboard.jpg"
-    },
-    {
-      "src": "^/olio-christmas.jpg",
-      "dest": "/olio-christmas.jpg"
-    },
-    {
-      "src": "^/vite.svg",
-      "dest": "/vite.svg"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
     }
   ]
 }

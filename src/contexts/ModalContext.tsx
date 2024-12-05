@@ -1,13 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { createContext, useContext, useState } from 'react';
 
 interface ModalContextType {
   isModalOpen: boolean;
   activeDay: number | null;
-  showWelcomeModal: boolean;
   openModal: (day: number) => void;
   closeModal: () => void;
-  setShowWelcomeModal: (show: boolean) => void;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
@@ -17,18 +14,6 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeDay, setActiveDay] = useState<number | null>(null);
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
-  const location = useLocation();
-
-  // Check if it's the first visit when not on /welcome route
-  useEffect(() => {
-    if (location.pathname !== '/welcome') {
-      const hasChosenMusic = localStorage.getItem('musicPreference');
-      if (hasChosenMusic === null) {
-        setShowWelcomeModal(true);
-      }
-    }
-  }, [location]);
 
   const openModal = (day: number) => {
     setActiveDay(day);
@@ -37,20 +22,11 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setActiveDay(null);
+    // Don't clear activeDay here - let the Calendar component handle it
   };
 
   return (
-    <ModalContext.Provider
-      value={{
-        isModalOpen,
-        activeDay,
-        showWelcomeModal,
-        openModal,
-        closeModal,
-        setShowWelcomeModal,
-      }}
-    >
+    <ModalContext.Provider value={{ isModalOpen, activeDay, openModal, closeModal }}>
       {children}
     </ModalContext.Provider>
   );
