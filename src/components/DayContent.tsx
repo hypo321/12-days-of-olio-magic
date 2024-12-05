@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { contentVariants } from '../utils/animations';
 import { ScreenEffect } from './ScreenEffect';
 import {
-  CONTENT_COMPONENTS,
+  DAY_CONTENT,
+  DAY_BACKGROUNDS,
   DAY_EFFECTS,
 } from '../config/dayContent';
 
@@ -16,7 +17,7 @@ export const DayContent: React.FC<DayContentProps> = ({
   day,
   isVisible,
 }) => {
-  const ContentComponent = CONTENT_COMPONENTS[day];
+  const ContentComponent = DAY_CONTENT[day];
   const dayEffect = DAY_EFFECTS[day];
 
   if (!ContentComponent) {
@@ -24,7 +25,7 @@ export const DayContent: React.FC<DayContentProps> = ({
   }
 
   const isVideoDay = [12].includes(day);
-  const bgColor = day % 2 === 0 ? 'bg-olio-lilac' : 'bg-olio-yellow';
+  const bgColor = DAY_BACKGROUNDS[day] || 'bg-olio-yellow';
   const textColor = 'text-gray-900';
 
   if (isVideoDay) {

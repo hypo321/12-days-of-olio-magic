@@ -1,20 +1,18 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
-        'olio': {
+        olio: {
           lilac: '#DDDBEC',
           yellow: '#FFCE00',
+          pink: '#F75996',
         },
       },
       fontFamily: {
-        'heading': ['Cosmica', 'system-ui', 'sans-serif'],
-        'body': ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        heading: ['Cosmica', 'system-ui', 'sans-serif'],
+        body: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
       },
       gridTemplateColumns: {
         'calendar-landscape': 'repeat(4, minmax(0, 1fr))',
@@ -23,4 +21,4 @@ export default {
     },
   },
   plugins: [],
-}
+};

@@ -7,10 +7,7 @@ import { QuoteBlock } from '../components/QuoteBlock';
 import { LiteYouTubeEmbed } from '../components/LiteYouTubeEmbed';
 import { AudioPlayer } from '../components/AudioPlayer';
 
-export const CONTENT_COMPONENTS: Record<
-  number,
-  () => React.ReactNode
-> = {
+export const DAY_CONTENT: Record<number, () => React.ReactNode> = {
   1: () => (
     <>
       <motion.h2
@@ -253,31 +250,10 @@ export const CONTENT_COMPONENTS: Record<
         className="text-4xl md:text-5xl font-bold drop-shadow-lg"
         variants={itemVariants}
       >
-        Future Vision
+        Let’s make 2025 our biggest year yet
       </motion.h2>
 
-      <motion.h3
-        className="text-2xl md:text-3xl font-semibold drop-shadow-md"
-        variants={itemVariants}
-      >
-        A World Without Waste
-      </motion.h3>
-
-      <motion.p
-        className="text-lg md:text-xl space-y-4 drop-shadow-md"
-        variants={itemVariants}
-      >
-        We envision a future where sharing is the new shopping, where
-        communities thrive through connection, and where nothing goes
-        to waste. Together, we're making this vision a reality.
-      </motion.p>
-
-      <StatsGrid
-        stats={[
-          { value: '2030', label: 'Zero Waste Goal' },
-          { value: '1B+', label: 'Target Users' },
-        ]}
-      />
+      <Emoji name="🤝" />
     </>
   ),
 
@@ -295,4 +271,21 @@ export const DAY_EFFECTS: Partial<
   2: { effect: 'confetti' },
   5: { effect: 'confetti' },
   6: { effect: 'hearts' },
+};
+
+export const DAY_BACKGROUNDS: Partial<
+  Record<number, 'bg-olio-yellow' | 'bg-olio-lilac' | 'bg-olio-pink'>
+> = {
+  1: 'bg-olio-lilac',
+  2: 'bg-olio-yellow',
+  3: 'bg-olio-lilac',
+  4: 'bg-olio-yellow',
+  5: 'bg-olio-lilac',
+  6: 'bg-olio-yellow',
+  7: 'bg-olio-lilac',
+  8: 'bg-olio-yellow',
+  9: 'bg-olio-lilac',
+  10: 'bg-olio-yellow',
+  11: 'bg-olio-pink',
+  12: 'bg-olio-yellow',
 };

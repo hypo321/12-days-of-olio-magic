@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://paulcuth.github.io/12-days-of-olio-magic",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build",
@@ -10,7 +11,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:coverage": "vitest --coverage",
-    "generate-images": "node scripts/generate-content-images.js"
+    "generate-images": "node scripts/generate-content-images.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

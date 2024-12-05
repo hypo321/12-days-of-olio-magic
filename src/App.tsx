@@ -175,7 +175,6 @@ function App() {
     <Router
       future={{
         v7_startTransition: true,
-        v7_relativeSplatPath: true,
       }}
     >
       <ModalProvider>
@@ -191,7 +190,9 @@ function App() {
             initiallyEnabled={musicEnabled}
           />
           <main className="relative">
-            <AppContent />
+            <Routes>
+              <Route path="/*" element={<AppContent />} />
+            </Routes>
           </main>
         </div>
       </ModalProvider>
