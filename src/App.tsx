@@ -3,6 +3,8 @@ import {
   Routes,
   Route,
   useParams,
+  useLocation,
+  useNavigate,
 } from 'react-router-dom';
 import { Calendar } from './components/Calendar';
 import { Helmet } from 'react-helmet-async';
@@ -156,48 +158,65 @@ const AppContent = () => {
 function App() {
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
   const [musicEnabled, setMusicEnabled] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Check if user has already made a choice
   useEffect(() => {
     const hasChosenMusic = localStorage.getItem('musicPreference');
-    if (hasChosenMusic !== null) {
+    if (location.pathname === '/welcome') {
+      setShowWelcomeModal(true);
+    } else if (hasChosenMusic !== null) {
       setShowWelcomeModal(false);
       setMusicEnabled(hasChosenMusic === 'true');
     }
-  }, []);
+  }, [location.pathname]);
 
   const handleMusicChoice = (enable: boolean) => {
     localStorage.setItem('musicPreference', enable.toString());
     setMusicEnabled(enable);
+    setShowWelcomeModal(false);
+    if (location.pathname === '/welcome') {
+      navigate('/');
+    }
   };
 
+  return (
+    <ModalProvider>
+      <div className="min-h-screen bg-gradient-to-b from-blue-900 via-purple-900 to-pink-900 text-white relative overflow-hidden">
+        <WelcomeModal
+          isOpen={showWelcomeModal}
+          onClose={() => {
+            setShowWelcomeModal(false);
+            if (location.pathname === '/welcome') {
+              navigate('/');
+            }
+          }}
+          onMusicChoice={handleMusicChoice}
+        />
+        <BackgroundMusic
+          fileName="ES_A Wishful Night - Martin Landstrom.mp3"
+          volume={0.2}
+          initiallyEnabled={musicEnabled}
+        />
+        <main className="relative">
+          <Routes>
+            <Route path="/*" element={<AppContent />} />
+          </Routes>
+        </main>
+      </div>
+    </ModalProvider>
+  );
+}
+
+export default function Root() {
   return (
     <Router
       future={{
         v7_startTransition: true,
       }}
     >
-      <ModalProvider>
-        <div className="min-h-screen bg-gradient-to-b from-blue-900 via-purple-900 to-pink-900 text-white relative overflow-hidden">
-          <WelcomeModal
-            isOpen={showWelcomeModal}
-            onClose={() => setShowWelcomeModal(false)}
-            onMusicChoice={handleMusicChoice}
-          />
-          <BackgroundMusic
-            fileName="ES_A Wishful Night - Martin Landstrom.mp3"
-            volume={0.2}
-            initiallyEnabled={musicEnabled}
-          />
-          <main className="relative">
-            <Routes>
-              <Route path="/*" element={<AppContent />} />
-            </Routes>
-          </main>
-        </div>
-      </ModalProvider>
+      <App />
     </Router>
   );
 }
-
-export default App;
