@@ -1,0 +1,17 @@
+{
+  "short_name": "12 Days of Olio",
+  "name": "The 12 Days of Olio Magic",
+  "description": "Join us for 12 days of magical surprises in our interactive advent calendar! Each day brings a new festive delight.",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1F2937",
+  "background_color": "#111827",
+  "orientation": "portrait-primary"
+}
