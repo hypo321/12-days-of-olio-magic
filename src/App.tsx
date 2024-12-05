@@ -3,7 +3,6 @@ import {
   Routes,
   Route,
   useParams,
-  useLocation,
   Navigate,
 } from 'react-router-dom';
 import { Calendar } from './components/Calendar';
