@@ -173,6 +173,11 @@ function App() {
 
   return (
     <Router
+      basename={
+        process.env.NODE_ENV === 'production'
+          ? '/12-days-of-olio-magic'
+          : '/'
+      }
       future={{
         v7_startTransition: true,
         v7_relativeSplatPath: true,
