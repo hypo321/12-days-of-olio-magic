@@ -1,18 +1,22 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModal } from '../contexts/ModalContext';
 
 interface WelcomeModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   onMusicChoice: (enableMusic: boolean) => void;
 }
 
 export const WelcomeModal: React.FC<WelcomeModalProps> = ({
-  isOpen,
-  onClose,
   onMusicChoice,
 }) => {
-  if (!isOpen) return null;
+  const { showWelcomeModal, setShowWelcomeModal } = useModal();
+
+  if (!showWelcomeModal) return null;
+
+  const handleChoice = (enableMusic: boolean) => {
+    onMusicChoice(enableMusic);
+    setShowWelcomeModal(false);
+  };
 
   return (
     <AnimatePresence>
@@ -32,19 +36,13 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
           
           <div className="flex gap-4">
             <button
-              onClick={() => {
-                onMusicChoice(true);
-                onClose();
-              }}
+              onClick={() => handleChoice(true)}
               className="flex-1 bg-gradient-to-r from-pink-500 to-red-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all duration-300"
             >
               Yes, enable music
             </button>
             <button
-              onClick={() => {
-                onMusicChoice(false);
-                onClose();
-              }}
+              onClick={() => handleChoice(false)}
               className="flex-1 bg-white/10 text-white px-6 py-3 rounded-lg font-medium hover:bg-white/20 transition-all duration-300"
             >
               No, thanks

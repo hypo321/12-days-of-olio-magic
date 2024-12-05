@@ -3,6 +3,8 @@ import {
   Routes,
   Route,
   useParams,
+  useLocation,
+  Navigate,
 } from 'react-router-dom';
 import { Calendar } from './components/Calendar';
 import { Helmet } from 'react-helmet-async';
@@ -133,6 +135,16 @@ const CalendarRoute = () => {
   );
 };
 
+const WelcomeRoute = () => {
+  const { setShowWelcomeModal } = useModal();
+  
+  useEffect(() => {
+    setShowWelcomeModal(true);
+  }, [setShowWelcomeModal]);
+
+  return <Navigate to="/" replace />;
+};
+
 const AppContent = () => {
   const { isModalOpen, activeDay, closeModal } = useModal();
 
@@ -154,14 +166,12 @@ const AppContent = () => {
 };
 
 function App() {
-  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
   const [musicEnabled, setMusicEnabled] = useState(false);
 
   // Check if user has already made a choice
   useEffect(() => {
     const hasChosenMusic = localStorage.getItem('musicPreference');
     if (hasChosenMusic !== null) {
-      setShowWelcomeModal(false);
       setMusicEnabled(hasChosenMusic === 'true');
     }
   }, []);
@@ -173,16 +183,19 @@ function App() {
 
   return (
     <Router
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
+      basename={
+        process.env.NODE_ENV === 'production'
+          ? '/12-days-of-olio-magic'
+          : '/'
+      }
     >
       <ModalProvider>
         <div className="min-h-screen bg-gradient-to-b from-blue-900 via-purple-900 to-pink-900 text-white relative overflow-hidden">
+          <Routes>
+            <Route path="/welcome" element={<WelcomeRoute />} />
+            <Route path="/*" element={<AppContent />} />
+          </Routes>
           <WelcomeModal
-            isOpen={showWelcomeModal}
-            onClose={() => setShowWelcomeModal(false)}
             onMusicChoice={handleMusicChoice}
           />
           <BackgroundMusic
@@ -190,9 +203,6 @@ function App() {
             volume={0.2}
             initiallyEnabled={musicEnabled}
           />
-          <main className="relative">
-            <AppContent />
-          </main>
         </div>
       </ModalProvider>
     </Router>
