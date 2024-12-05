@@ -220,6 +220,9 @@ function App() {
           ? '/12-days-of-olio-magic'
           : '/'
       }
+      future={{
+        v7_startTransition: true
+      }}
     >
       <ModalProvider>
         <Routes>
