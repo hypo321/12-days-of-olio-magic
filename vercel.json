@@ -2,10 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "server.ts",
-      "use": "@vercel/node"
-    },
-    {
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
@@ -15,16 +11,8 @@
   ],
   "rewrites": [
     {
-      "source": "/assets/:path*",
-      "destination": "/dist/assets/:path*"
-    },
-    {
-      "source": "/images/:path*",
-      "destination": "/dist/images/:path*"
-    },
-    {
       "source": "/(.*)",
-      "destination": "/server.ts"
+      "destination": "/index.html"
     }
   ],
   "headers": [
