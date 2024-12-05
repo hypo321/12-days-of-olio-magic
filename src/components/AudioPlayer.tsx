@@ -1,4 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
+import {
+  PlayIcon,
+  PauseIcon,
+  ArrowPathIcon,
+} from '@heroicons/react/24/solid';
 
 interface AudioPlayerProps {
   fileName: string;
@@ -118,39 +123,17 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     <div className="flex items-center space-x-4 w-full">
       <button
         onClick={togglePlayPause}
-        className="p-2 bg-pink-700 text-white rounded-full focus:outline-none"
+        className="p-2 bg-pink-700 text-white rounded-full hover:bg-pink-600 focus:outline-none transition-colors duration-300"
         aria-label={
           hasEnded ? 'Replay' : isPlaying ? 'Pause' : 'Play'
         }
       >
         {hasEnded ? (
-          // Replay Icon
-          <svg
-            className="w-6 h-6"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path d="M12 5V1L7 6l5 5V7c3.86 0 7 3.14 7 7 0 1.02-.21 1.98-.58 2.85l1.45 1.45C20.49 16.63 21 14.39 21 12c0-4.97-4.03-9-9-9zM3.51 3.51L2.1 4.92 4.27 7.1C3.5 8.38 3 9.91 3 11.5 3 16.47 7.03 20.5 12 20.5c1.59 0 3.12-.5 4.4-1.27l2.18 2.18 1.41-1.41L3.51 3.51zM12 18.5c-3.86 0-7-3.14-7-7 0-1.59.5-3.12 1.27-4.4l9.13 9.13C15.12 18 13.59 18.5 12 18.5z" />
-          </svg>
+          <ArrowPathIcon className="w-6 h-6" />
         ) : isPlaying ? (
-          // Pause Icon
-          <svg
-            className="w-6 h-6"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <rect x="6" y="4" width="4" height="16" />
-            <rect x="14" y="4" width="4" height="16" />
-          </svg>
+          <PauseIcon className="w-6 h-6" />
         ) : (
-          // Play Icon
-          <svg
-            className="w-6 h-6"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <polygon points="5,3 19,12 5,21" />
-          </svg>
+          <PlayIcon className="w-6 h-6" />
         )}
       </button>
       <div

@@ -13,6 +13,7 @@
     "generate-images": "node scripts/generate-content-images.js"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@types/canvas-confetti": "^1.6.4",
     "@vercel/node": "^3.0.11",
     "canvas-confetti": "^1.9.3",
