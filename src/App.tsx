@@ -1,20 +1,33 @@
+import { useState, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useParams,
+  useLocation,
+  useNavigate
 } from 'react-router-dom';
 import { Calendar } from './components/Calendar';
 import { Helmet } from 'react-helmet-async';
 import { ModalProvider } from './contexts/ModalContext';
+import { WelcomeModal } from './components/WelcomeModal';
+import { BackgroundMusic } from './components/BackgroundMusic';
+import { ScreenEffect } from './components/ScreenEffect';
 import { ContentModal } from './components/ContentModal';
 import { useModal } from './contexts/ModalContext';
-import { BackgroundMusic } from './components/BackgroundMusic';
-import { WelcomeModal } from './components/WelcomeModal';
-import { useState, useEffect } from 'react';
 
 const CalendarRoute = () => {
   const { day } = useParams();
+  const { openModal } = useModal();
+
+  useEffect(() => {
+    if (day) {
+      const dayNumber = parseInt(day, 10);
+      if (!isNaN(dayNumber)) {
+        openModal(dayNumber);
+      }
+    }
+  }, [day, openModal]);
 
   return (
     <>
@@ -135,13 +148,42 @@ const CalendarRoute = () => {
 
 const AppContent = () => {
   const { isModalOpen, activeDay, closeModal } = useModal();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [musicEnabled, setMusicEnabled] = useState(false);
+
+  useEffect(() => {
+    const hasChosenMusic = localStorage.getItem('musicPreference');
+    if (location.pathname === '/welcome') {
+      setShowWelcomeModal(true);
+    } else if (hasChosenMusic === null) {
+      setShowWelcomeModal(true);
+    } else {
+      setMusicEnabled(hasChosenMusic === 'true');
+    }
+  }, [location.pathname]);
+
+  const handleMusicChoice = (enable: boolean) => {
+    localStorage.setItem('musicPreference', enable.toString());
+    setMusicEnabled(enable);
+    setShowWelcomeModal(false);
+    if (location.pathname === '/welcome') {
+      navigate('/');
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-800 to-gray-900">
-      <Routes>
-        <Route path="/" element={<CalendarRoute />} />
-        <Route path="/day/:day" element={<CalendarRoute />} />
-      </Routes>
+    <div className="min-h-screen bg-gradient-to-b from-blue-900 via-purple-900 to-pink-900 text-white relative overflow-hidden">
+      <ScreenEffect effect="confetti" />
+      
+      <main className="relative">
+        <Routes>
+          <Route path="/" element={<CalendarRoute />} />
+          <Route path="/day/:day" element={<CalendarRoute />} />
+        </Routes>
+      </main>
+
       {activeDay !== null && (
         <ContentModal
           isOpen={isModalOpen}
@@ -149,51 +191,41 @@ const AppContent = () => {
           onClose={closeModal}
         />
       )}
+
+      <WelcomeModal
+        isOpen={showWelcomeModal}
+        onClose={() => {
+          setShowWelcomeModal(false);
+          if (location.pathname === '/welcome') {
+            navigate('/');
+          }
+        }}
+        onMusicChoice={handleMusicChoice}
+      />
+
+      <BackgroundMusic
+        fileName="ES_A Wishful Night - Martin Landstrom.mp3"
+        volume={0.2}
+        initiallyEnabled={musicEnabled}
+      />
     </div>
   );
 };
 
 function App() {
-  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
-  const [musicEnabled, setMusicEnabled] = useState(false);
-
-  // Check if user has already made a choice
-  useEffect(() => {
-    const hasChosenMusic = localStorage.getItem('musicPreference');
-    if (hasChosenMusic !== null) {
-      setShowWelcomeModal(false);
-      setMusicEnabled(hasChosenMusic === 'true');
-    }
-  }, []);
-
-  const handleMusicChoice = (enable: boolean) => {
-    localStorage.setItem('musicPreference', enable.toString());
-    setMusicEnabled(enable);
-  };
-
   return (
     <Router
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
+      basename={
+        process.env.NODE_ENV === 'production'
+          ? '/12-days-of-olio-magic'
+          : '/'
+      }
     >
       <ModalProvider>
-        <div className="min-h-screen bg-gradient-to-b from-blue-900 via-purple-900 to-pink-900 text-white relative overflow-hidden">
-          <WelcomeModal
-            isOpen={showWelcomeModal}
-            onClose={() => setShowWelcomeModal(false)}
-            onMusicChoice={handleMusicChoice}
-          />
-          <BackgroundMusic
-            fileName="ES_A Wishful Night - Martin Landstrom.mp3"
-            volume={0.2}
-            initiallyEnabled={musicEnabled}
-          />
-          <main className="relative">
-            <AppContent />
-          </main>
-        </div>
+        <Routes>
+          <Route path="/welcome" element={<AppContent />} />
+          <Route path="/*" element={<AppContent />} />
+        </Routes>
       </ModalProvider>
     </Router>
   );
