@@ -16,7 +16,22 @@ export default {
       },
       gridTemplateColumns: {
         'calendar-landscape': 'repeat(4, minmax(0, 1fr))',
-        'calendar-portrait': 'repeat(3, minmax(0, 1fr))',
+      },
+      keyframes: {
+        ripple: {
+          '0%': {
+            transform: 'scale(1)',
+            opacity: 0.4,
+          },
+          '100%': {
+            transform: 'scale(2)',
+            opacity: 0,
+          },
+        },
+      },
+      animation: {
+        'music-ripple':
+          'ripple 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },
   },
