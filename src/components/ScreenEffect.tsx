@@ -35,16 +35,30 @@ export const ScreenEffect: React.FC<ScreenEffectProps> = ({
           particleCount,
           angle: randomInRange(55, 125),
           spread: randomInRange(50, 70),
-          origin: { x: 0 },
-          colors: ['#FFCE00', '#DDDBEC', '#FF69B4', '#4CAF50'],
+          origin: { x: 0.2 },
+          colors: [
+            '#FFCE00',
+            '##FFB000',
+            '#F75996',
+            '#F4226E',
+            '#FB6501',
+          ],
+          scalar: 1.5,
         });
 
         confetti({
           particleCount,
           angle: randomInRange(55, 125),
           spread: randomInRange(50, 70),
-          origin: { x: 1 },
-          colors: ['#FFCE00', '#DDDBEC', '#FF69B4', '#4CAF50'],
+          origin: { x: 0.8 },
+          colors: [
+            '#FFCE00',
+            '##FFB000',
+            '#F75996',
+            '#F4226E',
+            '#FB6501',
+          ],
+          scalar: 1.5,
         });
       }, 250);
 
