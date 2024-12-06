@@ -72,7 +72,7 @@
   }
 
   .door.open {
-    transform: rotateY(-90deg);
+    transform: rotateY(-88deg);
   }
 
   .door-front {
