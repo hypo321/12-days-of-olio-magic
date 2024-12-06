@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface WelcomeModalProps {
@@ -14,8 +14,6 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const [enableMusic, setEnableMusic] = useState(false);
-
   return (
     <AnimatePresence>
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -29,9 +27,10 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
             Welcome to 12 Days of Olio Magic! 🎄
           </h2>
           <p className="text-white/90 mb-6">
-            Would you like to enable background music for a more magical experience?
+            Would you like to enable background music for a more
+            magical experience?
           </p>
-          
+
           <div className="flex gap-4">
             <button
               onClick={() => {
@@ -52,25 +51,10 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
               No, thanks
             </button>
           </div>
-          
-          <div className="mt-8 flex flex-col items-center">
-            {import.meta.env.VITE_ENABLE_BACKGROUND_MUSIC !== 'false' && (
-              <div className="mb-4">
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={enableMusic}
-                    onChange={(e) => setEnableMusic(e.target.checked)}
-                    className="form-checkbox h-4 w-4 text-blue-600"
-                  />
-                  <span>Enable festive music 🎵</span>
-                </label>
-              </div>
-            )}
-          </div>
-          
+
           <p className="text-white/60 text-sm mt-4">
-            You can toggle the music anytime using the button in the bottom-right corner.
+            You can toggle the music anytime using the button in the
+            bottom-right corner.
           </p>
         </motion.div>
       </div>
