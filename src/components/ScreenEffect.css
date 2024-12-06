@@ -1,31 +1,33 @@
 .screen-effect-container {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
+  overflow: hidden;
+  z-index: 9999;
+}
+
+@keyframes echo-spread {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x-offset), var(--y-offset)) scale(1.5);
+  }
 }
 
 .heart {
   position: absolute;
+  top: 50%;
+  left: 50%;
   font-size: 2rem;
-  opacity: 0;
-  transform: scale(0.5) translateY(20px);
-  animation: heart-animation 2s ease-out forwards;
-}
-
-@keyframes heart-animation {
-  0% {
-    opacity: 0;
-    transform: scale(0.5) translateY(20px);
-  }
-  20% {
-    opacity: 1;
-    transform: scale(1.2) translateY(-10px);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1) translateY(-100px);
-  }
+  transform: translate(-50%, -50%);
+  animation: echo-spread 1.5s ease-out forwards;
 }

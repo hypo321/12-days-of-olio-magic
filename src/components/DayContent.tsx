@@ -38,11 +38,11 @@ export const DayContent: React.FC<DayContentProps> = ({
         className={`absolute inset-0 ${bgColor} rounded-lg opacity-95`}
       />
       <div className="relative z-10 w-full h-full grid place-items-center p-8">
-        <div className="relative w-full max-w-4xl max-h-full overflow-y-auto scrollbar-hide">
+        <div className="relative w-full h-full max-w-4xl max-h-full grid place-items-center overflow-y-auto scrollbar-hide">
           {isVisible && dayEffect && (
             <ScreenEffect
               effect={dayEffect.effect}
-              className="absolute inset-0"
+              className="absolute inset-8"
             />
           )}
           <motion.div
