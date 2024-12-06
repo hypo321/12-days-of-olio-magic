@@ -1,93 +1,67 @@
 /* Create multiple snowflake animations */
-@keyframes snowfall-1 {
+@keyframes snowfall {
   0% {
     transform: translate(0, -10px) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(10vw, 100vh) rotate(360deg);
     opacity: 0;
   }
-}
-
-@keyframes snowfall-2 {
-  0% {
-    transform: translate(0, -10px) rotate(0deg);
+  10% {
     opacity: 1;
   }
-  100% {
-    transform: translate(-10vw, 100vh) rotate(-360deg);
-    opacity: 0;
-  }
-}
-
-@keyframes snowfall-3 {
-  0% {
-    transform: translate(0, -10px) rotate(0deg);
-    opacity: 1;
+  90% {
+    opacity: 0.8;
   }
   100% {
-    transform: translate(5vw, 100vh) rotate(180deg);
-    opacity: 0;
-  }
-}
-
-@keyframes snowfall-4 {
-  0% {
-    transform: translate(0, -10px) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-5vw, 100vh) rotate(-180deg);
-    opacity: 0;
-  }
-}
-
-@keyframes snowfall-5 {
-  0% {
-    transform: translate(0, -10px) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(0, 100vh) rotate(360deg);
+    transform: translate(var(--drift), 100vh) rotate(var(--spin));
     opacity: 0;
   }
 }
 
 .snowflake {
-  @apply absolute bg-white rounded-full opacity-80;
+  @apply absolute bg-white rounded-full;
   filter: blur(1px);
   pointer-events: none;
+  opacity: 0;
+  will-change: transform;
 }
 
 .snowflake:nth-child(5n + 1) {
   width: 0.3vw;
   height: 0.3vw;
-  animation: snowfall-1 10s linear infinite;
+  --drift: 10vw;
+  --spin: 360deg;
+  animation: snowfall 10s linear infinite;
 }
 
 .snowflake:nth-child(5n + 2) {
   width: 0.4vw;
   height: 0.4vw;
-  animation: snowfall-2 12s linear infinite;
+  --drift: -10vw;
+  --spin: -360deg;
+  animation: snowfall 12s linear infinite;
 }
 
 .snowflake:nth-child(5n + 3) {
   width: 0.2vw;
   height: 0.2vw;
-  animation: snowfall-3 8s linear infinite;
+  --drift: 5vw;
+  --spin: 180deg;
+  animation: snowfall 8s linear infinite;
 }
 
 .snowflake:nth-child(5n + 4) {
   width: 0.5vw;
   height: 0.5vw;
-  animation: snowfall-4 15s linear infinite;
+  --drift: -5vw;
+  --spin: -180deg;
+  animation: snowfall 15s linear infinite;
 }
 
 .snowflake:nth-child(5n) {
   width: 0.35vw;
   height: 0.35vw;
-  animation: snowfall-5 11s linear infinite;
+  --drift: 0;
+  --spin: 360deg;
+  animation: snowfall 11s linear infinite;
 }
 
 /* Add random delays to snowflakes */
