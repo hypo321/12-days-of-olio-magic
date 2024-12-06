@@ -93,7 +93,7 @@ export const CalendarWindow: React.FC<Props> = ({
     <div
       className="calendar-window absolute pointer-events-auto"
       style={{
-        perspective: '1000px',
+        perspective: '2000px',
         left: `${window.x}px`,
         top: `${window.y}px`,
         width: window.width,

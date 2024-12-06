@@ -47,7 +47,8 @@
     align-items: center;
     justify-content: center;
     transform-style: preserve-3d;
-    perspective: 1000px;
+    perspective-origin: center center;
+    perspective: 2500px;
   }
 
   .calendar-background {
@@ -72,7 +73,7 @@
   }
 
   .door.open {
-    transform: rotateY(-86deg);
+    transform: rotateY(-90deg);
   }
 
   .door-front {
