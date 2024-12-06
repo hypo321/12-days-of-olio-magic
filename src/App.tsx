@@ -13,8 +13,7 @@ import { ContentModal } from './components/ContentModal';
 import { useModal } from './contexts/ModalContext';
 import { BackgroundMusic } from './components/BackgroundMusic';
 import { WelcomeModal } from './components/WelcomeModal';
-import { Snow } from './components/Snow'; // Import Snow component
-
+import { SnowEffect } from './components/SnowEffect';
 import { useState, useEffect } from 'react';
 
 const CalendarRoute = () => {
@@ -187,7 +186,7 @@ function App() {
     <ModalProvider>
       <div className="relative min-h-screen">
         <div className="fixed inset-0 z-0 pointer-events-none">
-          {import.meta.env.VITE_ENABLE_SNOW_EFFECT !== 'false' && <Snow />}
+          {import.meta.env.VITE_ENABLE_SNOW_EFFECT !== 'false' && <SnowEffect />}
         </div>
         <WelcomeModal
           isOpen={showWelcomeModal}
