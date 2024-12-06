@@ -72,7 +72,7 @@
   }
 
   .door.open {
-    transform: rotateY(-88deg);
+    transform: rotateY(-86deg);
   }
 
   .door-front {
@@ -318,6 +318,7 @@ button:focus-visible {
 .conic-gradient::before {
   content: '';
     position: absolute;
+    margin: -40px;
 
     top: 0;
     left: 0;
@@ -336,5 +337,7 @@ button:focus-visible {
     #FFCE00 100%  /* Brand yellow */
   );
   filter: blur(30px);
+  filter: saturate(1.5);
+  filter: brightness(0.6);
 }
 

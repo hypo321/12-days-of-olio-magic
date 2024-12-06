@@ -140,6 +140,7 @@ export const SnowEffect = () => {
         left: 0,
         pointerEvents: 'none',
         zIndex: 50,
+        filter: 'blur(1px)',
       }}
     />
   );
