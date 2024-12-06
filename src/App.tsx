@@ -13,6 +13,8 @@ import { ContentModal } from './components/ContentModal';
 import { useModal } from './contexts/ModalContext';
 import { BackgroundMusic } from './components/BackgroundMusic';
 import { WelcomeModal } from './components/WelcomeModal';
+import { Snow } from './components/Snow'; // Import Snow component
+
 import { useState, useEffect } from 'react';
 
 const CalendarRoute = () => {
@@ -67,7 +69,7 @@ const CalendarRoute = () => {
               content={`Discover what's behind Door #${day} in our magical Olio advent calendar! `}
             />
             <meta
-              name="twitter:image"
+              property="twitter:image"
               content={`https://12-days-of-olio-magic.vercel.app/images/og/day${day}.jpg`}
             />
 
@@ -183,7 +185,10 @@ function App() {
 
   return (
     <ModalProvider>
-      <div className="min-h-screen bg-gradient-to-b from-blue-900 via-purple-900 to-pink-900 text-white relative overflow-hidden">
+      <div className="relative min-h-screen">
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          {import.meta.env.VITE_ENABLE_SNOW_EFFECT !== 'false' && <Snow />}
+        </div>
         <WelcomeModal
           isOpen={showWelcomeModal}
           onClose={() => {
@@ -199,6 +204,7 @@ function App() {
           volume={0.2}
           initiallyEnabled={musicEnabled}
         />
+
         <main className="relative">
           <Routes>
             <Route path="/*" element={<AppContent />} />

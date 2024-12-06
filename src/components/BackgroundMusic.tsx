@@ -15,6 +15,10 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
   volume = 0.3,
   initiallyEnabled = false,
 }) => {
+  if (import.meta.env.VITE_ENABLE_BACKGROUND_MUSIC === 'false') {
+    return null;
+  }
+
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(initiallyEnabled);
 
@@ -63,14 +67,14 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
         {/* Multiple ripple elements with different delays */}
         {isPlaying && (
           <>
-            <div className="hidden md:block absolute inset-0 bg-white/20 rounded-full animate-music-ripple" />
-            <div className="hidden md:block absolute inset-0 bg-white/20 rounded-full animate-music-ripple [animation-delay:0.5s]" />
-            <div className="hidden md:block absolute inset-0 bg-white/20 rounded-full animate-music-ripple [animation-delay:1s]" />
+            <div className="hidden md:block absolute inset-0 bg-white/80 rounded-full animate-music-ripple" />
+            <div className="hidden md:block absolute inset-0 bg-white/60 rounded-full animate-music-ripple [animation-delay:0.5s]" />
+            <div className="hidden md:block absolute inset-0 bg-white/50 rounded-full animate-music-ripple [animation-delay:1s]" />
           </>
         )}
         <button
           onClick={togglePlay}
-          className="relative p-3 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all duration-300 focus:outline-none group z-10"
+          className="relative p-3 bg-white/30 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all duration-300 focus:outline-none  group z-10"
           aria-label={
             isPlaying
               ? 'Mute background music'

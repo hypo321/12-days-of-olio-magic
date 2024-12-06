@@ -28,10 +28,33 @@ export default {
             opacity: 0,
           },
         },
+        snowGrowFast: {
+          '0%': { transform: 'scaleY(0)' },
+          '30%': { transform: 'scaleY(0.7)' },
+          '100%': { transform: 'scaleY(1)' },
+        },
+        snowGrowMedium: {
+          '0%': { transform: 'scaleY(0)' },
+          '50%': { transform: 'scaleY(0.5)' },
+          '100%': { transform: 'scaleY(1)' },
+        },
+        snowGrowSlow: {
+          '0%': { transform: 'scaleY(0)' },
+          '70%': { transform: 'scaleY(0.3)' },
+          '100%': { transform: 'scaleY(1)' },
+        },
+        driftGrow: {
+          '0%': { transform: 'scaleY(0) scaleX(0.8)' },
+          '100%': { transform: 'scaleY(1) scaleX(1)' },
+        },
       },
       animation: {
         'music-ripple':
           'ripple 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'snow-fast': 'snowGrowFast 40s ease-out forwards',
+        'snow-medium': 'snowGrowMedium 50s ease-out forwards',
+        'snow-slow': 'snowGrowSlow 60s ease-out forwards',
+        'snow-drift': 'driftGrow 45s ease-out forwards',
       },
     },
   },

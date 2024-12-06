@@ -5,6 +5,7 @@ import { CalendarWindow as CalendarWindowType } from '../types';
 import { BACKGROUND_IMAGE_URL } from '../constants';
 import { useModal } from '../contexts/ModalContext';
 import { useWindowInteractions } from '../hooks/useWindowInteractions';
+import { SnowPile } from './SnowPile';
 
 interface Props {
   window: CalendarWindowType;
@@ -120,6 +121,7 @@ export const CalendarWindow: React.FC<Props> = ({
         }}
       >
         <div className="door-front" onClick={handleDoorFrontClick}>
+          <SnowPile />
           <div className="door-front-image" style={backgroundStyle} />
           <div className="door-number">{windowDay}</div>
           {showMessage && !canOpenDoor && (

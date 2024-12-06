@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface WelcomeModalProps {
@@ -13,6 +13,8 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
   onMusicChoice,
 }) => {
   if (!isOpen) return null;
+
+  const [enableMusic, setEnableMusic] = useState(false);
 
   return (
     <AnimatePresence>
@@ -49,6 +51,22 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
             >
               No, thanks
             </button>
+          </div>
+          
+          <div className="mt-8 flex flex-col items-center">
+            {import.meta.env.VITE_ENABLE_BACKGROUND_MUSIC !== 'false' && (
+              <div className="mb-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={enableMusic}
+                    onChange={(e) => setEnableMusic(e.target.checked)}
+                    className="form-checkbox h-4 w-4 text-blue-600"
+                  />
+                  <span>Enable festive music 🎵</span>
+                </label>
+              </div>
+            )}
           </div>
           
           <p className="text-white/60 text-sm mt-4">

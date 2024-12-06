@@ -10,6 +10,7 @@ import { useCalendarWindows } from '../hooks/useCalendarWindows';
 import { getViewportSize } from '../utils/windowUtils';
 import { saveWindowData } from '../utils/localStorageUtils';
 import { SnowEffect } from './SnowEffect';
+import { SnowPile } from './SnowPile';
 
 export const Calendar = () => {
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
@@ -409,6 +410,7 @@ export const Calendar = () => {
               cursor: activeDay ? 'pointer' : 'default',
             }}
           />
+          <SnowPile />
           {allImagesLoaded && (
             <div className="relative w-full h-full">
               {windows.map((window) => (
