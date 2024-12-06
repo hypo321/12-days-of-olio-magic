@@ -140,7 +140,7 @@ const AppContent = () => {
   const { isModalOpen, activeDay, closeModal } = useModal();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-800 to-gray-900">
+    <div className="min-h-screen conic-gradient">
       <Routes>
         <Route path="/" element={<CalendarRoute />} />
         <Route path="/day/:day" element={<CalendarRoute />} />
@@ -186,7 +186,9 @@ function App() {
     <ModalProvider>
       <div className="relative min-h-screen">
         <div className="fixed inset-0 z-0 pointer-events-none">
-          {import.meta.env.VITE_ENABLE_SNOW_EFFECT !== 'false' && <SnowEffect />}
+          {import.meta.env.VITE_ENABLE_SNOW_EFFECT !== 'false' && (
+            <SnowEffect />
+          )}
         </div>
         <WelcomeModal
           isOpen={showWelcomeModal}
