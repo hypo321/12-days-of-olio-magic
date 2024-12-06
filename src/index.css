@@ -7,7 +7,7 @@
 
 @font-face {
   font-family: 'Cosmica';
-  src: url('/fonts/Cosmica-Bold.otf') format('opentype');
+  src: url('/fonts/Cosmica-Bold.woff2') format('woff2');
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -15,7 +15,7 @@
 
 @font-face {
   font-family: 'Plus Jakarta Sans';
-  src: url('/fonts/PlusJakartaSans-VariableFont_wght.ttf') format('truetype-variations');
+  src: url('/fonts/PlusJakartaSans-VariableFont_wght.woff2') format('woff2');
   font-weight: 200 800;
   font-style: normal;
   font-display: swap;
