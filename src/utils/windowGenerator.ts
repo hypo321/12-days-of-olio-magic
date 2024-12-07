@@ -43,10 +43,7 @@ export const generateNewWindows = (
   }
 
   // Create an array of scrambled day numbers (1-12)
-  const scrambledDays = Array.from(
-    { length: 12 },
-    (_, i) => i + 1
-  ).sort(() => Math.random() - 0.5);
+  const scrambledDays = [1, 9, 8, 10, 2, 11, 3, 4, 5, 12, 6, 7];
 
   const windows: WindowData[] = Array.from({ length: 12 }, (_, i) => {
     const row = Math.floor(i / columns);
@@ -59,19 +56,10 @@ export const generateNewWindows = (
     const gridTop = (height - gridHeight) / 2;
 
     // Position within the grid, centering windows in their cells
-    const baseX =
+    const finalX =
       gridLeft + col * cellWidth + (cellWidth - windowWidth) / 2;
-    const baseY =
+    const finalY =
       gridTop + row * cellHeight + (cellHeight - windowHeight) / 2;
-
-    // Add small random offset
-    const maxOffsetX = (cellWidth - windowWidth) * 0.1;
-    const maxOffsetY = (cellHeight - windowHeight) * 0.1;
-    const offsetX = (Math.random() - 0.5) * maxOffsetX;
-    const offsetY = (Math.random() - 0.5) * maxOffsetY;
-
-    const finalX = baseX + offsetX;
-    const finalY = baseY + offsetY;
 
     return {
       day: scrambledDays[i],
