@@ -17,9 +17,8 @@ import { SnowEffect } from './components/SnowEffect';
 import { useState, useEffect } from 'react';
 
 // Get the base URL dynamically
-const baseUrl = import.meta.env.PROD
-  ? 'https://oliopaulmckenna.github.io'
-  : 'http://localhost:5173';
+const baseUrl =
+  import.meta.env.VERCEL_URL || 'https://oliopaulmckenna.github.io';
 
 const CalendarRoute = () => {
   const { day } = useParams();
@@ -77,10 +76,7 @@ const CalendarRoute = () => {
               content={`${baseUrl}/images/og/day${day}.jpg`}
             />
 
-            <link
-              rel="canonical"
-              href={`${baseUrl}/day/${day}`}
-            />
+            <link rel="canonical" href={`${baseUrl}/day/${day}`} />
           </>
         ) : (
           <>
@@ -93,10 +89,7 @@ const CalendarRoute = () => {
 
             {/* Open Graph / Facebook */}
             <meta property="og:type" content="website" />
-            <meta
-              property="og:url"
-              content={baseUrl}
-            />
+            <meta property="og:url" content={baseUrl} />
             <meta
               property="og:title"
               content="The 12 Days of Olio Magic"
@@ -112,10 +105,7 @@ const CalendarRoute = () => {
 
             {/* Twitter */}
             <meta name="twitter:card" content="summary_large_image" />
-            <meta
-              name="twitter:url"
-              content={baseUrl}
-            />
+            <meta name="twitter:url" content={baseUrl} />
             <meta
               name="twitter:title"
               content="The 12 Days of Olio Magic"
@@ -129,10 +119,7 @@ const CalendarRoute = () => {
               content={`${baseUrl}/images/og/main.jpg`}
             />
 
-            <link
-              rel="canonical"
-              href={baseUrl}
-            />
+            <link rel="canonical" href={baseUrl} />
           </>
         )}
       </Helmet>
