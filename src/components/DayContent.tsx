@@ -35,7 +35,7 @@ export const DayContent: React.FC<DayContentProps> = ({
   return (
     <div className="relative w-full h-full">
       <div
-        className={`absolute inset-0 ${bgColor} rounded-lg opacity-95`}
+        className={`absolute inset-0 ${bgColor} rounded-xl opacity-95`}
       />
       <div className="relative z-10 w-full h-full grid place-items-center p-8">
         <div className="relative w-full h-full max-w-4xl max-h-full grid place-items-center overflow-y-auto scrollbar-hide">

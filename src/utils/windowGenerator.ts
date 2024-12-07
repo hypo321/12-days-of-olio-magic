@@ -18,13 +18,6 @@ export const generateNewWindows = (
   const cellWidth = availableWidth / columns;
   const cellHeight = availableHeight / rows;
 
-  // Calculate window size to fit within cells
-  // Make windows match the viewport's aspect ratio more closely
-  const viewportAspectRatio = width / height;
-  const aspectRatio = isPortrait
-    ? Math.min(1.1, viewportAspectRatio * 1.2) // In portrait, slightly taller
-    : Math.max(1.2, viewportAspectRatio * 0.8); // In landscape, slightly wider
-
   const maxWidth = cellWidth * 0.9; // 90% of cell width
   const maxHeight = cellHeight * 0.9; // 85% of cell height
 
@@ -32,15 +25,8 @@ export const generateNewWindows = (
   let windowWidth: number;
   let windowHeight: number;
 
-  if (maxWidth / aspectRatio <= maxHeight) {
-    // Width is the limiting factor
-    windowWidth = maxWidth;
-    windowHeight = maxHeight; //maxWidth / aspectRatio;
-  } else {
-    // Height is the limiting factor
-    windowHeight = maxHeight;
-    windowWidth = maxWidth; //maxHeight * aspectRatio;
-  }
+  windowWidth = maxWidth;
+  windowHeight = maxHeight;
 
   // Create an array of scrambled day numbers (1-12)
   const scrambledDays = [1, 9, 8, 10, 2, 11, 3, 4, 5, 12, 6, 7];

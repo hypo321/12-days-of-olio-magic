@@ -81,7 +81,7 @@ export const ContentModal: React.FC<Props> = ({
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            <div className="bg-black bg-opacity-90 rounded-lg w-full h-full overflow-hidden relative">
+            <div className="bg-black bg-opacity-90 rounded-xl w-full h-full overflow-hidden relative">
               <button
                 onClick={handleClose}
                 className="absolute top-2 right-2 md:top-4 md:right-4 p-2 rounded-full bg-black bg-opacity-30 hover:bg-opacity-50 text-white transition-all z-50"
