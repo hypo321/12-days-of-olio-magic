@@ -119,7 +119,6 @@ export const useWindowInteractions = ({
         setTimeout(() => setIsShaking(false), 820);
         return;
       }
-      debugger;
       onWindowClick(day);
     },
     [activeDay, canOpen, onWindowClick, day]
