@@ -16,6 +16,11 @@ import { WelcomeModal } from './components/WelcomeModal';
 import { SnowEffect } from './components/SnowEffect';
 import { useState, useEffect } from 'react';
 
+// Get the base URL dynamically
+const baseUrl = import.meta.env.PROD
+  ? 'https://oliopaulmckenna.github.io'
+  : 'http://localhost:5173';
+
 const CalendarRoute = () => {
   const { day } = useParams();
 
@@ -38,7 +43,7 @@ const CalendarRoute = () => {
             <meta property="og:type" content="website" />
             <meta
               property="og:url"
-              content={`https://12-days-of-olio-magic.vercel.app/day/${day}`}
+              content={`${baseUrl}/day/${day}`}
             />
             <meta
               property="og:title"
@@ -50,14 +55,14 @@ const CalendarRoute = () => {
             />
             <meta
               property="og:image"
-              content={`https://12-days-of-olio-magic.vercel.app/images/og/day${day}.jpg`}
+              content={`${baseUrl}/images/og/day${day}.jpg`}
             />
 
             {/* Twitter */}
             <meta name="twitter:card" content="summary_large_image" />
             <meta
               name="twitter:url"
-              content={`https://12-days-of-olio-magic.vercel.app/day/${day}`}
+              content={`${baseUrl}/day/${day}`}
             />
             <meta
               name="twitter:title"
@@ -69,12 +74,12 @@ const CalendarRoute = () => {
             />
             <meta
               property="twitter:image"
-              content={`https://12-days-of-olio-magic.vercel.app/images/og/day${day}.jpg`}
+              content={`${baseUrl}/images/og/day${day}.jpg`}
             />
 
             <link
               rel="canonical"
-              href={`https://12-days-of-olio-magic.vercel.app/day/${day}`}
+              href={`${baseUrl}/day/${day}`}
             />
           </>
         ) : (
@@ -90,7 +95,7 @@ const CalendarRoute = () => {
             <meta property="og:type" content="website" />
             <meta
               property="og:url"
-              content="https://12-days-of-olio-magic.vercel.app"
+              content={baseUrl}
             />
             <meta
               property="og:title"
@@ -102,14 +107,14 @@ const CalendarRoute = () => {
             />
             <meta
               property="og:image"
-              content="https://12-days-of-olio-magic.vercel.app/images/og/main.jpg"
+              content={`${baseUrl}/images/og/main.jpg`}
             />
 
             {/* Twitter */}
             <meta name="twitter:card" content="summary_large_image" />
             <meta
               name="twitter:url"
-              content="https://12-days-of-olio-magic.vercel.app"
+              content={baseUrl}
             />
             <meta
               name="twitter:title"
@@ -121,12 +126,12 @@ const CalendarRoute = () => {
             />
             <meta
               name="twitter:image"
-              content="https://12-days-of-olio-magic.vercel.app/images/og/main.jpg"
+              content={`${baseUrl}/images/og/main.jpg`}
             />
 
             <link
               rel="canonical"
-              href="https://12-days-of-olio-magic.vercel.app"
+              href={baseUrl}
             />
           </>
         )}
