@@ -217,11 +217,13 @@ function App() {
 }
 
 export default function Root() {
+  console.log('pathname', window.location.pathname);
   const base = window.location.pathname.includes(
     '12-days-of-olio-magic'
   )
     ? '/12-days-of-olio-magic'
     : '/';
+  console.log('base', base);
 
   return (
     <Router
