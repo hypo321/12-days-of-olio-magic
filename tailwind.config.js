@@ -14,9 +14,6 @@ export default {
         heading: ['Cosmica', 'system-ui', 'sans-serif'],
         body: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
       },
-      gridTemplateColumns: {
-        'calendar-landscape': 'repeat(4, minmax(0, 1fr))',
-      },
       keyframes: {
         ripple: {
           '0%': {
