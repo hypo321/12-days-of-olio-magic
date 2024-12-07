@@ -35,7 +35,7 @@ export const ScreenEffect: React.FC<ScreenEffectProps> = ({
           particleCount,
           angle: randomInRange(55, 125),
           spread: randomInRange(50, 70),
-          origin: { x: 0.2 },
+          origin: { x: 0.2, y: 0.8 },
           colors: [
             '#FFCE00',
             '##FFB000',
@@ -50,7 +50,7 @@ export const ScreenEffect: React.FC<ScreenEffectProps> = ({
           particleCount,
           angle: randomInRange(55, 125),
           spread: randomInRange(50, 70),
-          origin: { x: 0.8 },
+          origin: { x: 0.8, y: 0.8 },
           colors: [
             '#FFCE00',
             '##FFB000',

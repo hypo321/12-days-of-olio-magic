@@ -61,11 +61,6 @@ export const Calendar = () => {
               isOpen: !newWindows[windowIndex].isOpen,
             };
           }
-          // Save updated windows to localStorage
-          saveWindowData({
-            windows: newWindows,
-            viewportSize: containerSize,
-          });
           return newWindows;
         });
       }
