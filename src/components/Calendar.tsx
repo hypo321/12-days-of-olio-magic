@@ -8,7 +8,6 @@ import { BACKGROUND_IMAGE_URL } from '../constants';
 import { canOpenDoor } from '../utils';
 import { useCalendarWindows } from '../hooks/useCalendarWindows';
 import { getViewportSize } from '../utils/windowUtils';
-import { saveWindowData } from '../utils/localStorageUtils';
 import { SnowEffect } from './SnowEffect';
 
 export const Calendar = () => {
@@ -93,10 +92,7 @@ export const Calendar = () => {
           };
         }
         // Save updated windows to localStorage
-        saveWindowData({
-          windows: newWindows,
-          viewportSize: containerSize,
-        });
+
         return newWindows;
       });
 
