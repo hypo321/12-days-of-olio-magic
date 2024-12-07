@@ -217,8 +217,15 @@ function App() {
 }
 
 export default function Root() {
+  const base = window.location.pathname.includes(
+    '12-days-of-olio-magic'
+  )
+    ? '/12-days-of-olio-magic'
+    : '/';
+
   return (
     <Router
+      basename={base}
       future={{
         v7_startTransition: true,
       }}
