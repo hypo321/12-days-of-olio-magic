@@ -26,7 +26,7 @@ export const generateNewWindows = (
     : Math.max(1.2, viewportAspectRatio * 0.8); // In landscape, slightly wider
 
   const maxWidth = cellWidth * 0.9; // 90% of cell width
-  const maxHeight = cellHeight * 0.85; // 85% of cell height
+  const maxHeight = cellHeight * 0.9; // 85% of cell height
 
   // Calculate window dimensions based on aspect ratio while respecting max sizes
   let windowWidth: number;
@@ -35,11 +35,11 @@ export const generateNewWindows = (
   if (maxWidth / aspectRatio <= maxHeight) {
     // Width is the limiting factor
     windowWidth = maxWidth;
-    windowHeight = maxWidth / aspectRatio;
+    windowHeight = maxHeight; //maxWidth / aspectRatio;
   } else {
     // Height is the limiting factor
     windowHeight = maxHeight;
-    windowWidth = maxHeight * aspectRatio;
+    windowWidth = maxWidth; //maxHeight * aspectRatio;
   }
 
   // Create an array of scrambled day numbers (1-12)
