@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DayContent } from './DayContent';
 import { useNavigate } from 'react-router-dom';
@@ -15,10 +15,10 @@ export const ContentModal: React.FC<Props> = ({
   onClose,
 }) => {
   const navigate = useNavigate();
-  const [touchStart, setTouchStart] = useState<{
+  /*   const [touchStart, setTouchStart] = useState<{
     x: number;
     y: number;
-  } | null>(null);
+  } | null>(null); */
 
   const handleClose = () => {
     onClose();
@@ -28,13 +28,16 @@ export const ContentModal: React.FC<Props> = ({
   };
 
   const handleAdvance = () => {
-    onClose();
-    setTimeout(() => {
-      navigate(`/day/${day + 1}`, { replace: true });
-    }, 300);
+    const event = new KeyboardEvent('keydown', {
+      key: 'ArrowRight',
+      bubbles: true,
+      cancelable: true,
+    });
+
+    document.dispatchEvent(event);
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
+  /*   const handleTouchStart = (e: React.TouchEvent) => {
     const touch = e.touches[0];
     setTouchStart({ x: touch.clientX, y: touch.clientY });
   };
@@ -58,7 +61,7 @@ export const ContentModal: React.FC<Props> = ({
 
   const handleTouchEnd = () => {
     setTouchStart(null);
-  };
+  }; */
 
   return (
     <AnimatePresence>
@@ -81,9 +84,6 @@ export const ContentModal: React.FC<Props> = ({
               ease: [0.4, 0, 0.2, 1],
             }}
             className="fixed inset-4 md:inset-10 z-50 flex items-center justify-center"
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
           >
             <div className="bg-black bg-opacity-90 rounded-xl w-full h-full overflow-hidden relative">
               <button
