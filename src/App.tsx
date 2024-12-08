@@ -164,11 +164,7 @@ function App() {
   return (
     <ModalProvider>
       <div className="relative min-h-screen">
-        <div className="fixed inset-0 z-0 pointer-events-none">
-          {import.meta.env.VITE_ENABLE_SNOW_EFFECT !== 'false' && (
-            <SnowEffect />
-          )}
-        </div>
+        <div className="fixed inset-0 z-0 pointer-events-none"></div>
         <WelcomeModal
           isOpen={showWelcomeModal}
           onClose={() => {
