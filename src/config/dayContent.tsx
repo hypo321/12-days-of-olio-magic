@@ -7,7 +7,16 @@ import { QuoteBlock } from '../components/QuoteBlock';
 import { LiteYouTubeEmbed } from '../components/LiteYouTubeEmbed';
 import { AudioPlayer } from '../components/AudioPlayer';
 
-export const DAY_CONTENT: Record<number, () => React.ReactNode> = {
+type DayContentProps = {
+  onVideoEnd?: () => void;
+  reload?: boolean;
+  key?: string | number;
+};
+
+export const DAY_CONTENT: Record<
+  number,
+  (props?: DayContentProps) => React.ReactNode
+> = {
   1: () => (
     <>
       <motion.h2
@@ -257,9 +266,13 @@ export const DAY_CONTENT: Record<number, () => React.ReactNode> = {
     </>
   ),
 
-  12: () => (
-    <div className="relative w-full h-full flex flex-col items-center justify-center bg-black aspect-video">
-      <LiteYouTubeEmbed videoId="ckhjdrOxBhU" />
+  12: (props?: DayContentProps) => (
+    <div className="relative w-full h-full flex flex-col items-center justify-center">
+      <LiteYouTubeEmbed
+        videoId="ckhjdrOxBhU"
+        onVideoEnd={props?.onVideoEnd}
+        reload={props?.reload}
+      />
     </div>
   ),
 };
