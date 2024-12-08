@@ -14,7 +14,7 @@ import { useModal } from './contexts/ModalContext';
 import { BackgroundMusic } from './components/BackgroundMusic';
 import { WelcomeModal } from './components/WelcomeModal';
 import { SnowEffect } from './components/SnowEffect';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 // Get the base URL dynamically
 const baseUrl =
@@ -136,6 +136,7 @@ const AppContent = () => {
       <Routes>
         <Route path="/" element={<CalendarRoute />} />
         <Route path="/day/:day" element={<CalendarRoute />} />
+        <Route path="*" element={<CalendarRoute />} />
       </Routes>
       {activeDay !== null && (
         <ContentModal
@@ -154,24 +155,10 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Check if user has already made a choice
-  useEffect(() => {
-    const hasChosenMusic = localStorage.getItem('musicPreference');
-    if (location.pathname === '/welcome') {
-      setShowWelcomeModal(true);
-    } else if (hasChosenMusic !== null) {
-      setShowWelcomeModal(false);
-      setMusicEnabled(hasChosenMusic === 'true');
-    }
-  }, [location.pathname]);
-
   const handleMusicChoice = (enable: boolean) => {
-    localStorage.setItem('musicPreference', enable.toString());
+    //localStorage.setItem('musicPreference', enable.toString());
     setMusicEnabled(enable);
     setShowWelcomeModal(false);
-    if (location.pathname === '/welcome') {
-      navigate('/');
-    }
   };
 
   return (
