@@ -7,11 +7,13 @@ interface ModalContextType {
   closeModal: () => void;
 }
 
-const ModalContext = createContext<ModalContextType | undefined>(undefined);
+const ModalContext = createContext<ModalContextType | undefined>(
+  undefined
+);
 
-export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const ModalProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeDay, setActiveDay] = useState<number | null>(null);
 
@@ -22,11 +24,13 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const closeModal = () => {
     setIsModalOpen(false);
-    // Don't clear activeDay here - let the Calendar component handle it
+    setActiveDay(null); // Reset activeDay when closing the modal
   };
 
   return (
-    <ModalContext.Provider value={{ isModalOpen, activeDay, openModal, closeModal }}>
+    <ModalContext.Provider
+      value={{ isModalOpen, activeDay, openModal, closeModal }}
+    >
       {children}
     </ModalContext.Provider>
   );

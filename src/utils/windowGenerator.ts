@@ -11,8 +11,8 @@ export const generateNewWindows = (
   const rows = isPortrait ? 4 : 3;
 
   // Calculate available space
-  const availableWidth = width;
-  const availableHeight = height;
+  const availableWidth = width * 0.92;
+  const availableHeight = height * 0.92;
 
   // Calculate cell dimensions
   const cellWidth = availableWidth / columns;
