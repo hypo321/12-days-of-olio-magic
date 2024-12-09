@@ -368,7 +368,7 @@ export const Calendar = () => {
   }, [activeDay, navigate]);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden">
+    <div className="relative w-screen h-screen overflow-hidden ">
       {isLoading ? (
         <LoadingScreen progress={loadingProgress} />
       ) : (
