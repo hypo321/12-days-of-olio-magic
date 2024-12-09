@@ -13,7 +13,6 @@ import { ContentModal } from './components/ContentModal';
 import { useModal } from './contexts/ModalContext';
 import { BackgroundMusic } from './components/BackgroundMusic';
 import { WelcomeModal } from './components/WelcomeModal';
-import { SnowEffect } from './components/SnowEffect';
 import { useState } from 'react';
 
 // Get the base URL dynamically
