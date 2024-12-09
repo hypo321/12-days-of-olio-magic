@@ -143,6 +143,10 @@ export const Calendar = () => {
             { length: 12 },
             (_, i) => `/content/day${i + 1}.jpg`
           ),
+          ...Array.from(
+            { length: 12 },
+            (_, i) => `/content/day${i + 1}-thumb.jpg`
+          ),
         ];
 
         // Load images concurrently and track progress
