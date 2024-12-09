@@ -174,7 +174,7 @@ export const DAY_CONTENT: Record<
   10: () => (
     <>
       <motion.img
-        src="/content/Day9quote.jpg"
+        src="/content/Day10quote.jpg"
         alt="quote"
         className="mx-auto rounded-lg max-h-full"
         variants={itemVariants}

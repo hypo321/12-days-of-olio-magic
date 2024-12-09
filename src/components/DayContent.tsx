@@ -100,7 +100,7 @@ export const DayContent: React.FC<DayContentProps> = ({
         className={`absolute inset-0 ${bgColor} rounded-xl opacity-95`}
       />
       <div className="relative z-10 w-full h-full grid place-items-center p-8">
-        <div className="relative w-full h-full max-w-4xl max-h-full grid place-items-center overflow-y-auto scrollbar-hide">
+        <div className="relative  w-full h-full max-w-4xl max-h-full grid place-items-center overflow-y-auto scrollbar-hide">
           {isVisible && dayEffect && (
             <ScreenEffect
               effect={dayEffect.effect}
@@ -108,7 +108,8 @@ export const DayContent: React.FC<DayContentProps> = ({
             />
           )}
           <motion.div
-            className={`relative grid gap-6 ${textColor} text-center`}
+            className={`relative max-h-full grid gap-6 ${textColor} text-center`}
+            style={{ maxHeight: '100%' }}
             initial="hidden"
             animate={isVisible ? 'visible' : 'hidden'}
             variants={contentVariants}
