@@ -37,16 +37,17 @@ export const DayContent: React.FC<DayContentProps> = ({
   }
 
   const isVideoDay = [12].includes(day);
-  const bgColor = DAY_BACKGROUNDS[day] || 'bg-olio-yellow';
+  const bgColor = DAY_BACKGROUNDS[day] || 'bg-olio-lilac';
   const textColor = 'text-gray-900';
 
   if (isVideoDay) {
     return (
       <div className="relative w-full h-full bg-gradient-to-br from-olio-purple to-olio-yellow">
-        {!videoEnded && ContentComponent({
-          onVideoEnd: () => setVideoEnded(true),
-          reload: reloadVideo,
-        })}
+        {!videoEnded &&
+          ContentComponent({
+            onVideoEnd: () => setVideoEnded(true),
+            reload: reloadVideo,
+          })}
         {videoEnded && (
           <motion.div
             initial={{ opacity: 0 }}
