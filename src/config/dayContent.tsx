@@ -151,34 +151,34 @@ export const DAY_CONTENT: Record<
 
   8: () => (
     <>
-      <motion.img
-        src="/content/day8-quote.jpg"
-        alt="quote"
-        className="mx-auto rounded-lg max-h-full"
+      <motion.div
+        className=" rounded-lg p-80 h-90 w-90 bg-cover bg-[url('/content/day8-quote.jpg')]"
         variants={itemVariants}
-      />
+      >
+        &nbsp;
+      </motion.div>
     </>
   ),
 
   9: () => (
     <>
-      <motion.img
-        src="/content/day9-quote.jpg"
-        alt="quote"
-        className="mx-auto rounded-lg max-h-full"
+      <motion.div
+        className=" rounded-lg p-80 h-90 w-90 bg-cover bg-[url('/content/day9-quote.jpg')]"
         variants={itemVariants}
-      />
+      >
+        &nbsp;
+      </motion.div>
     </>
   ),
 
   10: () => (
     <>
-      <motion.img
-        src="/content/day10-quote.jpg"
-        alt="quote"
-        className="mx-auto rounded-lg max-h-full"
+      <motion.div
+        className=" rounded-lg p-80 h-full bg-cover bg-[url('/content/day10-quote.jpg')]"
         variants={itemVariants}
-      />
+      >
+        &nbsp;
+      </motion.div>
     </>
   ),
 
