@@ -17,10 +17,7 @@ export const DAY_CONTENT: Record<
 > = {
   1: () => (
     <>
-      <motion.h2
-        className="text-4xl md:text-5xl font-bold drop-shadow-lg"
-        variants={itemVariants}
-      >
+      <motion.h2 className="h2" variants={itemVariants}>
         Welcome!
       </motion.h2>
       <AudioPlayer fileName="welcome.mp3" play />
@@ -35,30 +32,21 @@ export const DAY_CONTENT: Record<
 
   2: () => (
     <>
-      <motion.h2
-        className="text-4xl md:text-5xl font-bold drop-shadow-lg"
-        variants={itemVariants}
-      >
+      <motion.h2 className="h2" variants={itemVariants}>
         We rescued 30 million meals in 12 months
       </motion.h2>
 
-      <Emoji name="party" />
+      <Emoji name="🥳" />
     </>
   ),
 
   3: () => (
     <>
-      <motion.h2
-        className="text-4xl md:text-5xl font-bold drop-shadow-lg"
-        variants={itemVariants}
-      >
+      <motion.h2 className="h2" variants={itemVariants}>
         Those meals fed 168,700 households
       </motion.h2>
 
-      <motion.h3
-        className="text-2xl md:text-3xl font-semibold drop-shadow-md"
-        variants={itemVariants}
-      >
+      <motion.h3 className="h3" variants={itemVariants}>
         in UK and Irish communities
       </motion.h3>
 
@@ -68,19 +56,13 @@ export const DAY_CONTENT: Record<
 
   4: () => (
     <>
-      <motion.h2
-        className="text-4xl md:text-5xl font-bold drop-shadow-lg"
-        variants={itemVariants}
-      >
+      <motion.h2 className="h2" variants={itemVariants}>
         We saved 8.5 billion litres of water
       </motion.h2>
 
       <Emoji name="💧🏊‍♀️" />
 
-      <motion.h3
-        className="text-2xl md:text-3xl font-semibold drop-shadow-md"
-        variants={itemVariants}
-      >
+      <motion.h3 className="h3" variants={itemVariants}>
         Which is enough to fill 3,400 Olympic swimming pools!
       </motion.h3>
     </>
@@ -88,17 +70,11 @@ export const DAY_CONTENT: Record<
 
   5: () => (
     <>
-      <motion.h2
-        className="text-4xl md:text-5xl font-bold drop-shadow-lg"
-        variants={itemVariants}
-      >
+      <motion.h2 className="h2" variants={itemVariants}>
         We diverted 50,000 tonnes of Co2 from the atmosphere
       </motion.h2>
       <Emoji name="⛅️" />
-      <motion.h3
-        className="text-2xl md:text-3xl font-semibold drop-shadow-md"
-        variants={itemVariants}
-      >
+      <motion.h3 className="h3" variants={itemVariants}>
         Which is the same as cancelling out 170 flights from London to
         New York
       </motion.h3>
@@ -107,22 +83,13 @@ export const DAY_CONTENT: Record<
 
   6: () => (
     <>
-      <motion.h2
-        className="text-4xl md:text-5xl font-bold drop-shadow-lg"
-        variants={itemVariants}
-      >
+      <motion.h2 className="h2" variants={itemVariants}>
         And amazingly...
       </motion.h2>
-      <motion.h2
-        className="text-4xl md:text-5xl font-bold drop-shadow-lg"
-        variants={itemVariants}
-      >
+      <motion.h2 className="h2" variants={itemVariants}>
         We've just hit 100 million meals rescued
       </motion.h2>
-      <motion.h3
-        className="text-2xl md:text-3xl font-semibold drop-shadow-md"
-        variants={itemVariants}
-      >
+      <motion.h3 className="h3" variants={itemVariants}>
         since we were first founded in 2015
       </motion.h3>
 
@@ -132,16 +99,10 @@ export const DAY_CONTENT: Record<
 
   7: () => (
     <>
-      <motion.h2
-        className="text-4xl md:text-5xl font-bold drop-shadow-lg"
-        variants={itemVariants}
-      >
+      <motion.h2 className="h2" variants={itemVariants}>
         But those numbers mean nothing...
       </motion.h2>
-      <motion.h3
-        className="text-2xl md:text-3xl font-semibold drop-shadow-md"
-        variants={itemVariants}
-      >
+      <motion.h3 className="h3" variants={itemVariants}>
         without a snapshot of the human impact we're having
       </motion.h3>
 
@@ -152,10 +113,17 @@ export const DAY_CONTENT: Record<
   8: () => (
     <>
       <motion.div
-        className=" rounded-lg p-80 h-90 w-90 bg-cover bg-[url('/content/day8-quote.jpg')]"
-        variants={itemVariants}
+        className="rounded-lg overflow-hidden drop-shadow-lg"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 10 }}
       >
-        &nbsp;
+        <motion.img
+          src="/content/day8-quote.jpg"
+          className="w-full h-auto object-contain max-h-[80vh]"
+          variants={itemVariants}
+          alt="Day 8 quote"
+        />
       </motion.div>
     </>
   ),
@@ -163,10 +131,17 @@ export const DAY_CONTENT: Record<
   9: () => (
     <>
       <motion.div
-        className=" rounded-lg p-80 h-90 w-90 bg-cover bg-[url('/content/day9-quote.jpg')]"
-        variants={itemVariants}
+        className="rounded-lg overflow-hidden drop-shadow-lg"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 10 }}
       >
-        &nbsp;
+        <motion.img
+          src="/content/day9-quote.jpg"
+          className="w-full h-auto object-contain max-h-[80vh]"
+          variants={itemVariants}
+          alt="Day 9 quote"
+        />
       </motion.div>
     </>
   ),
@@ -174,20 +149,24 @@ export const DAY_CONTENT: Record<
   10: () => (
     <>
       <motion.div
-        className=" rounded-lg p-80 h-full bg-cover bg-[url('/content/day10-quote.jpg')]"
-        variants={itemVariants}
+        className="rounded-lg overflow-hidden drop-shadow-lg"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 10 }}
       >
-        &nbsp;
+        <motion.img
+          src="/content/day10-quote.jpg"
+          className="w-full h-auto object-contain max-h-[80vh]"
+          variants={itemVariants}
+          alt="Day 10 quote"
+        />
       </motion.div>
     </>
   ),
 
   11: () => (
     <>
-      <motion.h2
-        className="text-4xl md:text-5xl font-bold drop-shadow-lg"
-        variants={itemVariants}
-      >
+      <motion.h2 className="h2" variants={itemVariants}>
         Let’s make 2025 our biggest year yet
       </motion.h2>
 

@@ -1,7 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import {
-  SpeakerWaveIcon,
+  // SpeakerWaveIcon,
   SpeakerXMarkIcon,
+  XMarkIcon,
+  MusicalNoteIcon,
 } from '@heroicons/react/24/solid';
 
 interface BackgroundMusicProps {
@@ -82,9 +84,12 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
           }
         >
           {isPlaying ? (
-            <SpeakerWaveIcon className="w-6 h-6 text-white group-hover:text-pink-200 transition-colors" />
+            <MusicalNoteIcon className="w-8 h-8 text-white group-hover:text-pink-200 transition-colors" />
           ) : (
-            <SpeakerXMarkIcon className="w-6 h-6 text-white group-hover:text-pink-200 transition-colors" />
+            <div className="relative w-8 h-8">
+              <MusicalNoteIcon className="absolute w-7 h-7 text-white group-hover:text-pink-200 transition-colors" />
+              <XMarkIcon className="absolute w-16 h-16 -top-4 -left-4 text-white group-hover:text-pink-200 stroke-pink-700/50 transition-colors" />
+            </div>
           )}
         </button>
       </div>

@@ -40,7 +40,7 @@ export const Emoji: React.FC<EmojiProps> = ({
     // Render text-based emoji
     return (
       <motion.span
-        className={`text-9xl mt-4 block ${className}`}
+        className={`text-8xl sm:text-9xl md:text-10xl lg:text-10xl block ${className}`}
         variants={itemVariants}
         role="img"
         aria-label={name}

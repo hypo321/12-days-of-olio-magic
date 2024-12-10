@@ -95,29 +95,21 @@ export const DayContent: React.FC<DayContentProps> = ({
   }
 
   return (
-    <div className="relative w-full h-full">
-      <div
-        className={`absolute inset-0 ${bgColor} rounded-xl opacity-95`}
-      />
-      <div className="relative z-10 w-full h-full grid place-items-center p-8">
-        <div className="relative  w-full h-full max-w-4xl max-h-full grid place-items-center overflow-y-auto scrollbar-hide">
-          {isVisible && dayEffect && (
-            <ScreenEffect
-              effect={dayEffect.effect}
-              className="absolute inset-8"
-            />
-          )}
-          <motion.div
-            className={`relative max-h-full grid gap-6 ${textColor} text-center`}
-            style={{ maxHeight: '100%' }}
-            initial="hidden"
-            animate={isVisible ? 'visible' : 'hidden'}
-            variants={contentVariants}
-          >
-            {ContentComponent()}
-          </motion.div>
-        </div>
-      </div>
+    <div className={` ${bgColor} z-10 p-4 w-full h-full`}>
+      {isVisible && dayEffect && (
+        <ScreenEffect
+          effect={dayEffect.effect}
+          className="absolute inset-8"
+        />
+      )}
+      <motion.div
+        className={`max-h-full h-full w-full p-2 flex flex-col items-center justify-center text-center  ${textColor} gap-4 md:gap-6 lg:gap-8`}
+        initial="hidden"
+        animate={isVisible ? 'visible' : 'hidden'}
+        variants={contentVariants}
+      >
+        {ContentComponent()}
+      </motion.div>
     </div>
   );
 };

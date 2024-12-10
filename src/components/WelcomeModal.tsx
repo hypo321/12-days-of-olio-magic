@@ -38,23 +38,23 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
                 onMusicChoice(true);
                 onClose();
               }}
-              className="flex-1 bg-gradient-to-r from-red-600 to-pink-500 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all duration-300"
+              className="flex-1 bg-gradient-to-r from-pink-700 to-red-700 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all duration-300"
             >
-              Yes, enable music
+              Yes, enable music 🎵
             </button>
             <button
               onClick={() => {
                 onMusicChoice(false);
                 onClose();
               }}
-              className="flex-1 bg-white/10 text-white px-6 py-3 rounded-lg font-medium hover:bg-white/20 transition-all duration-300"
+              className="flex-1 bg-white/20 text-white px-6 py-3 rounded-lg font-medium hover:bg-white/20 hover:scale-105 transition-all duration-300"
             >
-              No, thanks
+              No music, thanks 🔇
             </button>
           </div>
 
-          <p className="text-white/60 text-sm mt-4">
-            You can toggle the music anytime using the button in the
+          <p className="text-white/100 text-sm mt-4">
+            You can toggle the music using the button in the
             bottom-right corner.
           </p>
         </motion.div>

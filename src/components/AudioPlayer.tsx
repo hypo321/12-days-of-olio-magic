@@ -120,7 +120,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   };
 
   return (
-    <div className="flex items-center space-x-4 w-full">
+    <div className="flex items-center max-w-2xl space-x-4 w-full">
       <button
         onClick={togglePlayPause}
         className="p-2 bg-pink-700 text-white rounded-full hover:bg-pink-600 focus:outline-none transition-colors duration-300"
