@@ -260,5 +260,5 @@ export const DAY_BACKGROUNDS: Partial<
   9: 'bg-olio-lilac',
   10: 'bg-olio-yellow',
   11: 'bg-olio-pink',
-  12: 'bg-olio-yellow',
+  12: 'bg-olio-lilac',
 };

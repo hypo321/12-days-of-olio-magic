@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import {
-  XMarkIcon,
+  SlashIcon,
   MusicalNoteIcon,
 } from '@heroicons/react/24/solid';
 
@@ -86,7 +86,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
           ) : (
             <div className="relative w-8 h-8">
               <MusicalNoteIcon className="absolute w-7 h-7 text-white group-hover:text-pink-200 transition-colors" />
-              <XMarkIcon className="absolute w-16 h-16 -top-4 -left-4 text-white group-hover:text-pink-200 stroke-pink-700/50 transition-colors" />
+              <SlashIcon className="absolute w-12 h-12 -rotate-[70deg] -top-2 -left-2 text-white group-hover:text-pink-200 stroke-pink-700/50 transition-colors" />
             </div>
           )}
         </button>
