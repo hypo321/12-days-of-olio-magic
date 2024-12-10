@@ -17,7 +17,7 @@ import { useState } from 'react';
 
 // Get the base URL dynamically
 const baseUrl =
-  import.meta.env.VERCEL_URL || 'https://oliopaulmckenna.github.io';
+  import.meta.env.VERCEL_URL || 'https://12days.olioapp.com';
 
 const CalendarRoute = () => {
   const { day } = useParams();
@@ -83,7 +83,7 @@ const CalendarRoute = () => {
             <meta name="title" content="The 12 Days of Olio Magic" />
             <meta
               name="description"
-              content="Join us for a magical journey through 12 days of Olio surprises! Open a new door each day to discover something special."
+              content="Join us for a magical journey through 12 days of Olio surprises. Open the doors to celebrate 2024 with us!"
             />
 
             {/* Open Graph / Facebook */}
@@ -95,7 +95,7 @@ const CalendarRoute = () => {
             />
             <meta
               property="og:description"
-              content="Join us for a magical journey through 12 days of Olio surprises! Open a new door each day to discover something special."
+              content="Join us for a magical journey through 12 days of Olio surprises. Open the doors to celebrate 2024 with us!"
             />
             <meta
               property="og:image"
@@ -111,7 +111,7 @@ const CalendarRoute = () => {
             />
             <meta
               name="twitter:description"
-              content="Join us for a magical journey through 12 days of Olio surprises! Open a new door each day to discover something special."
+              content="Join us for a magical journey through 12 days of Olio surprises. Open the doors to celebrate 2024 with us!"
             />
             <meta
               name="twitter:image"
