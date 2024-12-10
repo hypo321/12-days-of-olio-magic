@@ -93,7 +93,45 @@ export const DAY_CONTENT: Record<
         since we were first founded in 2015
       </motion.h3>
 
-      <Emoji name="🚀" />
+      <div
+        style={{
+          position: 'relative',
+          width: '100px',
+          height: '100px',
+          overflow: 'visible',
+        }}
+      >
+        {/* Rocket */}
+        <motion.div
+          initial={{ x: 0, y: 0, opacity: 1 }}
+          animate={{
+            // Enhanced jitter with rapid shake before takeoff
+            x: [
+              0, -0.3, 0.3, -0.3, 0.3, -0.3, 0.3, -0.3, 0.3, -0.3, -7,
+              1000, 1000, -1000, 0,
+            ],
+            y: [
+              0, 0.3, -0.3, 0.3, -0.3, 0.3, -0.3, 0.3, -0.3, 0.3, 7,
+              -1000, -1000, 1000, 0,
+            ],
+            opacity: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+          }}
+          transition={{
+            duration: 3,
+            times: [
+              // Increased frequency for rapid jitter at the beginning
+              0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.45, 0.5,
+              0.55, 0.7, 0.75, 0.8, 1,
+            ],
+            ease: 'anticipate',
+            repeat: Infinity,
+            repeatDelay: 0.5,
+          }}
+          style={{ position: 'absolute' }}
+        >
+          <Emoji name="🚀" />
+        </motion.div>
+      </div>
     </>
   ),
 
