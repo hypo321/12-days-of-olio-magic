@@ -139,6 +139,9 @@ export const Calendar = () => {
         const imageUrls = [
           BACKGROUND_IMAGE_URL,
           '/thumbnails/cardboard.jpg', // Door back texture
+          '/content/Day8quote.jpg',
+          '/content/Day9quote.jpg',
+          '/content/Day10quote.jpg',
           ...Array.from(
             { length: 12 },
             (_, i) => `/content/day${i + 1}.jpg`

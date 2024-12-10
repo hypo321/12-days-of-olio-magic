@@ -152,7 +152,7 @@ export const DAY_CONTENT: Record<
   8: () => (
     <>
       <motion.img
-        src="/content/Day8quote.jpg"
+        src="/content/day8-quote.jpg"
         alt="quote"
         className="mx-auto rounded-lg max-h-full"
         variants={itemVariants}
@@ -163,7 +163,7 @@ export const DAY_CONTENT: Record<
   9: () => (
     <>
       <motion.img
-        src="/content/Day9quote.jpg"
+        src="/content/day9-quote.jpg"
         alt="quote"
         className="mx-auto rounded-lg max-h-full"
         variants={itemVariants}
@@ -174,7 +174,7 @@ export const DAY_CONTENT: Record<
   10: () => (
     <>
       <motion.img
-        src="/content/Day10quote.jpg"
+        src="/content/day10-quote.jpg"
         alt="quote"
         className="mx-auto rounded-lg max-h-full"
         variants={itemVariants}
