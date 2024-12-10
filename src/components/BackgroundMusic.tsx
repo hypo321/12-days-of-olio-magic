@@ -1,7 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
 import {
-  // SpeakerWaveIcon,
-  SpeakerXMarkIcon,
   XMarkIcon,
   MusicalNoteIcon,
 } from '@heroicons/react/24/solid';
