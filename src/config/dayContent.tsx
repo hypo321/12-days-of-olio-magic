@@ -169,8 +169,21 @@ export const DAY_CONTENT: Record<
       <motion.h2 className="h2" variants={itemVariants}>
         Let’s make 2025 our biggest year yet
       </motion.h2>
-
-      <Emoji name="🤝" />
+      <motion.div
+        animate={{
+          y: [0, -15, 0, -10, 0],
+        }}
+        transition={{
+          duration: 0.4,
+          repeat: Infinity,
+          delay: 1,
+          repeatDelay: 2,
+          times: [0, 0.25, 0.5, 0.75, 1],
+          ease: 'easeInOut',
+        }}
+      >
+        <Emoji name="🤝" />
+      </motion.div>
     </>
   ),
 
