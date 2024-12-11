@@ -398,8 +398,22 @@ export const Calendar = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeDay, navigate]);
 
-  // Prevent pinch zoom on mobile
+  // Prevent browser zoom (both pinch and keyboard)
   useEffect(() => {
+    const preventZoom = (e: WheelEvent | KeyboardEvent) => {
+      // Prevent Ctrl/Cmd + wheel zoom
+      if (e instanceof WheelEvent && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+      }
+      
+      // Prevent Ctrl/Cmd + +/- zoom
+      if (e instanceof KeyboardEvent && (e.ctrlKey || e.metaKey)) {
+        if (e.key === '=' || e.key === '-' || e.key === '+' || e.key === '_') {
+          e.preventDefault();
+        }
+      }
+    };
+
     const preventPinchZoom = (e: TouchEvent) => {
       // Prevent pinch-zoom if there are 2 or more touch points
       if (e.touches.length > 1) {
@@ -408,6 +422,8 @@ export const Calendar = () => {
     };
 
     // Add the event listeners with passive: false to allow preventDefault
+    window.addEventListener('wheel', preventZoom, { passive: false });
+    window.addEventListener('keydown', preventZoom, { passive: false });
     document.addEventListener('touchstart', preventPinchZoom, {
       passive: false,
     });
@@ -416,6 +432,8 @@ export const Calendar = () => {
     });
 
     return () => {
+      window.removeEventListener('wheel', preventZoom);
+      window.removeEventListener('keydown', preventZoom);
       document.removeEventListener('touchstart', preventPinchZoom);
       document.removeEventListener('touchmove', preventPinchZoom);
     };
