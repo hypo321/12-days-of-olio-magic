@@ -139,9 +139,9 @@ export const useWindowInteractions = ({
     }
   }, [activeDay, showMessage]);
 
-  // Manage content visibility based on window open state
+  // Manage content visibility based on window open state and active state
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen || activeDay === String(day)) {
       setShowContent(true);
     } else {
       const timer = setTimeout(() => {
@@ -149,7 +149,7 @@ export const useWindowInteractions = ({
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [isOpen, activeDay, day]);
 
   return {
     showMessage,

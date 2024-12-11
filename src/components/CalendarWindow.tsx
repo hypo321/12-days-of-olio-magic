@@ -165,14 +165,24 @@ export const CalendarWindow: React.FC<Props> = ({
         }}
       >
         {showContent && (
-          <div
-            style={
-              activeDay === String(windowDay)
-                ? fullImageStyle
-                : thumbnailStyle
-            }
-            className="rounded-lg"
-          />
+          <div className="relative w-full h-full">
+            <div
+              style={thumbnailStyle}
+              className={`absolute inset-0 rounded-lg transition-opacity duration-300 ${
+                activeDay === String(windowDay)
+                  ? 'opacity-100'
+                  : 'opacity-100'
+              }`}
+            />
+            <div
+              style={fullImageStyle}
+              className={`absolute inset-0 rounded-lg transition-opacity duration-300 ${
+                activeDay === String(windowDay)
+                  ? 'opacity-100'
+                  : 'opacity-0'
+              }`}
+            />
+          </div>
         )}
       </div>
     </div>
