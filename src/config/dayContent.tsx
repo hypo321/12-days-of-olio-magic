@@ -2,8 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { itemVariants } from '../utils/animations';
 import { Emoji } from '../components/Emoji';
-import { LiteYouTubeEmbed } from '../components/LiteYouTubeEmbed';
 import { AudioPlayer } from '../components/AudioPlayer';
+import { VideoPlayer } from '../components/VideoPlayer';
 
 type DayContentProps = {
   onVideoEnd?: () => void;
@@ -227,8 +227,8 @@ export const DAY_CONTENT: Record<
 
   12: (props?: DayContentProps) => (
     <div className="relative w-full h-full flex flex-col items-center justify-center">
-      <LiteYouTubeEmbed
-        videoId="SBgoNiiC7UM"
+      <VideoPlayer
+        src="/content/Meet Olio_ Your Local Sharing App.mp4"
         onVideoEnd={props?.onVideoEnd}
         reload={props?.reload}
       />
