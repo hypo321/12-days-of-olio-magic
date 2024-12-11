@@ -70,7 +70,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
 
           <div className="mt-6 pt-4 border-t border-white/20">
             <p className="text-white/80 text-sm">
-              This site uses analyticalcookies to enhance your
+              This site uses analytical cookies to enhance your
               experience and analyse site usage. By continuing to use
               this site, you consent to our use of cookies.
             </p>
