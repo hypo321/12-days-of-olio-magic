@@ -3,6 +3,7 @@ import {
   SlashIcon,
   MusicalNoteIcon,
 } from '@heroicons/react/24/solid';
+import { trackMusicToggle } from '../utils/analytics';
 
 interface BackgroundMusicProps {
   fileName: string;
@@ -57,7 +58,9 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
           console.error('Playback prevented:', error);
         });
       }
-      setIsPlaying(!isPlaying);
+      const newPlayingState = !isPlaying;
+      setIsPlaying(newPlayingState);
+      trackMusicToggle(newPlayingState);
     }
   };
 

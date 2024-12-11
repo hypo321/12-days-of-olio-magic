@@ -5,6 +5,7 @@ import { CalendarWindow as CalendarWindowType } from '../types';
 import { BACKGROUND_IMAGE_URL } from '../constants';
 import { useModal } from '../contexts/ModalContext';
 import { useWindowInteractions } from '../hooks/useWindowInteractions';
+import { trackDoorOpen } from '../utils/analytics';
 
 interface Props {
   window: CalendarWindowType;
@@ -107,6 +108,7 @@ export const CalendarWindow: React.FC<Props> = ({
         // When zoomed out and door is open, zoom in on tap
         if (!activeDay && isOpen) {
           onWindowClick(windowDay);
+          trackDoorOpen(windowDay);
         }
       }}
     >
@@ -159,6 +161,7 @@ export const CalendarWindow: React.FC<Props> = ({
           // When zoomed out and door is open, zoom in on tap
           if (!activeDay && isOpen) {
             onWindowClick(windowDay);
+            trackDoorOpen(windowDay);
           }
         }}
         style={{

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DayContent } from './DayContent';
 import { useNavigate } from 'react-router-dom';
+import { trackModalView } from '../utils/analytics';
 
 interface Props {
   isOpen: boolean;
@@ -15,10 +16,12 @@ export const ContentModal: React.FC<Props> = ({
   onClose,
 }) => {
   const navigate = useNavigate();
-  /*   const [touchStart, setTouchStart] = useState<{
-    x: number;
-    y: number;
-  } | null>(null); */
+
+  React.useEffect(() => {
+    if (isOpen && day) {
+      trackModalView(day);
+    }
+  }, [isOpen, day]);
 
   const handleClose = () => {
     onClose();
