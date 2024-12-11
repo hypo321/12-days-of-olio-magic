@@ -123,7 +123,7 @@ export const ContentModal: React.FC<Props> = ({
                     e.stopPropagation();
                     handleAdvance();
                   }}
-                  className="absolute bottom-4 right-4 md:bottom-6 md:right-6 rounded-full md:rounded-lg bg-black/30 hover:bg-black/50 text-white transition-all duration-300 z-50"
+                  className="absolute bottom-4 right-4 md:bottom-6 md:right-6 rounded-full md:rounded-lg bg-black/30 hover:bg-black/50 text-white  z-50"
                 >
                   <div className="p-2 md:px-6 md:py-3 md:font-medium flex items-center gap-2">
                     <span className="hidden md:inline">
