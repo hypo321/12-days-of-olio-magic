@@ -1,6 +1,9 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { trackWelcomeModalView, trackWelcomeMusicChoice } from '../utils/analytics';
+import {
+  trackWelcomeModalView,
+  trackWelcomeMusicChoice,
+} from '../utils/analytics';
 
 interface WelcomeModalProps {
   isOpen: boolean;
@@ -68,7 +71,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
           <div className="mt-6 pt-4 border-t border-white/20">
             <p className="text-white/80 text-sm">
               This site uses cookies to enhance your experience and
-              analyze site usage. By continuing to use this site, you
+              analyse site usage. By continuing to use this site, you
               consent to our use of cookies.
             </p>
             <p className="text-white/80 text-sm">
