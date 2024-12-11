@@ -415,9 +415,16 @@ export const Calendar = () => {
     };
 
     const preventPinchZoom = (e: TouchEvent) => {
-      // Prevent pinch-zoom if there are 2 or more touch points
+      // If there are 2 or more touch points, it's a pinch gesture
       if (e.touches.length > 1) {
         e.preventDefault();
+        
+        // If we're zoomed in (either modal or day view), zoom out
+        if (activeDay) {
+          setIsZooming(true);
+          setActiveDay(null);
+          navigate('/', { replace: true });
+        }
       }
     };
 
@@ -437,7 +444,7 @@ export const Calendar = () => {
       document.removeEventListener('touchstart', preventPinchZoom);
       document.removeEventListener('touchmove', preventPinchZoom);
     };
-  }, []);
+  }, [activeDay, navigate]);
 
   return (
     <div className="relative w-dvw h-dvh overflow-hidden ">
