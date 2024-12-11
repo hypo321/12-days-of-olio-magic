@@ -145,10 +145,6 @@ export const CalendarWindow: React.FC<Props> = ({
             position: 'absolute',
             inset: '0',
             cursor: 'pointer',
-            transform: 'rotateY(180deg)',
-            backgroundColor: isOpen
-              ? 'rgba(255, 0, 0, 0.3)'
-              : undefined,
             zIndex: 10,
             backfaceVisibility: 'hidden',
           }}
