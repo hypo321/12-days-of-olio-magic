@@ -405,10 +405,15 @@ export const Calendar = () => {
       if (e instanceof WheelEvent && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
       }
-      
+
       // Prevent Ctrl/Cmd + +/- zoom
       if (e instanceof KeyboardEvent && (e.ctrlKey || e.metaKey)) {
-        if (e.key === '=' || e.key === '-' || e.key === '+' || e.key === '_') {
+        if (
+          e.key === '=' ||
+          e.key === '-' ||
+          e.key === '+' ||
+          e.key === '_'
+        ) {
           e.preventDefault();
         }
       }
@@ -418,9 +423,27 @@ export const Calendar = () => {
       // If there are 2 or more touch points, it's a pinch gesture
       if (e.touches.length > 1) {
         e.preventDefault();
-        
-        // If we're zoomed in (either modal or day view), zoom out
-        if (activeDay) {
+
+        // Check if any touch started on a door
+        const touchOnDoor = Array.from(e.touches).some(touch => {
+          const element = touch.target as HTMLElement;
+          return element.closest('.calendar-window') !== null;
+        });
+
+        // If touch started on a door and we're not zoomed in, zoom into that door
+        if (touchOnDoor && !activeDay) {
+          const doorElement = (e.touches[0].target as HTMLElement).closest('.calendar-window');
+          if (doorElement) {
+            const day = doorElement.getAttribute('data-day');
+            if (day) {
+              setIsZooming(true);
+              setActiveDay(day);
+              navigate(`/${day}`, { replace: true });
+            }
+          }
+        }
+        // If we're already zoomed in, zoom out
+        else if (activeDay) {
           setIsZooming(true);
           setActiveDay(null);
           navigate('/', { replace: true });
@@ -430,7 +453,9 @@ export const Calendar = () => {
 
     // Add the event listeners with passive: false to allow preventDefault
     window.addEventListener('wheel', preventZoom, { passive: false });
-    window.addEventListener('keydown', preventZoom, { passive: false });
+    window.addEventListener('keydown', preventZoom, {
+      passive: false,
+    });
     document.addEventListener('touchstart', preventPinchZoom, {
       passive: false,
     });
