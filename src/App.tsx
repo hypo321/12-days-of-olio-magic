@@ -119,6 +119,17 @@ const CalendarRoute = () => {
             />
 
             <link rel="canonical" href={baseUrl} />
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y3Q7CYY4RJ" />
+            <script>
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-Y3Q7CYY4RJ', {
+                  'cookie_flags': 'SameSite=None;Secure'
+                });
+              `}
+            </script>
           </>
         )}
       </Helmet>
