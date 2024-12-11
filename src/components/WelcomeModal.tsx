@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { trackWelcomeModalView, trackWelcomeMusicChoice } from '../utils/analytics';
 
 interface WelcomeModalProps {
   isOpen: boolean;
@@ -12,6 +13,18 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
   onClose,
   onMusicChoice,
 }) => {
+  React.useEffect(() => {
+    if (isOpen) {
+      trackWelcomeModalView();
+    }
+  }, [isOpen]);
+
+  const handleMusicChoice = (enabled: boolean) => {
+    trackWelcomeMusicChoice(enabled);
+    onMusicChoice(enabled);
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -34,19 +47,13 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
 
           <div className="flex gap-4">
             <button
-              onClick={() => {
-                onMusicChoice(true);
-                onClose();
-              }}
+              onClick={() => handleMusicChoice(true)}
               className="flex-1 bg-gradient-to-r from-pink-700 to-red-700 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg hover:scale-105 transition-all duration-300"
             >
               Yes, enable music 🎵
             </button>
             <button
-              onClick={() => {
-                onMusicChoice(false);
-                onClose();
-              }}
+              onClick={() => handleMusicChoice(false)}
               className="flex-1 bg-white/20 text-white px-6 py-3 rounded-lg font-medium hover:bg-white/20 hover:scale-105 transition-all duration-300"
             >
               No music, thanks 🔇

@@ -44,3 +44,23 @@ export const trackModalView = (dayNumber: number | string) => {
     day_number: dayNumber,
   });
 };
+
+export const trackWelcomeModalView = () => {
+  trackEvent('welcome_modal_view');
+};
+
+export const trackWelcomeMusicChoice = (enabled: boolean) => {
+  trackEvent('welcome_music_choice', {
+    choice: enabled ? 'enabled' : 'disabled',
+  });
+};
+
+export const trackRestart = () => {
+  trackEvent('restart_experience');
+};
+
+export const trackVideoRewatch = (dayNumber: number | string) => {
+  trackEvent('video_rewatch', {
+    day_number: dayNumber,
+  });
+};

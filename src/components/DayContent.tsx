@@ -8,6 +8,7 @@ import {
   ShareIcon,
   CheckIcon,
 } from '@heroicons/react/24/solid';
+import { trackVideoRewatch, trackRestart } from '../utils/analytics';
 import {
   DAY_CONTENT,
   DAY_BACKGROUNDS,
@@ -102,6 +103,7 @@ export const DayContent: React.FC<DayContentProps> = ({
                   onClick={() => {
                     setVideoEnded(false);
                     setReloadVideo(true);
+                    trackVideoRewatch(day);
                   }}
                   className="px-6 py-3 bg-pink-700/70 hover:bg-pink-700/90 rounded-lg text-white transition-colors flex items-center justify-center gap-2"
                 >
@@ -111,6 +113,7 @@ export const DayContent: React.FC<DayContentProps> = ({
 
                 <motion.button
                   onClick={() => {
+                    trackRestart();
                     window.location.href = '/';
                   }}
                   initial={{ opacity: 0.6, scale: 0.95 }}

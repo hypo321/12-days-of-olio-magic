@@ -119,7 +119,10 @@ const CalendarRoute = () => {
             />
 
             <link rel="canonical" href={baseUrl} />
-            <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y3Q7CYY4RJ" />
+            <script
+              async
+              src="https://www.googletagmanager.com/gtag/js?id=G-Y3Q7CYY4RJ"
+            />
             <script>
               {`
                 window.dataLayer = window.dataLayer || [];
