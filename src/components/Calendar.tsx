@@ -138,7 +138,6 @@ export const Calendar = () => {
         // List of images to preload
         const imageUrls = [
           BACKGROUND_IMAGE_URL,
-          '/thumbnails/cardboard.jpg', // Door back texture
           '/content/day8-quote.jpg',
           '/content/day9-quote.jpg',
           '/content/day10-quote.jpg',
@@ -148,7 +147,7 @@ export const Calendar = () => {
           ),
           ...Array.from(
             { length: 12 },
-            (_, i) => `/content/day${i + 1}-thumb.jpg`
+            (_, i) => `/content/day${i + 1}-thumb.jpeg`
           ),
         ];
 

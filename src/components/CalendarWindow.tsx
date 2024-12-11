@@ -57,7 +57,7 @@ export const CalendarWindow: React.FC<Props> = ({
   };
 
   const thumbnailStyle = {
-    backgroundImage: `url("/content/day${windowDay}-thumb.jpg")`,
+    backgroundImage: `url("/content/day${windowDay}-thumb.jpeg")`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     width: '100%',

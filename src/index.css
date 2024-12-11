@@ -120,7 +120,7 @@
 
   .door-back {
     @apply absolute inset-0 rounded-lg;
-    background-image: url('/thumbnails/cardboard.jpg');
+    background-color: #808080;
     background-size: cover;
     background-position: center;
     border: 2px dashed #e5e5e5;
