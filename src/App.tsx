@@ -2,7 +2,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useParams,
   useLocation,
   useNavigate,
 } from 'react-router-dom';
