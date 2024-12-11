@@ -38,8 +38,8 @@
 @layer components {
   .calendar-container {
     @apply fixed inset-0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     overflow: hidden;
     position: relative;
     display: flex;
@@ -47,6 +47,7 @@
     justify-content: center;
     transform-style: preserve-3d;
     perspective: 2000px;
+    transform-origin: center center;
   }
 
   .calendar-background {

@@ -221,6 +221,24 @@ export const Calendar = () => {
     setIsZooming(false);
   }, []);
 
+  // Handle resize events
+  useEffect(() => {
+    const handleResize = () => {
+      // Add a small delay to ensure the container has been resized
+      setTimeout(() => {
+        setContainerSize(getViewportSize());
+      }, 100);
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('zoom', handleResize); // Handle zoom events if supported
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('zoom', handleResize);
+    };
+  }, []);
+
   // Update container size on window resize
   useEffect(() => {
     const handleResize = () => {
@@ -258,10 +276,9 @@ export const Calendar = () => {
         const windowWidth = parseFloat(selectedWindow.width);
         const windowHeight = parseFloat(selectedWindow.height);
 
-        const viewportWidth =
-          window.visualViewport?.width || containerSize.width;
-        const viewportHeight =
-          window.visualViewport?.height || containerSize.height;
+        // Use container size consistently
+        const viewportWidth = containerSize.width;
+        const viewportHeight = containerSize.height;
 
         const targetWidth = viewportWidth * 0.8;
         const targetHeight = viewportHeight * 0.8;
