@@ -8,7 +8,11 @@ import {
   ShareIcon,
   CheckIcon,
 } from '@heroicons/react/24/solid';
-import { trackVideoRewatch, trackRestart } from '../utils/analytics';
+import {
+  trackVideoRewatch,
+  trackRestart,
+  trackShareAtEnd,
+} from '../utils/analytics';
 import {
   DAY_CONTENT,
   DAY_BACKGROUNDS,
@@ -42,6 +46,7 @@ export const DayContent: React.FC<DayContentProps> = ({
 
   const handleShare = async () => {
     const url = 'https://12days.olioapp.com';
+    trackShareAtEnd();
     if (navigator.share) {
       try {
         await navigator.share({

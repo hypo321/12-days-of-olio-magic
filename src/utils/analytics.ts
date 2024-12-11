@@ -32,7 +32,10 @@ export const trackMusicToggle = (enabled: boolean) => {
   });
 };
 
-export const trackShare = (dayNumber: number | string, platform: string) => {
+export const trackShare = (
+  dayNumber: number | string,
+  platform: string
+) => {
   trackEvent('share', {
     day_number: dayNumber,
     platform: platform,
@@ -63,4 +66,8 @@ export const trackVideoRewatch = (dayNumber: number | string) => {
   trackEvent('video_rewatch', {
     day_number: dayNumber,
   });
+};
+
+export const trackShareAtEnd = () => {
+  trackEvent('share_after_video');
 };
