@@ -54,9 +54,29 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
           </div>
 
           <p className="text-white/100 text-sm mt-4">
-            You can toggle the music using the button in the
+            Tip: You can toggle the music using the button in the
             bottom-right corner.
           </p>
+
+          <div className="mt-6 pt-4 border-t border-white/20">
+            <p className="text-white/80 text-sm">
+              This site uses cookies to enhance your experience and
+              analyze site usage. By continuing to use this site, you
+              consent to our use of cookies.
+            </p>
+            <p className="text-white/80 text-sm">
+              Learn more in our{' '}
+              <a
+                href="/privacy-policy.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-white"
+              >
+                privacy policy
+              </a>
+              .
+            </p>
+          </div>
         </motion.div>
       </div>
     </AnimatePresence>
