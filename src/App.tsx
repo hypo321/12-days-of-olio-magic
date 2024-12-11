@@ -16,115 +16,58 @@ import { WelcomeModal } from './components/WelcomeModal';
 import { useState } from 'react';
 
 // Get the base URL dynamically
-const baseUrl =
-  import.meta.env.VERCEL_URL || 'https://12days.olioapp.com';
+const baseUrl = 'https://12days.olioapp.com';
 
 const CalendarRoute = () => {
-  const { day } = useParams();
-
   return (
     <>
       <Helmet>
-        {day ? (
-          <>
-            <title>The 12 Days of Olio Magic - Day {day}</title>
-            <meta
-              name="title"
-              content={`The 12 Days of Olio Magic - Day ${day}`}
-            />
-            <meta
-              name="description"
-              content={`Discover what's behind Door #${day} in our magical Olio advent calendar! `}
-            />
+        <title>The 12 Days of Olio Magic</title>
+        <meta name="title" content="The 12 Days of Olio Magic" />
+        <meta
+          name="description"
+          content="Join us for a magical journey through 12 days of Olio surprises. Open the doors to celebrate 2024 with us!"
+        />
 
-            {/* Open Graph / Facebook */}
-            <meta property="og:type" content="website" />
-            <meta
-              property="og:url"
-              content={`${baseUrl}/day/${day}`}
-            />
-            <meta
-              property="og:title"
-              content={`The 12 Days of Olio Magic - Day ${day}`}
-            />
-            <meta
-              property="og:description"
-              content={`Discover what's behind Door #${day} in our magical Olio advent calendar! `}
-            />
-            <meta
-              property="og:image"
-              content={`${baseUrl}/images/og/day${day}.jpg`}
-            />
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={baseUrl} />
+        <meta
+          property="og:title"
+          content="The 12 Days of Olio Magic"
+        />
+        <meta
+          property="og:description"
+          content="Join us for a magical journey through 12 days of Olio surprises. Open the doors to celebrate 2024 with us!"
+        />
+        <meta
+          property="og:image"
+          content={`${baseUrl}/images/og/main.jpg`}
+        />
 
-            {/* Twitter */}
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta
-              name="twitter:url"
-              content={`${baseUrl}/day/${day}`}
-            />
-            <meta
-              name="twitter:title"
-              content={`The 12 Days of Olio Magic - Day ${day}`}
-            />
-            <meta
-              name="twitter:description"
-              content={`Discover what's behind Door #${day} in our magical Olio advent calendar! `}
-            />
-            <meta
-              property="twitter:image"
-              content={`${baseUrl}/images/og/day${day}.jpg`}
-            />
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={baseUrl} />
+        <meta
+          name="twitter:title"
+          content="The 12 Days of Olio Magic"
+        />
+        <meta
+          name="twitter:description"
+          content="Join us for a magical journey through 12 days of Olio surprises. Open the doors to celebrate 2024 with us!"
+        />
+        <meta
+          name="twitter:image"
+          content={`${baseUrl}/images/og/main.jpg`}
+        />
 
-            <link rel="canonical" href={`${baseUrl}/day/${day}`} />
-          </>
-        ) : (
-          <>
-            <title>The 12 Days of Olio Magic</title>
-            <meta name="title" content="The 12 Days of Olio Magic" />
-            <meta
-              name="description"
-              content="Join us for a magical journey through 12 days of Olio surprises. Open the doors to celebrate 2024 with us!"
-            />
-
-            {/* Open Graph / Facebook */}
-            <meta property="og:type" content="website" />
-            <meta property="og:url" content={baseUrl} />
-            <meta
-              property="og:title"
-              content="The 12 Days of Olio Magic"
-            />
-            <meta
-              property="og:description"
-              content="Join us for a magical journey through 12 days of Olio surprises. Open the doors to celebrate 2024 with us!"
-            />
-            <meta
-              property="og:image"
-              content={`${baseUrl}/images/og/main.jpg`}
-            />
-
-            {/* Twitter */}
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta name="twitter:url" content={baseUrl} />
-            <meta
-              name="twitter:title"
-              content="The 12 Days of Olio Magic"
-            />
-            <meta
-              name="twitter:description"
-              content="Join us for a magical journey through 12 days of Olio surprises. Open the doors to celebrate 2024 with us!"
-            />
-            <meta
-              name="twitter:image"
-              content={`${baseUrl}/images/og/main.jpg`}
-            />
-
-            <link rel="canonical" href={baseUrl} />
-            <script
-              async
-              src="https://www.googletagmanager.com/gtag/js?id=G-Y3Q7CYY4RJ"
-            />
-            <script>
-              {`
+        <link rel="canonical" href={baseUrl} />
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-Y3Q7CYY4RJ"
+        />
+        <script>
+          {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
@@ -132,9 +75,7 @@ const CalendarRoute = () => {
                   'cookie_flags': 'SameSite=None;Secure'
                 });
               `}
-            </script>
-          </>
-        )}
+        </script>
       </Helmet>
       <Calendar />
     </>
