@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { getViewportSize } from '../utils/windowUtils';
 
 interface Snowflake {
   x: number;
@@ -11,22 +12,22 @@ interface Snowflake {
 export const SnowEffect = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Track the window width so we can regenerate flakes on resize
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [windowHeight, setWindowHeight] = useState(
-    window.innerHeight
-  );
+  // Track the container size instead of window size
+  const [containerSize, setContainerSize] = useState(() => ({
+    width: window.innerWidth,
+    height: window.innerHeight
+  }));
 
-  // Recalculate the number of flakes based on window width
-  const snowflakeCount = windowWidth < 600 ? 100 : 200;
+  // Recalculate the number of flakes based on container width
+  const snowflakeCount = containerSize.width < 600 ? 100 : 200;
 
   // Generate snowflakes whenever dimensions change
   const [snowflakes, setSnowflakes] = useState<Snowflake[]>(() => {
     const flakes: Snowflake[] = [];
     for (let i = 0; i < snowflakeCount; i++) {
       flakes.push({
-        x: Math.random() * windowWidth,
-        y: Math.random() * windowHeight,
+        x: Math.random() * containerSize.width,
+        y: Math.random() * containerSize.height,
         radius: 1 + Math.random() * 3,
         speed: 40 + Math.random() * 60,
         drift: -20 + Math.random() * 40,
@@ -35,30 +36,35 @@ export const SnowEffect = () => {
     return flakes;
   });
 
+  // Update container size once mounted and on resize
   useEffect(() => {
-    // Whenever the window size changes, regenerate flakes
+    const updateSize = () => {
+      const size = getViewportSize();
+      setContainerSize(size);
+    };
+
+    // Initial size
+    updateSize();
+
+    // Update on resize
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  useEffect(() => {
+    // Whenever the container size changes, regenerate flakes
     const flakes: Snowflake[] = [];
     for (let i = 0; i < snowflakeCount; i++) {
       flakes.push({
-        x: Math.random() * windowWidth,
-        y: Math.random() * windowHeight,
+        x: Math.random() * containerSize.width,
+        y: Math.random() * containerSize.height,
         radius: 1 + Math.random() * 3,
         speed: 40 + Math.random() * 60,
         drift: -20 + Math.random() * 40,
       });
     }
     setSnowflakes(flakes);
-  }, [windowWidth, windowHeight, snowflakeCount]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-      setWindowHeight(window.innerHeight);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [containerSize.width, containerSize.height, snowflakeCount]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -66,8 +72,8 @@ export const SnowEffect = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    canvas.width = windowWidth;
-    canvas.height = windowHeight;
+    canvas.width = containerSize.width;
+    canvas.height = containerSize.height;
 
     let animationFrameId: number;
     let lastTime = performance.now();
@@ -116,31 +122,27 @@ export const SnowEffect = () => {
       }
     };
 
-    document.addEventListener(
-      'visibilitychange',
-      handleVisibilityChange
-    );
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     animationFrameId = requestAnimationFrame(draw);
 
     return () => {
-      document.removeEventListener(
-        'visibilitychange',
-        handleVisibilityChange
-      );
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [snowflakes, windowWidth, windowHeight]);
+  }, [snowflakes, containerSize.width, containerSize.height]);
 
   return (
     <canvas
       ref={canvasRef}
       style={{
-        position: 'fixed',
+        position: 'absolute',
         top: 0,
         left: 0,
         pointerEvents: 'none',
         zIndex: 50,
         filter: 'blur(1px)',
+        width: '100%',
+        height: '100%',
       }}
     />
   );

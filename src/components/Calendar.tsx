@@ -8,6 +8,7 @@ import { BACKGROUND_IMAGE_URL } from '../constants';
 import { canOpenDoor } from '../utils';
 import { useCalendarWindows } from '../hooks/useCalendarWindows';
 import { getViewportSize } from '../utils/windowUtils';
+
 import { SnowEffect } from './SnowEffect';
 
 export const Calendar = () => {
@@ -28,9 +29,16 @@ export const Calendar = () => {
   });
 
   // Get initial container size
-  const [containerSize, setContainerSize] = useState(
-    getViewportSize()
-  );
+  const [containerSize, setContainerSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  // Update container size once mounted
+  useEffect(() => {
+    const size = getViewportSize();
+    setContainerSize(size);
+  }, []);
 
   // Use the custom hook to manage calendar windows
   const [windows, setWindows] = useCalendarWindows(containerSize);
@@ -214,7 +222,7 @@ export const Calendar = () => {
       setActiveDay(day);
     }
     setIsInitialLoad(false);
-  }, [day, activeDay, isInitialLoad]);
+  }, [day, activeDay, isInitialLoad, containerSize]);
 
   // Handle transition end
   const handleTransitionEnd = useCallback(() => {
@@ -389,6 +397,29 @@ export const Calendar = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeDay, navigate]);
+
+  // Prevent pinch zoom on mobile
+  useEffect(() => {
+    const preventPinchZoom = (e: TouchEvent) => {
+      // Prevent pinch-zoom if there are 2 or more touch points
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    };
+
+    // Add the event listeners with passive: false to allow preventDefault
+    document.addEventListener('touchstart', preventPinchZoom, {
+      passive: false,
+    });
+    document.addEventListener('touchmove', preventPinchZoom, {
+      passive: false,
+    });
+
+    return () => {
+      document.removeEventListener('touchstart', preventPinchZoom);
+      document.removeEventListener('touchmove', preventPinchZoom);
+    };
+  }, []);
 
   return (
     <div className="relative w-dvw h-dvh overflow-hidden ">
