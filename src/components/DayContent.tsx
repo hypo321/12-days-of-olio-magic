@@ -77,33 +77,11 @@ export const DayContent: React.FC<DayContentProps> = ({
   if (isVideoDay) {
     return (
       <div className={`relative w-full h-full ${bgColor}`}>
-        {!videoEnded && (
-          <>
-            <button
-              onClick={() => setVideoEnded(true)}
-              className="absolute top-2 right-2 md:top-4 md:right-4 p-2 rounded-full bg-black bg-opacity-100 hover:bg-opacity-50 text-white transition-all z-[60]"
-              aria-label="Skip video"
-            >
-              <svg
-                className="w-4 h-4 md:w-6 md:h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            {ContentComponent({
-              onVideoEnd: () => setVideoEnded(true),
-              reload: reloadVideo,
-            })}
-          </>
-        )}
+        {!videoEnded &&
+          ContentComponent({
+            onVideoEnd: () => setVideoEnded(true),
+            reload: reloadVideo,
+          })}
         {videoEnded && (
           <motion.div
             initial={{ opacity: 0 }}
