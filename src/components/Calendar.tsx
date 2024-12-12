@@ -348,6 +348,7 @@ export const Calendar = () => {
         e.preventDefault();
         setIsZooming(true);
         setActiveDay(null);
+        adjustVolume(0.3);
         navigate('/', { replace: true });
         return;
       }
@@ -362,6 +363,7 @@ export const Calendar = () => {
         setTimeout(() => {
           setIsZooming(true);
           setActiveDay(prevDay.toString());
+          adjustVolume(0.3);
           navigate(`/day/${prevDay}`, { replace: true });
         }, 1000);
         return;
@@ -376,6 +378,7 @@ export const Calendar = () => {
         setTimeout(() => {
           setIsZooming(true);
           setActiveDay(nextDay.toString());
+          adjustVolume(0.3);
           navigate(`/day/${nextDay}`, { replace: true });
         }, 1000);
         return;
@@ -392,6 +395,7 @@ export const Calendar = () => {
         setTimeout(() => {
           setIsZooming(true);
           setActiveDay(num.toString());
+          adjustVolume(0.3);
           navigate(`/day/${num}`, { replace: true });
         }, 1000);
       }
@@ -399,7 +403,7 @@ export const Calendar = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeDay, navigate]);
+  }, [activeDay, navigate, adjustVolume]);
 
   // Prevent browser zoom (both pinch and keyboard)
   useEffect(() => {
