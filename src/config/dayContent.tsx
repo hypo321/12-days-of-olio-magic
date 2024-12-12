@@ -32,10 +32,15 @@ export const DAY_CONTENT: Record<
 
   2: () => (
     <>
-      <motion.h2 className="h2" variants={itemVariants}>
-        We rescued 30 million meals in 12 months
+      <motion.h3 className="h2" variants={itemVariants}>
+        We rescued
+      </motion.h3>
+      <motion.h2 className="hero" variants={itemVariants}>
+        30 million meals
       </motion.h2>
-
+      <motion.h2 className="h2" variants={itemVariants}>
+        in 12 months
+      </motion.h2>
       <Emoji name="🥳" />
     </>
   ),
@@ -43,7 +48,10 @@ export const DAY_CONTENT: Record<
   3: () => (
     <>
       <motion.h2 className="h2" variants={itemVariants}>
-        Those meals fed 168,700 households
+        Those meals fed
+      </motion.h2>
+      <motion.h2 className="hero" variants={itemVariants}>
+        168,700 households
       </motion.h2>
 
       <motion.h3 className="h3" variants={itemVariants}>
@@ -57,11 +65,16 @@ export const DAY_CONTENT: Record<
   4: () => (
     <>
       <motion.h2 className="h2" variants={itemVariants}>
-        We saved 8.5 billion litres of water
+        We saved
+      </motion.h2>
+      <motion.h2 className="hero" variants={itemVariants}>
+        8.5 billion
+      </motion.h2>
+      <motion.h2 className="h2" variants={itemVariants}>
+        litres of water
       </motion.h2>
 
       <Emoji name="💧🏊‍♀️" />
-
       <motion.h3 className="h3" variants={itemVariants}>
         Which is enough to fill 3,400 Olympic swimming pools!
       </motion.h3>
@@ -71,8 +84,15 @@ export const DAY_CONTENT: Record<
   5: () => (
     <>
       <motion.h2 className="h2" variants={itemVariants}>
-        We diverted 50,000 tonnes of Co2 from the atmosphere
+        We diverted
       </motion.h2>
+      <motion.h2 className="hero" variants={itemVariants}>
+        50,000
+      </motion.h2>
+      <motion.h2 className="h2" variants={itemVariants}>
+        tonnes of Co2 from the atmosphere
+      </motion.h2>
+
       <Emoji name="⛅️" />
       <motion.h3 className="h3" variants={itemVariants}>
         Which is the same as cancelling out 170 flights from London to
@@ -84,15 +104,18 @@ export const DAY_CONTENT: Record<
   6: () => (
     <>
       <motion.h2 className="h2" variants={itemVariants}>
-        And amazingly...
+        And amazingly, we've just hit
+      </motion.h2>
+      <motion.h2 className="hero" variants={itemVariants}>
+        100 million
       </motion.h2>
       <motion.h2 className="h2" variants={itemVariants}>
-        We've just hit 100 million meals rescued
+        meals rescued
       </motion.h2>
-      <motion.h3 className="h3" variants={itemVariants}>
-        since we were first founded in 2015
-      </motion.h3>
 
+      <motion.h3 className="h3" variants={itemVariants}>
+        rescued since we were first founded in 2015
+      </motion.h3>
       <div
         style={{
           position: 'relative',

@@ -248,6 +248,11 @@ box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   }
 
   /* Typography styles */
+
+.hero {
+    @apply text-5xl sm:text-5xl md:text-7xl lg:text-8xl font-bold drop-shadow-lg;
+  }
+
   .h2-small {
     @apply text-4xl md:text-5xl font-bold drop-shadow-lg;
   }
