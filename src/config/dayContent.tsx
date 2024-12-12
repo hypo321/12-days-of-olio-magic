@@ -76,7 +76,7 @@ export const DAY_CONTENT: Record<
 
       <Emoji name="💧🏊‍♀️" />
       <motion.h3 className="h3" variants={itemVariants}>
-        Which is enough to fill 3,400 Olympic swimming pools!
+        That's enough to fill 3,400 Olympic swimming pools!
       </motion.h3>
     </>
   ),
@@ -95,8 +95,7 @@ export const DAY_CONTENT: Record<
 
       <Emoji name="⛅️" />
       <motion.h3 className="h3" variants={itemVariants}>
-        Which is the same as cancelling out 170 flights from London to
-        New York
+        That's like grounding 170 flights from London to New York
       </motion.h3>
     </>
   ),
