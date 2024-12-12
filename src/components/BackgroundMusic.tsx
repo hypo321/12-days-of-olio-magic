@@ -29,6 +29,39 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
   const { registerMusicControl, registerTemporaryPauseCallback } = useBackgroundMusicState();
 
   const MAX_VOLUME = 0.2;
+  const FADE_DURATION = 500; // 500ms fade
+
+  // Handle fading audio
+  const fadeAudio = useCallback((
+    startTime: number,
+    startVolume: number,
+    endVolume: number,
+    onComplete?: () => void
+  ) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(1, elapsed / FADE_DURATION);
+
+      // Cubic easing function for smoother transitions
+      const easeProgress = progress < 0.5
+        ? 4 * progress * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+      const newVolume = startVolume + (endVolume - startVolume) * easeProgress;
+      audio.volume = Math.min(MAX_VOLUME, Math.max(0, newVolume));
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        onComplete?.();
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, []);
 
   // Handle temporary pausing
   const handleTemporaryPause = useCallback((paused: boolean) => {
@@ -37,11 +70,15 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
     if (!audio) return;
 
     if (paused) {
-      audio.pause();
+      const currentVolume = audio.volume;
+      fadeAudio(Date.now(), currentVolume, 0, () => {
+        audio.pause();
+      });
     } else if (isPlaying) {
       audio.play().catch(console.error);
+      fadeAudio(Date.now(), 0, MAX_VOLUME);
     }
-  }, [isPlaying]);
+  }, [isPlaying, fadeAudio]);
 
   // Handle keyboard volume controls
   useEffect(() => {
@@ -100,14 +137,18 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
         setIsPlaying(newIsPlaying);
         if (newIsPlaying && !isTemporarilyPaused) {
           audio.play().catch(console.error);
+          fadeAudio(Date.now(), 0, MAX_VOLUME);
         } else {
-          audio.pause();
+          const currentVolume = audio.volume;
+          fadeAudio(Date.now(), currentVolume, 0, () => {
+            audio.pause();
+          });
         }
       },
       getIsPlaying: () => isPlaying && !isTemporarilyPaused
     });
     return () => registerMusicControl(null);
-  }, [isPlaying, isTemporarilyPaused]);
+  }, [isPlaying, isTemporarilyPaused, fadeAudio]);
 
   // Register temporary pause handler
   useEffect(() => {
@@ -177,13 +218,17 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
     if (!audio) return;
 
     if (isPlaying) {
-      audio.pause();
+      const currentVolume = audio.volume;
+      fadeAudio(Date.now(), currentVolume, 0, () => {
+        audio.pause();
+      });
       setIsPlaying(false);
       trackMusicToggle(false);
     } else {
       audio.play().catch((error) => {
         console.error('Playback prevented:', error);
       });
+      fadeAudio(Date.now(), 0, MAX_VOLUME);
       setIsPlaying(true);
       trackMusicToggle(true);
     }
