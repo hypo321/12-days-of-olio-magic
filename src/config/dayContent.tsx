@@ -114,7 +114,7 @@ export const DAY_CONTENT: Record<
       </motion.h2>
 
       <motion.h3 className="h3" variants={itemVariants}>
-        rescued since we were first founded in 2015
+        since we were first founded in 2015
       </motion.h3>
       <div
         style={{
