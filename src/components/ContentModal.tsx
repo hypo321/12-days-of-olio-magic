@@ -88,18 +88,18 @@ export const ContentModal: React.FC<Props> = ({
             exit={{ opacity: 0, scale: 0.75 }}
             transition={{
               duration: 0.3,
-              ease: [0.4, 0, 0.211, 1],
+              ease: [0.4, 0, 0.2, 1],
             }}
             className="fixed inset-4 md:inset-10 z-50 flex items-center justify-center"
           >
             <div className="bg-black bg-opacity-90 rounded-xl w-full h-full overflow-hidden relative">
               <button
                 onClick={handleClose}
-                className="absolute top-2 right-2 md:top-4 md:right-4 p-2 rounded-full bg-black bg-opacity-30 hover:bg-opacity-50 text-white transition-all z-50"
+                className="absolute top-4 right-4 md:top-8 md:right-8 p-3 rounded-full bg-black bg-opacity-30 hover:bg-opacity-50 text-white transition-all z-50"
                 aria-label="Close modal"
               >
                 <svg
-                  className="w-4 h-4 md:w-6 md:h-6"
+                  className="w-8 h-8 md:w-12 md:h-12"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -121,7 +121,7 @@ export const ContentModal: React.FC<Props> = ({
                   transition={{
                     duration: 0.3,
                     delay: 2,
-                    ease: [0.4, 0, 0.212, 1],
+                    ease: [0.4, 0, 0.2, 1],
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
