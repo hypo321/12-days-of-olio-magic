@@ -4,6 +4,7 @@ import {
   MusicalNoteIcon,
 } from '@heroicons/react/24/solid';
 import { trackMusicToggle } from '../utils/analytics';
+import { useBackgroundMusicVolume } from '../hooks/useBackgroundMusicVolume';
 
 interface BackgroundMusicProps {
   fileName: string;
@@ -22,6 +23,18 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(initiallyEnabled);
+  const { registerVolumeControl } = useBackgroundMusicVolume();
+
+  useEffect(() => {
+    registerVolumeControl({
+      setVolume: (newVolume: number) => {
+        if (audioRef.current) {
+          audioRef.current.volume = newVolume;
+        }
+      },
+    });
+    return () => registerVolumeControl(null);
+  }, [registerVolumeControl]);
 
   useEffect(() => {
     const audio = audioRef.current;
