@@ -34,6 +34,7 @@ export const ContentModal: React.FC<Props> = ({
   };
 
   const handleAdvance = () => {
+    adjustVolume(0.3);
     const event = new KeyboardEvent('keydown', {
       key: 'ArrowRight',
       bubbles: true,
