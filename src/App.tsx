@@ -13,6 +13,9 @@ import { useModal } from './contexts/ModalContext';
 import { BackgroundMusic } from './components/BackgroundMusic';
 import { WelcomeModal } from './components/WelcomeModal';
 import { useState } from 'react';
+import { ShareIcon } from '@heroicons/react/24/solid';
+import { motion } from 'framer-motion';
+import { ShareModal } from './components/ShareModal';
 
 // Get the base URL dynamically
 const baseUrl = 'https://12days.olioapp.com';
@@ -107,12 +110,12 @@ const AppContent = () => {
 
 function App() {
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [musicEnabled, setMusicEnabled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   const handleMusicChoice = (enable: boolean) => {
-    //localStorage.setItem('musicPreference', enable.toString());
     setMusicEnabled(enable);
     setShowWelcomeModal(false);
   };
@@ -121,6 +124,19 @@ function App() {
     <ModalProvider>
       <div className="relative min-h-screen">
         <div className="fixed inset-0 z-0 pointer-events-none"></div>
+        <div className="fixed top-4 right-4 z-50 flex gap-2">
+          <motion.button
+            initial={{ opacity: 0.6, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowShareModal(true)}
+            className="rounded-full bg-pink-700/70 hover:bg-pink-700/90 p-2 text-white transition-colors"
+            title="Share"
+          >
+            <ShareIcon className="w-8 h-8" />
+          </motion.button>
+        </div>
         <WelcomeModal
           isOpen={showWelcomeModal}
           onClose={() => {
@@ -136,12 +152,15 @@ function App() {
           volume={0.2}
           initiallyEnabled={musicEnabled}
         />
-
         <main className="relative">
           <Routes>
             <Route path="/*" element={<AppContent />} />
           </Routes>
         </main>
+        <ShareModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+        />
       </div>
     </ModalProvider>
   );
