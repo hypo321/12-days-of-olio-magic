@@ -15,7 +15,7 @@ export const ScreenEffect: React.FC<ScreenEffectProps> = ({
 }) => {
   useEffect(() => {
     if (effect === 'confetti') {
-      const duration = 3 * 1000;
+      const duration = 5 * 1000;
       const animationEnd = Date.now() + duration;
 
       const randomInRange = (min: number, max: number) => {

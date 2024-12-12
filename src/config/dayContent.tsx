@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { itemVariants } from '../utils/animations';
+import { itemVariants, useHeroAnimation } from '../utils/animations';
 import { Emoji } from '../components/Emoji';
 import { AudioPlayer } from '../components/AudioPlayer';
 import { VideoPlayer } from '../components/VideoPlayer';
@@ -36,13 +36,33 @@ export const DAY_CONTENT: Record<
       <motion.h3 className="h2" variants={itemVariants}>
         We rescued
       </motion.h3>
-      <motion.h2 className="hero" variants={itemVariants}>
+      <motion.h2 className="hero" {...useHeroAnimation()}>
         30 million meals
       </motion.h2>
       <motion.h2 className="h2" variants={itemVariants}>
         in 12 months
       </motion.h2>
-      <Emoji name="🥳" />
+      <motion.div
+        variants={itemVariants}
+        className="flex items-center justify-center gap-2"
+      >
+        <motion.div
+          animate={{
+            rotate: [0, -10, 10, -10, 10, -5, 5, -5, 5, 0],
+            x: [0, -3, 3, -3, 3, -1, 1, -1, 1, 0],
+            y: [0, 3, -3, 3, -3, 1, -1, 1, -1, 0],
+          }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+            repeatType: 'loop',
+            ease: 'easeInOut',
+          }}
+          style={{ display: 'inline-block' }}
+        >
+          <Emoji name="🥳" />
+        </motion.div>
+      </motion.div>
     </>
   ),
 
@@ -51,7 +71,7 @@ export const DAY_CONTENT: Record<
       <motion.h2 className="h2" variants={itemVariants}>
         Those meals fed
       </motion.h2>
-      <motion.h2 className="hero" variants={itemVariants}>
+      <motion.h2 className="hero" {...useHeroAnimation()}>
         168,700 households
       </motion.h2>
 
@@ -68,7 +88,7 @@ export const DAY_CONTENT: Record<
       <motion.h2 className="h2" variants={itemVariants}>
         We saved
       </motion.h2>
-      <motion.h2 className="hero" variants={itemVariants}>
+      <motion.h2 className="hero" {...useHeroAnimation()}>
         8.5 billion
       </motion.h2>
       <motion.h2 className="h2" variants={itemVariants}>
@@ -87,7 +107,7 @@ export const DAY_CONTENT: Record<
       <motion.h2 className="h2" variants={itemVariants}>
         We diverted
       </motion.h2>
-      <motion.h2 className="hero" variants={itemVariants}>
+      <motion.h2 className="hero" {...useHeroAnimation()}>
         50,000
       </motion.h2>
       <motion.h2 className="h2" variants={itemVariants}>
@@ -106,7 +126,7 @@ export const DAY_CONTENT: Record<
       <motion.h2 className="h2" variants={itemVariants}>
         And amazingly, we've just hit
       </motion.h2>
-      <motion.h2 className="hero" variants={itemVariants}>
+      <motion.h2 className="hero" {...useHeroAnimation()}>
         100 million
       </motion.h2>
       <motion.h2 className="h2" variants={itemVariants}>
@@ -228,7 +248,13 @@ export const DAY_CONTENT: Record<
   11: () => (
     <>
       <motion.h2 className="h2" variants={itemVariants}>
-        Let’s make 2025 our biggest year yet
+        Let’s make
+      </motion.h2>
+      <motion.h2 className="hero" {...useHeroAnimation()}>
+        2025
+      </motion.h2>
+      <motion.h2 className="h2" variants={itemVariants}>
+        our biggest year yet!
       </motion.h2>
       <motion.div
         animate={{
