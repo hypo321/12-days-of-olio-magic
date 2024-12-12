@@ -8,7 +8,7 @@ import { BACKGROUND_IMAGE_URL } from '../constants';
 import { canOpenDoor } from '../utils';
 import { useCalendarWindows } from '../hooks/useCalendarWindows';
 import { getViewportSize } from '../utils/windowUtils';
-
+import { useBackgroundMusicVolume } from '../hooks/useBackgroundMusicVolume';
 import { SnowEffect } from './SnowEffect';
 
 export const Calendar = () => {
@@ -27,6 +27,8 @@ export const Calendar = () => {
     translateX: 0,
     translateY: 0,
   });
+
+  const { adjustVolume } = useBackgroundMusicVolume();
 
   // Get initial container size
   const [containerSize, setContainerSize] = useState({
@@ -320,6 +322,7 @@ export const Calendar = () => {
         e.preventDefault();
         setIsZooming(true);
         setActiveDay(null);
+        adjustVolume(0.3);
         navigate('/', { replace: true });
       }
     };
@@ -425,14 +428,16 @@ export const Calendar = () => {
         e.preventDefault();
 
         // Check if any touch started on a door
-        const touchOnDoor = Array.from(e.touches).some(touch => {
+        const touchOnDoor = Array.from(e.touches).some((touch) => {
           const element = touch.target as HTMLElement;
           return element.closest('.calendar-window') !== null;
         });
 
         // If touch started on a door and we're not zoomed in, zoom into that door
         if (touchOnDoor && !activeDay) {
-          const doorElement = (e.touches[0].target as HTMLElement).closest('.calendar-window');
+          const doorElement = (
+            e.touches[0].target as HTMLElement
+          ).closest('.calendar-window');
           if (doorElement) {
             const day = doorElement.getAttribute('data-day');
             if (day) {

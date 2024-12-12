@@ -54,6 +54,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
           setIsPlaying(false);
         });
         setIsPlaying(true);
+        audio.volume = 0.3;
       } else if (!initiallyEnabled && isPlaying) {
         audio.pause();
         setIsPlaying(false);

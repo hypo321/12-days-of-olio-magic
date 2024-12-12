@@ -8,7 +8,10 @@ interface ShareModalProps {
   onClose: () => void;
 }
 
-export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
+export const ShareModal: React.FC<ShareModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleShare = async () => {
@@ -51,10 +54,11 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
             className="fixed top-16 right-4 z-50 bg-white rounded-xl p-6 shadow-lg w-72"
           >
             <div className="absolute -top-2 right-4 w-4 h-4 bg-white transform rotate-45" />
-            
+
             <h2 className="text-xl font-bold mb-3">Share the Joy</h2>
             <p className="mb-4 text-sm text-gray-600">
-              Spread the magic of the 12 Days of Olio with your friends and family!
+              Spread the magic of the 12 Days of Olio with your
+              friends and family!
             </p>
 
             <motion.button
@@ -77,7 +81,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
               ) : (
                 <>
                   <ShareIcon className="w-5 h-5" />
-                  Share the Joy
+                  Share
                 </>
               )}
             </motion.button>

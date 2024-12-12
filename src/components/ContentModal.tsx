@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DayContent } from './DayContent';
 import { useNavigate } from 'react-router-dom';
 import { trackModalView } from '../utils/analytics';
+import { useBackgroundMusicVolume } from '../hooks/useBackgroundMusicVolume';
 
 interface Props {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export const ContentModal: React.FC<Props> = ({
   onClose,
 }) => {
   const navigate = useNavigate();
+  const { adjustVolume } = useBackgroundMusicVolume();
 
   React.useEffect(() => {
     if (isOpen && day) {
@@ -24,6 +26,7 @@ export const ContentModal: React.FC<Props> = ({
   }, [isOpen, day]);
 
   const handleClose = () => {
+    adjustVolume(0.3);
     onClose();
     setTimeout(() => {
       navigate('/', { replace: true });
