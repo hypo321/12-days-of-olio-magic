@@ -7,6 +7,8 @@ interface VideoPlayerProps {
   reload?: boolean;
 }
 
+const FADE_DURATION = 500; // Duration of fade in milliseconds
+
 export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   src,
   onVideoEnd,
@@ -15,15 +17,67 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const { adjustVolume } = useBackgroundMusicVolume();
 
+  const fadeAudio = (
+    startTime: number,
+    videoStart: number,
+    videoEnd: number,
+    musicStart: number,
+    musicEnd: number,
+    onComplete?: () => void
+  ) => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(1, elapsed / FADE_DURATION);
+
+    // Smooth easing function
+    const easeProgress =
+      progress < 0.5
+        ? 2 * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+    // Update volumes
+    video.volume =
+      videoStart + (videoEnd - videoStart) * easeProgress;
+    adjustVolume(musicStart + (musicEnd - musicStart) * easeProgress);
+
+    if (progress < 1) {
+      requestAnimationFrame(() =>
+        fadeAudio(
+          startTime,
+          videoStart,
+          videoEnd,
+          musicStart,
+          musicEnd,
+          onComplete
+        )
+      );
+    } else {
+      onComplete?.();
+    }
+  };
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const handlePlay = () => adjustVolume(0.0); // Lower volume when video plays
-    const handlePause = () => adjustVolume(0.3); // Restore volume when video pauses
+    // Set initial volume
+    video.volume = 0;
+
+    const handlePlay = () => {
+      // Fade video in and background music out
+      fadeAudio(Date.now(), 0, 0.3, 0.3, 0);
+    };
+
+    const handlePause = () => {
+      // Fade video out and background music in
+      fadeAudio(Date.now(), 0.3, 0, 0, 0.3);
+    };
+
     const handleEnded = () => {
-      adjustVolume(0.3); // Restore volume when video ends
-      onVideoEnd?.();
+      // Fade video out and background music in
+      fadeAudio(Date.now(), 0.3, 0, 0, 0.3, onVideoEnd);
     };
 
     video.addEventListener('play', handlePlay);
