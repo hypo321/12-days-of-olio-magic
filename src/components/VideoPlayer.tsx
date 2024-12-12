@@ -1,8 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useBackgroundMusicVolume } from '../hooks/useBackgroundMusicVolume';
+import { useBackgroundMusicState } from '../hooks/useBackgroundMusicState';
 
 interface VideoPlayerProps {
   src: string;
+  autoPlay?: boolean;
+  loop?: boolean;
+  className?: string;
   onVideoEnd?: () => void;
   reload?: boolean;
 }
@@ -11,11 +15,17 @@ const FADE_DURATION = 500; // Duration of fade in milliseconds
 
 export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   src,
+  autoPlay = false,
+  loop = false,
+  className = 'w-full h-full rounded-lg',
   onVideoEnd,
   reload = false,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(autoPlay);
   const { adjustVolume } = useBackgroundMusicVolume();
+  const { isMusicPlaying } = useBackgroundMusicState();
+  const musicEnabled = isMusicPlaying();
 
   const fadeAudio = (
     startTime: number,
@@ -37,10 +47,16 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         ? 2 * progress * progress
         : 1 - Math.pow(-2 * progress + 2, 2) / 2;
 
-    // Update volumes
-    video.volume =
-      videoStart + (videoEnd - videoStart) * easeProgress;
-    adjustVolume(musicStart + (musicEnd - musicStart) * easeProgress);
+    // Only adjust volumes if background music is enabled
+    if (musicEnabled) {
+      video.volume =
+        videoStart + (videoEnd - videoStart) * easeProgress;
+      adjustVolume(
+        musicStart + (musicEnd - musicStart) * easeProgress
+      );
+    } else {
+      video.volume = 0;
+    }
 
     if (progress < 1) {
       requestAnimationFrame(() =>
@@ -63,21 +79,31 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     if (!video) return;
 
     // Set initial volume
-    video.volume = 0;
+    video.volume = musicEnabled ? 0 : 0;
 
     const handlePlay = () => {
-      // Fade video in and background music out
-      fadeAudio(Date.now(), 0, 0.3, 0.3, 0);
+      setIsPlaying(true);
+      // Fade video in and background music out, only if music is enabled
+      fadeAudio(Date.now(), 0, musicEnabled ? 1 : 0, 0.2, 0.1);
     };
 
     const handlePause = () => {
-      // Fade video out and background music in
-      fadeAudio(Date.now(), 0.3, 0, 0, 0.3);
+      setIsPlaying(false);
+      // Fade video out and background music in, only if music is enabled
+      fadeAudio(Date.now(), musicEnabled ? 1 : 0, 0, 0.1, 0.2);
     };
 
     const handleEnded = () => {
-      // Fade video out and background music in
-      fadeAudio(Date.now(), 0.3, 0, 0, 0.3, onVideoEnd);
+      setIsPlaying(false);
+      // Fade video out and background music in, only if music is enabled
+      fadeAudio(
+        Date.now(),
+        musicEnabled ? 1 : 0,
+        0,
+        0.1,
+        0.2,
+        onVideoEnd
+      );
     };
 
     video.addEventListener('play', handlePlay);
@@ -88,29 +114,46 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       video.removeEventListener('play', handlePlay);
       video.removeEventListener('pause', handlePause);
       video.removeEventListener('ended', handleEnded);
+      if (musicEnabled) {
+        adjustVolume(0.2);
+      }
     };
-  }, [adjustVolume, onVideoEnd]);
+  }, [adjustVolume, musicEnabled, onVideoEnd]);
 
+  // Handle changes in music enabled state
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !isPlaying) return;
 
-    if (reload) {
-      video.currentTime = 0;
-      video.play();
+    if (musicEnabled) {
+      // If music was re-enabled while video is playing, fade in video sound
+      fadeAudio(Date.now(), 0, 1, 0.2, 0.1);
+    } else {
+      // If music was disabled while video is playing, mute video immediately
+      video.volume = 0;
     }
+  }, [musicEnabled, isPlaying]);
+
+  // Handle reload prop
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !reload) return;
+
+    video.currentTime = 0;
+    video.play().catch((error) => {
+      console.error('Failed to play video:', error);
+    });
   }, [reload]);
 
   return (
     <video
       ref={videoRef}
-      className="w-full h-full rounded-lg"
-      controls
+      src={src}
       autoPlay
+      loop={loop}
       playsInline
-    >
-      <source src={src} type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
+      controls
+      className={className}
+    />
   );
 };

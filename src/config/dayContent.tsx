@@ -17,9 +17,10 @@ export const DAY_CONTENT: Record<
 > = {
   1: () => (
     <>
-      <motion.h2 className="h2" variants={itemVariants}>
+      <motion.h2 className="hero" variants={itemVariants}>
         Welcome!
       </motion.h2>
+      <motion.p> </motion.p>
       <AudioPlayer fileName="welcome.mp3" play />
       <motion.p
         className="text-lg md:text-xl space-y-4 drop-shadow-md"

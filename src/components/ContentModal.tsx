@@ -26,7 +26,7 @@ export const ContentModal: React.FC<Props> = ({
   }, [isOpen, day]);
 
   const handleClose = () => {
-    adjustVolume(0.3);
+    adjustVolume(0.2);
     onClose();
     setTimeout(() => {
       navigate('/', { replace: true });
@@ -34,7 +34,7 @@ export const ContentModal: React.FC<Props> = ({
   };
 
   const handleAdvance = () => {
-    adjustVolume(0.3);
+    adjustVolume(0.2);
     const event = new KeyboardEvent('keydown', {
       key: 'ArrowRight',
       bubbles: true,

@@ -128,7 +128,14 @@ const CanvasHearts: React.FC<CanvasHeartsProps> = ({
   }, [duration, heartCount, heartEmoji]);
 
   return (
-    <canvas ref={canvasRef} style={{ display: 'block', ...style }} />
+    <canvas
+      ref={canvasRef}
+      style={{
+        display: 'block',
+        pointerEvents: 'none', // Make canvas non-interactive
+        ...style,
+      }}
+    />
   );
 };
 

@@ -25,6 +25,14 @@ export default {
             opacity: 0,
           },
         },
+        pulseGentle: {
+          '0%, 100%': {
+            transform: 'scale(1)',
+          },
+          '50%': {
+            transform: 'scale(1.2)',
+          },
+        },
         snowGrowFast: {
           '0%': { transform: 'scaleY(0)' },
           '30%': { transform: 'scaleY(0.7)' },
@@ -48,10 +56,11 @@ export default {
       animation: {
         'music-ripple':
           'ripple 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'pulse-gentle': 'pulseGentle 1s ease-in-out infinite',
         'snow-fast': 'snowGrowFast 40s ease-out forwards',
-        'snow-medium': 'snowGrowMedium 50s ease-out forwards',
-        'snow-slow': 'snowGrowSlow 60s ease-out forwards',
-        'snow-drift': 'driftGrow 45s ease-out forwards',
+        'snow-medium': 'snowGrowMedium 40s ease-out forwards',
+        'snow-slow': 'snowGrowSlow 40s ease-out forwards',
+        'drift-grow': 'driftGrow 40s ease-out forwards',
       },
     },
   },

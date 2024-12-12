@@ -1,10 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import {
-  SlashIcon,
   MusicalNoteIcon,
+  SpeakerXMarkIcon,
 } from '@heroicons/react/24/solid';
 import { trackMusicToggle } from '../utils/analytics';
 import { useBackgroundMusicVolume } from '../hooks/useBackgroundMusicVolume';
+import { useBackgroundMusicState } from '../hooks/useBackgroundMusicState';
 
 interface BackgroundMusicProps {
   fileName: string;
@@ -14,7 +15,7 @@ interface BackgroundMusicProps {
 
 export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
   fileName,
-  volume = 0.3,
+  volume = 0.2,
   initiallyEnabled = false,
 }) => {
   if (import.meta.env.VITE_ENABLE_BACKGROUND_MUSIC === 'false') {
@@ -24,7 +25,9 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(initiallyEnabled);
   const { registerVolumeControl } = useBackgroundMusicVolume();
+  const { registerMusicControl } = useBackgroundMusicState();
 
+  // Register volume control
   useEffect(() => {
     registerVolumeControl({
       setVolume: (newVolume: number) => {
@@ -36,45 +39,72 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
     return () => registerVolumeControl(null);
   }, [registerVolumeControl]);
 
+  // Register music state control
   useEffect(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.volume = volume;
-      audio.loop = true;
-    }
-  }, [volume]);
+    registerMusicControl({
+      setIsPlaying: (newIsPlaying: boolean) => {
+        const audio = audioRef.current;
+        if (audio) {
+          if (newIsPlaying && !isPlaying) {
+            audio.play().catch((error) => {
+              console.error('Playback prevented:', error);
+            });
+            setIsPlaying(true);
+          } else if (!newIsPlaying && isPlaying) {
+            audio.pause();
+            setIsPlaying(false);
+          }
+        }
+      },
+      getIsPlaying: () => isPlaying,
+    });
+    return () => registerMusicControl(null);
+  }, [isPlaying]);
 
-  // Sync with initiallyEnabled prop changes
   useEffect(() => {
     const audio = audioRef.current;
-    if (audio) {
-      if (initiallyEnabled && !isPlaying) {
-        audio.play().catch((error) => {
-          console.error('Playback prevented:', error);
-          setIsPlaying(false);
-        });
-        setIsPlaying(true);
-        audio.volume = 0.3;
-      } else if (!initiallyEnabled && isPlaying) {
-        audio.pause();
+    if (!audio) return;
+
+    audio.addEventListener('ended', () => {
+      audio.currentTime = 0;
+      audio.play().catch((error) => {
+        console.error('Playback prevented:', error);
         setIsPlaying(false);
-      }
-    }
-  }, [initiallyEnabled]);
+      });
+    });
 
-  const togglePlay = () => {
+    if (initiallyEnabled && !isPlaying) {
+      audio.play().catch((error) => {
+        console.error('Playback prevented:', error);
+        setIsPlaying(false);
+      });
+      audio.volume = volume;
+      setIsPlaying(true);
+    } else if (!initiallyEnabled && isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    }
+
+    return () => {
+      audio.pause();
+      setIsPlaying(false);
+    };
+  }, [initiallyEnabled, fileName]);
+
+  const togglePlayback = () => {
     const audio = audioRef.current;
-    if (audio) {
-      if (isPlaying) {
-        audio.pause();
-      } else {
-        audio.play().catch((error) => {
-          console.error('Playback prevented:', error);
-        });
-      }
-      const newPlayingState = !isPlaying;
-      setIsPlaying(newPlayingState);
-      trackMusicToggle(newPlayingState);
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+      trackMusicToggle(false);
+    } else {
+      audio.play().catch((error) => {
+        console.error('Playback prevented:', error);
+      });
+      setIsPlaying(true);
+      trackMusicToggle(true);
     }
   };
 
@@ -90,7 +120,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
           </>
         )}
         <button
-          onClick={togglePlay}
+          onClick={togglePlayback}
           className="relative p-3 bg-white/30 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all duration-300 focus:outline-none  group z-10"
           aria-label={
             isPlaying
@@ -102,8 +132,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
             <MusicalNoteIcon className="w-8 h-8 text-white group-hover:text-pink-200 transition-colors" />
           ) : (
             <div className="relative w-8 h-8">
-              <MusicalNoteIcon className="absolute w-7 h-7 text-white group-hover:text-pink-200 transition-colors" />
-              <SlashIcon className="absolute w-12 h-12 -rotate-[70deg] -top-2 -left-2 text-white group-hover:text-pink-200 stroke-pink-700/50 transition-colors" />
+              <SpeakerXMarkIcon className="absolute w-12 h-12  -top-2 -left-2 text-white group-hover:text-pink-200 stroke-pink-700/50 transition-colors" />
             </div>
           )}
         </button>
