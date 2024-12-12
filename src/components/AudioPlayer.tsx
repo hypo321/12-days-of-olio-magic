@@ -256,14 +256,16 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       play,
       'audio.paused': audio.paused,
       isPlaying,
+      musicEnabled,
     });
 
-    if (play) {
+    // Only autoplay if music is enabled
+    if (play && musicEnabled) {
       audio.volume = volume;
       audio.play().catch(console.error);
       setIsPlaying(true);
     }
-  }, [play, volume]);
+  }, [play, volume, musicEnabled]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -334,7 +336,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             onTouchMove={handleDrag}
             onTouchEnd={handleDragEnd}
             onTouchCancel={handleDragEnd}
-            className={`p-2 bg-pink-700 text-white rounded-full hover:bg-pink-600 focus:outline-none transition-colors duration-150 animate-pulse-  ${
+            className={`p-2 bg-pink-700 text-white rounded-full hover:bg-pink-600 focus:outline-none transition-colors duration-150 animate-pulse-gentle  ${
               isDragging ? 'cursor-grabbing' : 'cursor-pointer'
             } touch-none`}
             aria-label={
