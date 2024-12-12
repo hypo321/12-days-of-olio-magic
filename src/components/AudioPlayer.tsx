@@ -194,13 +194,6 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   useEffect(() => {
     if (!musicEnabled) return;
 
-    console.log('Volume effect triggered:', {
-      isPlaying,
-      musicEnabled,
-      hasEnded,
-      'audioRef.current?.paused': audioRef.current?.paused,
-    });
-
     // On mobile, temporarily pause background music instead of adjusting volume
     const isMobile = /iPhone|iPad|iPod|Android/i.test(
       navigator.userAgent
@@ -227,12 +220,6 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     const audio = audioRef.current;
     if (!audio) return;
 
-    console.log('Toggle playback:', {
-      'audio.paused': audio.paused,
-      hasEnded,
-      isPlaying,
-    });
-
     if (hasEnded) {
       audio.currentTime = 0;
       setHasEnded(false);
@@ -251,13 +238,6 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    console.log('Play prop effect:', {
-      play,
-      'audio.paused': audio.paused,
-      isPlaying,
-      musicEnabled,
-    });
 
     // Only autoplay if music is enabled
     if (play && musicEnabled) {

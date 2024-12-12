@@ -26,7 +26,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
 
   const { adjustVolume } = useBackgroundMusicVolume();
-  const { isMusicPlaying, setTemporarilyPaused } = useBackgroundMusicState();
+  const { isMusicPlaying, setTemporarilyPaused } =
+    useBackgroundMusicState();
   const musicEnabled = isMusicPlaying();
 
   const fadeAudio = (
@@ -63,7 +64,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    
+
     // Always mute video if background music is not playing
     video.muted = !musicEnabled;
   }, [musicEnabled]);
@@ -72,11 +73,13 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     const video = videoRef.current;
     if (!video) return;
 
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(
+      navigator.userAgent
+    );
 
     const handlePlay = () => {
       setIsPlaying(true);
-      
+
       // Only handle audio if background music is enabled
       if (musicEnabled) {
         if (isMobile) {
@@ -85,7 +88,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           adjustVolume(0.01);
         }
         video.muted = false;
-        fadeAudio(Date.now(), 0, 1);
+        fadeAudio(Date.now(), 0, 0.2);
       }
     };
 
@@ -99,7 +102,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           adjustVolume(0.2);
         }
         // Fade video out
-        fadeAudio(Date.now(), 1, 0);
+        fadeAudio(Date.now(), 0.2, 0);
       }
     };
 
@@ -113,11 +116,16 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           adjustVolume(0.2);
         }
         // Fade video out
-        fadeAudio(Date.now(), 1, 0, () => {
+        fadeAudio(Date.now(), 0.2, 0, () => {
           if (!loop) {
             video.currentTime = 0;
           }
+          // Call onVideoEnd callback after fade out
+          onVideoEnd?.();
         });
+      } else {
+        // If music is not enabled, call onVideoEnd immediately
+        onVideoEnd?.();
       }
     };
 
@@ -150,7 +158,10 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       video.removeEventListener('play', handlePlay);
       video.removeEventListener('pause', handlePause);
       video.removeEventListener('ended', handleEnded);
-      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener(
+        'loadedmetadata',
+        handleLoadedMetadata
+      );
       // Restore background music volume on unmount if needed
       if (musicEnabled) {
         if (isMobile) {
@@ -160,7 +171,14 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         }
       }
     };
-  }, [autoPlay, musicEnabled, loop, onVideoEnd, adjustVolume, setTemporarilyPaused]);
+  }, [
+    autoPlay,
+    musicEnabled,
+    loop,
+    onVideoEnd,
+    adjustVolume,
+    setTemporarilyPaused,
+  ]);
 
   // Handle changes in music enabled state
   useEffect(() => {
@@ -169,7 +187,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
     if (musicEnabled) {
       // If music was re-enabled while video is playing, fade in video sound
-      fadeAudio(Date.now(), 0, 1);
+      fadeAudio(Date.now(), 0, 0.2);
     } else {
       // If music was disabled while video is playing, mute video immediately
       video.volume = 0;

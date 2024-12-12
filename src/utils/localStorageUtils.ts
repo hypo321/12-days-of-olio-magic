@@ -7,7 +7,7 @@ interface CachedData {
 
 export const saveWindowData = (data: CachedData) => {
   console.log(data);
-
+  return;
   //localStorage.setItem(
   //  'advent-calendar-windows',
   //  JSON.stringify(data)
