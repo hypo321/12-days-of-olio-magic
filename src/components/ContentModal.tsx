@@ -26,7 +26,7 @@ export const ContentModal: React.FC<Props> = ({
   }, [isOpen, day]);
 
   const handleClose = () => {
-    adjustVolume(0.2);
+    adjustVolume(0.25);
     onClose();
     setTimeout(() => {
       navigate('/', { replace: true });
@@ -34,7 +34,7 @@ export const ContentModal: React.FC<Props> = ({
   };
 
   const handleAdvance = () => {
-    adjustVolume(0.2);
+    adjustVolume(0.26);
     const event = new KeyboardEvent('keydown', {
       key: 'ArrowRight',
       bubbles: true,
@@ -88,7 +88,7 @@ export const ContentModal: React.FC<Props> = ({
             exit={{ opacity: 0, scale: 0.75 }}
             transition={{
               duration: 0.3,
-              ease: [0.4, 0, 0.2, 1],
+              ease: [0.4, 0, 0.211, 1],
             }}
             className="fixed inset-4 md:inset-10 z-50 flex items-center justify-center"
           >
@@ -121,7 +121,7 @@ export const ContentModal: React.FC<Props> = ({
                   transition={{
                     duration: 0.3,
                     delay: 2,
-                    ease: [0.4, 0, 0.2, 1],
+                    ease: [0.4, 0, 0.212, 1],
                   }}
                   onClick={(e) => {
                     e.stopPropagation();

@@ -24,18 +24,18 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const progressRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasEnded, setHasEnded] = useState(false);
-  const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [wasDragging, setWasDragging] = useState(false);
-  const [dragStartPos, setDragStartPos] = useState<{
+  const [dragStart, setDragStart] = useState<{
     x: number;
     y: number;
   } | null>(null);
   const animationFrameRef = useRef<number>();
 
   const { adjustVolume } = useBackgroundMusicVolume();
-  const { isMusicPlaying } = useBackgroundMusicState();
+  const { isMusicPlaying, setTemporarilyPaused } =
+    useBackgroundMusicState();
   const musicEnabled = isMusicPlaying();
 
   const DRAG_TOLERANCE = 5; // pixels
@@ -71,9 +71,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     e.preventDefault();
     e.stopPropagation();
     const point = 'touches' in e ? e.touches[0] : e;
-    setDragStartPos({ x: point.clientX, y: point.clientY });
+    setDragStart({ x: point.clientX, y: point.clientY });
     setIsDragging(true);
-    setWasDragging(false);
   };
 
   const handleDrag = (
@@ -81,19 +80,18 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       | React.MouseEvent<HTMLButtonElement>
       | React.TouchEvent<HTMLButtonElement>
   ) => {
-    if (!isDragging || !dragStartPos) return;
+    if (!isDragging || !dragStart) return;
 
     e.preventDefault();
     e.stopPropagation();
 
     const point = 'touches' in e ? e.touches[0] : e;
-    const dx = point.clientX - dragStartPos.x;
-    const dy = point.clientY - dragStartPos.y;
+    const dx = point.clientX - dragStart.x;
+    const dy = point.clientY - dragStart.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     if (distance > DRAG_TOLERANCE) {
       updateAudioTime(point.clientX);
-      setWasDragging(true);
     }
   };
 
@@ -106,8 +104,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     e.stopPropagation();
 
     const point = 'changedTouches' in e ? e.changedTouches[0] : e;
-    const dx = point.clientX - (dragStartPos?.x ?? 0);
-    const dy = point.clientY - (dragStartPos?.y ?? 0);
+    const dx = point.clientX - (dragStart?.x ?? 0);
+    const dy = point.clientY - (dragStart?.y ?? 0);
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     // If we haven't dragged beyond tolerance, treat as a click
@@ -116,7 +114,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     }
 
     setIsDragging(false);
-    setDragStartPos(null);
+    setDragStart(null);
   };
 
   const handleProgressClick = (
@@ -194,6 +192,80 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   }, [isDragging, duration]);
 
   useEffect(() => {
+    if (!musicEnabled) return;
+
+    console.log('Volume effect triggered:', {
+      isPlaying,
+      musicEnabled,
+      hasEnded,
+      'audioRef.current?.paused': audioRef.current?.paused,
+    });
+
+    // On mobile, temporarily pause background music instead of adjusting volume
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(
+      navigator.userAgent
+    );
+
+    if (isPlaying) {
+      if (isMobile) {
+        setTemporarilyPaused(true);
+      } else {
+        adjustVolume(0.08);
+      }
+    }
+
+    return () => {
+      if (isMobile) {
+        setTemporarilyPaused(false);
+      } else if (!isPlaying) {
+        adjustVolume(0.2);
+      }
+    };
+  }, [isPlaying, musicEnabled, adjustVolume, setTemporarilyPaused]);
+
+  const togglePlayback = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    console.log('Toggle playback:', {
+      'audio.paused': audio.paused,
+      hasEnded,
+      isPlaying,
+    });
+
+    if (hasEnded) {
+      audio.currentTime = 0;
+      setHasEnded(false);
+    }
+
+    if (audio.paused) {
+      audio.volume = volume;
+      audio.play().catch(console.error);
+      setIsPlaying(true);
+    } else {
+      audio.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    console.log('Play prop effect:', {
+      play,
+      'audio.paused': audio.paused,
+      isPlaying,
+    });
+
+    if (play) {
+      audio.volume = volume;
+      audio.play().catch(console.error);
+      setIsPlaying(true);
+    }
+  }, [play, volume]);
+
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -208,7 +280,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       setHasEnded(true);
       setCurrentTime(duration);
       onAudioEnd?.();
-      // Restore background music volume
+      // Move volume adjustment here to ensure it happens after playback ends
       if (musicEnabled) {
         adjustVolume(0.2);
       }
@@ -223,58 +295,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         handleLoadedMetadata
       );
       audio.removeEventListener('ended', handleEnded);
-      if (musicEnabled) {
-        adjustVolume(0.2); // Restore background music volume on unmount
-      }
     };
   }, [duration, musicEnabled, onAudioEnd, adjustVolume]);
-
-  const togglePlayback = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (hasEnded) {
-      audio.currentTime = 0;
-      setHasEnded(false);
-    }
-
-    if (audio.paused) {
-      // Lower background music when playing
-      if (musicEnabled) {
-        adjustVolume(0.05);
-      }
-      audio.volume = volume;
-      audio.play().catch(console.error);
-      setIsPlaying(true);
-    } else {
-      audio.pause();
-      setIsPlaying(false);
-      // Restore background music volume
-      if (musicEnabled) {
-        adjustVolume(0.2);
-      }
-    }
-  };
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (play && musicEnabled) {
-      adjustVolume(0.05);
-      audio.volume = volume;
-      audio.play().catch(console.error);
-      setIsPlaying(true);
-    }
-  }, [play, musicEnabled, volume, adjustVolume]);
-
-  useEffect(() => {
-    return () => {
-      if (musicEnabled) {
-        adjustVolume(0.2); // Restore background music volume on unmount
-      }
-    };
-  }, [musicEnabled, adjustVolume]);
 
   return (
     <div className="flex items-center max-w-2xl space-x-4 w-full">
@@ -313,9 +335,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             onTouchEnd={handleDragEnd}
             onTouchCancel={handleDragEnd}
             className={`p-2 bg-pink-700 text-white rounded-full hover:bg-pink-600 focus:outline-none transition-colors duration-150 animate-pulse-  ${
-              isDragging && wasDragging
-                ? 'cursor-grabbing'
-                : 'cursor-pointer'
+              isDragging ? 'cursor-grabbing' : 'cursor-pointer'
             } touch-none`}
             aria-label={
               hasEnded ? 'Replay' : isPlaying ? 'Pause' : 'Play'

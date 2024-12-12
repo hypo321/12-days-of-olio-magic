@@ -348,7 +348,7 @@ export const Calendar = () => {
         e.preventDefault();
         setIsZooming(true);
         setActiveDay(null);
-        adjustVolume(0.2);
+        adjustVolume(0.22);
         navigate('/', { replace: true });
         return;
       }
@@ -359,11 +359,12 @@ export const Calendar = () => {
         const prevDay = currentDay - 1;
         setIsZooming(true);
         setActiveDay(null);
+        adjustVolume(0.21);
         navigate('/', { replace: true });
         setTimeout(() => {
           setIsZooming(true);
           setActiveDay(prevDay.toString());
-          adjustVolume(0.2);
+
           navigate(`/day/${prevDay}`, { replace: true });
         }, 1000);
         return;
@@ -378,7 +379,7 @@ export const Calendar = () => {
         setTimeout(() => {
           setIsZooming(true);
           setActiveDay(nextDay.toString());
-          adjustVolume(0.2);
+          adjustVolume(0.23);
           navigate(`/day/${nextDay}`, { replace: true });
         }, 1000);
         return;
@@ -395,7 +396,7 @@ export const Calendar = () => {
         setTimeout(() => {
           setIsZooming(true);
           setActiveDay(num.toString());
-          adjustVolume(0.2);
+          adjustVolume(0.24);
           navigate(`/day/${num}`, { replace: true });
         }, 1000);
       }
