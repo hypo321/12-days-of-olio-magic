@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DayContent } from './DayContent';
 import { useNavigate } from 'react-router-dom';
-import { trackModalView } from '../utils/analytics';
+import { trackModalView, trackAdvance } from '../utils/analytics';
 import { useBackgroundMusicVolume } from '../hooks/useBackgroundMusicVolume';
 
 interface Props {
@@ -34,13 +34,14 @@ export const ContentModal: React.FC<Props> = ({
   };
 
   const handleAdvance = () => {
+    trackAdvance(day);
+
     adjustVolume(0.26);
     const event = new KeyboardEvent('keydown', {
       key: 'ArrowRight',
       bubbles: true,
       cancelable: true,
     });
-
     document.dispatchEvent(event);
   };
 

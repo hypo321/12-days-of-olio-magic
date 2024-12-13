@@ -58,6 +58,12 @@ export const trackWelcomeMusicChoice = (enabled: boolean) => {
   });
 };
 
+export const trackAdvance = (dayNumber: number | string) => {
+  trackEvent('modal_advance', {
+    day_number: dayNumber,
+  });
+};
+
 export const trackRestart = () => {
   trackEvent('restart_experience');
 };
