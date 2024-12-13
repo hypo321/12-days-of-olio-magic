@@ -22,6 +22,8 @@ export const CalendarWindow: React.FC<Props> = ({
 }) => {
   const { openModal, closeModal } = useModal();
   const { day: windowDay, isOpen } = window;
+  const [showClickMessage, setShowClickMessage] =
+    React.useState(false);
 
   const {
     showMessage,
@@ -71,6 +73,19 @@ export const CalendarWindow: React.FC<Props> = ({
     width: '100%',
     height: '100%',
   };
+
+  // Show click message when zoomed in to door 1
+  React.useEffect(() => {
+    if (windowDay === 1 && activeDay === '1') {
+      // Small delay to let the zoom animation complete
+      const timer = setTimeout(() => {
+        setShowClickMessage(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    } else {
+      setShowClickMessage(false);
+    }
+  }, [windowDay, activeDay, isOpen]);
 
   // Handle modal opening when window is opened
   React.useEffect(() => {
@@ -124,6 +139,10 @@ export const CalendarWindow: React.FC<Props> = ({
         <div className="door-front" onClick={handleDoorFrontClick}>
           <div className="door-front-image" style={backgroundStyle} />
           <div className="door-number">{windowDay}</div>
+          {windowDay === 1 && !isOpen && !activeDay && (
+            <div className={`start-label `}>Start here</div>
+          )}
+
           {showMessage && !canOpenDoor && (
             <div
               className={`date-message ${
@@ -132,6 +151,9 @@ export const CalendarWindow: React.FC<Props> = ({
             >
               {openingDateMessage}
             </div>
+          )}
+          {showClickMessage && (
+            <div className="click-message">Click to open</div>
           )}
         </div>
         <div
